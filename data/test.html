@@ -71,6 +71,10 @@
         var dragStarted;	// indicates whether we are currently in a drag operation
         var offset;
         var update = true;
+        var addNode = false;
+        var addEdge = false;
+        var selectedNodesNumber = 0;
+        var selectedNodes = [];
 
         function init() {
             examples.showDistractor();
@@ -130,12 +134,112 @@
             }
         }
 
+        function addNodeToBitmap(node,container,bitmap) {
+
+            var textoffset = 3;
+
+            var text  = new createjs.Text(node.id);
+            container.addChild(bitmap,text);
+            bitmap.x = node.x;
+            bitmap.y = node.y;
+            //bitmap.rotation = 360 * Math.random() | 0;
+            bitmap.regX = bitmap.image.width / 2 | 0;
+            bitmap.regY = bitmap.image.height / 2 | 0;
+            //bitmap.scale = bitmap.originalScale = Math.random() * 0.4 + 0.6;
+            bitmap.scale = 0.7;
+            bitmap.name = "bmp_" + node.id;
+            bitmap.id = (node.id);
+            bitmap.cursor = "pointer";
+            node.size=(bitmap.getBounds().width);
+
+            text.x = node.x-textoffset;
+            text.y = node.y-textoffset;
+            text.name = "text_" + node.id;
+            text.id = (node.id);
+            text.cursor = "pointer";
+            text.scale = 1.5;
+        }
+
+        function addEdgeBetweenNodes(nodes,edges)
+        {
+            var edge = new Edge(edges.length,nodes);
+            edges.push(edge);
+            drawEdges(edges);
+        }
+
+        function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
+            bitmap.on("mousedown", function (evt) {
+                this.parent.addChild(this);
+                this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
+                if(addEdge==true)
+                {
+                    if(selectedNodesNumber<2)
+                    {
+                        selectedNodesNumber++;
+                        selectedNodes.push(nodes[bitmap.id]);
+
+                    }
+                    else
+                    {
+                        addEdgeBetweenNodes(selectedNodes,edges);
+                        selectedNodesNumber=0;
+                        selectedNodes = []
+                        addEdge=false;
+                    }
+                }
+            });
+
+            // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
+            bitmap.on("pressmove", function (evt) {
+                node.x=evt.stageX + this.offset.x;
+                node.y=evt.stageY + this.offset.y;
+                this.x = node.x
+                this.y = node.y
+
+                for(var i = 0; i < edges.length; i++)
+                {
+                    if(node.id===edges[i].nodes[0].id)
+                    {
+                        g.clear();
+                        edges[i].nodes[0]=node
+                        drawEdges(edges);
+                    }
+                    else if(node.id===edges[i].nodes[1].id)
+                    {
+                        g.clear();
+                        edges[i].nodes[1]=node
+                        drawEdges(edges);
+                    }
+                }
+                var node_text = this.parent.getChildByName("text_"+this.id);
+                node_text.x=node.x-3;//textoffset;
+                node_text.y=node.y-3;//textoffset;
+
+                this.parent.addChild(node_text);
+                // indicate that the stage should be updated on the next tick:
+                update = true;
+            });
+
+            bitmap.on("rollover", function (evt) {
+                //this.scale = this.originalScale * 1.2;
+                update = true;
+            });
+
+            bitmap.on("rollout", function (evt) {
+                //this.scale = this.originalScale;
+                update = true;
+            });
+        }
+
         function handleImageLoad(event) {
-            var image = event.target;
+            var textoffset = 3;
             var bitmap;
             var container = new createjs.Container();
             var text;
-            var textoffset = 3;
+            var node_image = "./assets/images/node.png";
+            var add_edge_image = "./assets/images/addedge.png";
+
+
             stage.addChild(container);
 
             const nodes = [];
@@ -151,83 +255,34 @@
 
             // create and populate the screen with random daisies:
             for (var i = 0; i < nodes.length; i++) {
-                bitmap = new createjs.Bitmap(image);
-                text  = new createjs.Text(nodes[i].id);
-                container.addChild(bitmap,text);
-                bitmap.x = nodes[i].x;
-                bitmap.y = nodes[i].y;
-                //bitmap.rotation = 360 * Math.random() | 0;
-                bitmap.regX = bitmap.image.width / 2 | 0;
-                bitmap.regY = bitmap.image.height / 2 | 0;
-                //bitmap.scale = bitmap.originalScale = Math.random() * 0.4 + 0.6;
-                bitmap.scale = 0.7;
-                bitmap.name = "bmp_" + i;
-                bitmap.id = (nodes[i].id);
-                bitmap.cursor = "pointer";
-                nodes[i].size=(bitmap.getBounds().width);
 
-                text.x = nodes[i].x-textoffset;
-                text.y = nodes[i].y-textoffset;
-                //text.text(nodes[i].text);
-                /*text.regX = bitmap.image.width / 2 | 0;
-                text.regY = bitmap.image.height / 2 | 0;*/
-                text.name = "text_" + i;
-                text.id = (nodes[i].id);
-                text.cursor = "pointer";
-                text.scale = 1.5;
-                //text.color = "red";
+                bitmap = new createjs.Bitmap(node_image);
+                addNodeToBitmap(nodes[i],container,bitmap);
 
                 // using "on" binds the listener to the scope of the currentTarget by default
                 // in this case that means it executes in the scope of the button.
-                bitmap.on("mousedown", function (evt) {
-                    this.parent.addChild(this);
-                    this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
-                });
-
-                // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
-                bitmap.on("pressmove", function (evt) {
-                    nodes[this.id].x=evt.stageX + this.offset.x;
-                    nodes[this.id].y=evt.stageY + this.offset.y;
-                    this.x = nodes[this.id].x
-                    this.y = nodes[this.id].y
-
-                    for(var i = 0; i < edges.length; i++)
-                    {
-                        if(nodes[this.id].id===edges[i].nodes[0].id)
-                        {
-                            g.clear();
-                            edges[i].nodes[0]=nodes[this.id]
-                            drawEdges(edges);
-                        }
-                        else if(nodes[this.id].id===edges[i].nodes[1].id)
-                        {
-                            g.clear();
-                            edges[i].nodes[1]=nodes[this.id]
-                            drawEdges(edges);
-                        }
-                    }
-                    var node_text = this.parent.getChildByName("text_"+this.id);
-                    node_text.x=nodes[this.id].x-textoffset;
-                    node_text.y=nodes[this.id].y-textoffset;
-
-                    this.parent.addChild(node_text);
-                    // indicate that the stage should be updated on the next tick:
-                    update = true;
-                });
-
-                bitmap.on("rollover", function (evt) {
-                    //this.scale = this.originalScale * 1.2;
-                    update = true;
-                });
-
-                bitmap.on("rollout", function (evt) {
-                    //this.scale = this.originalScale;
-                    update = true;
-                });
-
-
+                bindFunctionalityToBitmap(nodes[i],bitmap,edges, nodes);
             }
-                drawEdges(edges);
+            stage.on("stagemousedown", function(evt) {
+                if(addNode==true)
+                {
+                    var newNode = new Node(nodes.length,nodes.length,(evt.stageX),(evt.stageY))
+                    nodes.push(newNode);
+                    var bitmap = new createjs.Bitmap(node_image);
+                    addNodeToBitmap(newNode,container,bitmap);
+                    bindFunctionalityToBitmap(newNode,bitmap,edges,nodes);
+                    addNode=false;
+                    update = true;
+                }
+                /*else if(addEdge==true)
+                {
+                    selectedNodesNumber++;
+                    selectedNodes.push()
+
+                    var newEdge = new Edge(edges.length,)
+                }*/
+            });
+            drawEdges(edges);
 
             examples.hideDistractor();
             createjs.Ticker.addEventListener("tick", tick);
@@ -240,6 +295,14 @@
                 stage.update(event);
             }
         }
+
+        function addNodeBtnClicked() {
+            addNode=!addNode;
+        }
+        function addEdgeBtnClicked() {
+            addEdge=!addEdge;
+        }
+
     </script>
 
 </head>
@@ -250,7 +313,13 @@
 </header>
 
 <div>
-    <canvas id="testCanvas" width="960" height="400"></canvas>
+    <div class="menu">
+        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+    </div>
+
+    <canvas style="z-index:1" id="testCanvas" width="960" height="400"></canvas>
+
 </div>
 </body>
 </html>

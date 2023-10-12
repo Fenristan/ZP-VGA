@@ -44,6 +44,10 @@
             {
                 this._size=size;
             }
+            set id(id)
+            {
+                this._id=id;
+            }
 
         }
 
@@ -71,10 +75,13 @@
         var dragStarted;	// indicates whether we are currently in a drag operation
         var offset;
         var update = true;
-        var addNode = false;
-        var addEdge = false;
+        var addNodeFlag = false;
+        var addEdgeFlag = false;
+        var removeNodeFlag = false;
+        var removeEdgeFlag = false;
         var selectedNodesNumber = 0;
         var selectedNodes = [];
+        var textoffset = 3;
 
         function init() {
             examples.showDistractor();
@@ -136,7 +143,7 @@
 
         function addNodeToBitmap(node,container,bitmap) {
 
-            var textoffset = 3;
+
 
             var text  = new createjs.Text(node.id);
             container.addChild(bitmap,text);
@@ -168,25 +175,54 @@
         }
 
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
+
             bitmap.on("mousedown", function (evt) {
-                this.parent.addChild(this);
+                //this.parent.addChild(this);
+                console.log(""+bitmap.id);
+                console.log(""+this.name)
                 this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
-                if(addEdge==true)
+                if(addEdgeFlag==true)
                 {
                     if(selectedNodesNumber<2)
                     {
                         selectedNodesNumber++;
                         selectedNodes.push(nodes[bitmap.id]);
-
                     }
                     else
                     {
                         addEdgeBetweenNodes(selectedNodes,edges);
                         selectedNodesNumber=0;
                         selectedNodes = []
-                        addEdge=false;
+                        addEdgeFlag=false;
                     }
                 }
+                else if(removeNodeFlag==true)
+                {
+                    console.log(nodes)
+                    for(let i = bitmap.id; i < nodes.length-1; i++)
+                    {
+                        console.log("stalo se");
+                        nodes[i]=nodes[i+1];
+                        nodes[i].id=(nodes[i].id)-1;
+                        let selectedBitmap = this.parent.getChildByName("bmp_"+(i+1));
+                        selectedBitmap.id=selectedBitmap.id-1;
+                        selectedBitmap.name="bmp_"+i;
+                        this.parent.addChild(selectedBitmap);
+
+                        let node_text = this.parent.getChildByName("text_"+selectedBitmap.id);
+                        node_text.x=selectedBitmap.x-textoffset;
+                        node_text.y=selectedBitmap.y-textoffset;
+                        this.parent.addChild(node_text);
+
+                    }
+                    nodes.pop();
+                    //console.log(nodes)
+
+                    this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
+                    this.parent.removeChild(this);
+                }
+                update=true;
+                removeNodeFlag=false;
             });
 
             // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
@@ -212,8 +248,8 @@
                     }
                 }
                 var node_text = this.parent.getChildByName("text_"+this.id);
-                node_text.x=node.x-3;//textoffset;
-                node_text.y=node.y-3;//textoffset;
+                node_text.x=node.x-textoffset;//textoffset;
+                node_text.y=node.y-textoffset;//textoffset;
 
                 this.parent.addChild(node_text);
                 // indicate that the stage should be updated on the next tick:
@@ -264,14 +300,16 @@
                 bindFunctionalityToBitmap(nodes[i],bitmap,edges, nodes);
             }
             stage.on("stagemousedown", function(evt) {
-                if(addNode==true)
+                if(addNodeFlag==true)
                 {
                     var newNode = new Node(nodes.length,nodes.length,(evt.stageX),(evt.stageY))
                     nodes.push(newNode);
+                    console.log(newNode);
+                    console.log(nodes);
                     var bitmap = new createjs.Bitmap(node_image);
                     addNodeToBitmap(newNode,container,bitmap);
                     bindFunctionalityToBitmap(newNode,bitmap,edges,nodes);
-                    addNode=false;
+                    addNodeFlag=false;
                     update = true;
                 }
                 /*else if(addEdge==true)
@@ -297,10 +335,16 @@
         }
 
         function addNodeBtnClicked() {
-            addNode=!addNode;
+            addNodeFlag=!addNodeFlag;
         }
         function addEdgeBtnClicked() {
-            addEdge=!addEdge;
+            addEdgeFlag=!addEdgeFlag;
+        }
+        function removeNodeBtnClicked() {
+            removeNodeFlag=!removeNodeFlag;
+        }
+        function removeEdgeBtnClicked() {
+            removeEdgeFlag=!removeEdgeFlag;
         }
 
     </script>
@@ -316,6 +360,8 @@
     <div class="menu">
         <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
         <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
     </div>
 
     <canvas style="z-index:1" id="testCanvas" width="960" height="400"></canvas>

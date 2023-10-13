@@ -66,6 +66,11 @@
             set nodes(value) {
                 this._nodes = value;
             }
+
+            set id(id)
+            {
+                this._id=id;
+            }
         }
 
         var canvas, stage;
@@ -136,15 +141,14 @@
                     g.lineTo(end_x,end_y);
                     g.endStroke();
                     var line = new createjs.Shape(g);
+                    line.id=edges[i].id;
+                    line.name="line_"+edges[i].id;
                     stage.addChild(line);
                 }
             }
         }
 
         function addNodeToBitmap(node,container,bitmap) {
-
-
-
             var text  = new createjs.Text(node.id);
             container.addChild(bitmap,text);
             bitmap.x = node.x;
@@ -173,6 +177,54 @@
             edges.push(edge);
             drawEdges(edges);
         }
+        function removeEdgeBetweenNodes(nodes,edges)
+        {
+            //var edge = new Edge(edges.length,nodes);
+            for(let i = 0; i<edges.length; i++)
+            {
+                if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1]))
+                {
+                    for(let j = edges[i].id; j < edges.length-1; j++)
+                    {
+                        edges[j]=edges[j+1];
+                        edges[j].id=(edges[j].id)-1;
+                        /*let selectedLine = this.parent.getChildByName("line_"+(i+1));
+                        selectedLine.id=selectedLine.id-1;
+                        selectedLine.name="bmp_"+i;
+                        this.parent.addChild(selectedLine);*/
+                    }
+                    edges.pop();
+                    console.log(edges);
+                    //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
+                }
+            }
+
+            drawEdges(edges);
+        }
+        function removeAllEdgesFromNode(node,nodes,edges)
+        {
+            //var edge = new Edge(edges.length,nodes);
+            for(let i = 0; i<edges.length; i++)
+            {
+                console.log("id ndoe predaneho"+node.id);
+
+                if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
+                {console.log("tolikrat");
+                    /*for(let j = edges[i].id; j < edges.length-1; j++)
+                    {
+                        edges[j]=edges[j+1];
+                        edges[j].id=(edges[j].id)-1;
+
+                    }*/
+                    edges.splice(i, 1);
+                    //i--;
+                    console.log(edges);
+                    //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
+                }
+            }
+
+            drawEdges(edges);
+        }
 
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
 
@@ -180,6 +232,8 @@
                 //this.parent.addChild(this);
                 console.log(""+bitmap.id);
                 console.log(""+this.name)
+                console.log(edges)
+                console.log(nodes);
                 this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
                 if(addEdgeFlag==true)
                 {
@@ -199,6 +253,7 @@
                 else if(removeNodeFlag==true)
                 {
                     console.log(nodes)
+                    removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
                     for(let i = bitmap.id; i < nodes.length-1; i++)
                     {
                         console.log("stalo se");
@@ -220,6 +275,21 @@
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
                     this.parent.removeChild(this);
+                }
+                else if(removeEdgeFlag==true)
+                {
+                    if(selectedNodesNumber<2)
+                    {
+                        selectedNodesNumber++;
+                        selectedNodes.push(nodes[bitmap.id]);
+                    }
+                    else
+                    {
+                        removeEdgeBetweenNodes(selectedNodes,edges);
+                        selectedNodesNumber=0;
+                        selectedNodes = []
+                        removeEdgeFlag=false;
+                    }
                 }
                 update=true;
                 removeNodeFlag=false;
@@ -287,7 +357,7 @@
             }
 
             edges.push(new Edge(0,[nodes[0],nodes[1]]));
-            edges.push(new Edge(0,[nodes[1],nodes[2]]));
+            edges.push(new Edge(1,[nodes[1],nodes[2]]));
 
             // create and populate the screen with random daisies:
             for (var i = 0; i < nodes.length; i++) {

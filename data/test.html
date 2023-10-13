@@ -208,19 +208,19 @@
             {
                 console.log("id ndoe predaneho"+node.id);
 
-                if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
-                {console.log("tolikrat");
-                    /*for(let j = edges[i].id; j < edges.length-1; j++)
+                //if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
+                if((edges[i].nodes[0]==node||edges[i].nodes[1]==node))
+                {
+                    for(let j = edges[i].id; j < edges.length-1; j++)
                     {
                         edges[j]=edges[j+1];
                         edges[j].id=(edges[j].id)-1;
-
-                    }*/
-                    edges.splice(i, 1);
-                    //i--;
+                    }
+                    edges.pop();
                     console.log(edges);
                     //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
                 }
+
             }
 
             drawEdges(edges);
@@ -268,10 +268,23 @@
                         node_text.x=selectedBitmap.x-textoffset;
                         node_text.y=selectedBitmap.y-textoffset;
                         this.parent.addChild(node_text);
-
                     }
                     nodes.pop();
-                    //console.log(nodes)
+
+                    //cleanupnu smycku vytvorenou mezi smazanym edgem
+                    for(let i = 0; i<edges.length; i++)
+                    {
+                        if((edges[i].nodes[0].id===edges[i].nodes[1].id))
+                        {
+                            console.log("HALO HALO");
+                            for(let j = edges[i].id; j < edges.length-1; j++)
+                            {
+                                edges[j]=edges[j+1];
+                                edges[j].id=(edges[j].id)-1;
+                            }
+                            edges.pop();
+                        }
+                    }
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
                     this.parent.removeChild(this);

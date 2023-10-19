@@ -112,7 +112,8 @@
         }
 
         function drawEdges(edges) {
-            for(var i = 0; i<edges.length;i++)
+            g.clear();
+            for(let i = 0; i<edges.length;i++)
             {
                 if(edges[i].nodes.length===2)
                 {
@@ -198,7 +199,6 @@
                     //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
                 }
             }
-
             drawEdges(edges);
         }
         function removeAllEdgesFromNode(node,nodes,edges)
@@ -237,13 +237,14 @@
                 this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
                 if(addEdgeFlag==true)
                 {
-                    if(selectedNodesNumber<2)
+                    if(selectedNodesNumber<1)
                     {
                         selectedNodesNumber++;
                         selectedNodes.push(nodes[bitmap.id]);
                     }
                     else
                     {
+                        selectedNodes.push(nodes[bitmap.id]);
                         addEdgeBetweenNodes(selectedNodes,edges);
                         selectedNodesNumber=0;
                         selectedNodes = []
@@ -254,6 +255,7 @@
                 {
                     console.log(nodes)
                     removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
+                    //drawEdges(edges);
                     for(let i = bitmap.id; i < nodes.length-1; i++)
                     {
                         console.log("stalo se");
@@ -286,18 +288,21 @@
                         }
                     }
 
+                    drawEdges(edges);
+
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
                     this.parent.removeChild(this);
                 }
                 else if(removeEdgeFlag==true)
                 {
-                    if(selectedNodesNumber<2)
+                    if(selectedNodesNumber<1)
                     {
                         selectedNodesNumber++;
                         selectedNodes.push(nodes[bitmap.id]);
                     }
                     else
                     {
+                        selectedNodes.push(nodes[bitmap.id]);
                         removeEdgeBetweenNodes(selectedNodes,edges);
                         selectedNodesNumber=0;
                         selectedNodes = []
@@ -402,7 +407,16 @@
 
                     var newEdge = new Edge(edges.length,)
                 }*/
+                stage.update(event)
+                for(let i =0; i<edges.length;i++)
+                {
+                    console.log(""+stage.getChildByName("line_"+edges[i].id));
+                }
+                console.log("clicked");
+                drawEdges(edges);
+
             });
+
             drawEdges(edges);
 
             examples.hideDistractor();

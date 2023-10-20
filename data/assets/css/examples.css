@@ -71,3 +71,7 @@ body.embedded {
     background: white;
     margin-bottom: 8px;
 }
+
+div[contenteditable] {
+    outline: none;
+}

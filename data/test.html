@@ -151,7 +151,7 @@
 
         function addNodeToBitmap(node,container,bitmap) {
             var text  = new createjs.Text(node.id);
-            container.addChild(bitmap,text);
+
             bitmap.x = node.x;
             bitmap.y = node.y;
             //bitmap.rotation = 360 * Math.random() | 0;
@@ -164,12 +164,39 @@
             bitmap.cursor = "pointer";
             node.size=(bitmap.getBounds().width);
 
-            text.x = node.x-textoffset;
+            /*text.x = node.x-textoffset;
             text.y = node.y-textoffset;
             text.name = "text_" + node.id;
             text.id = (node.id);
             text.cursor = "pointer";
-            text.scale = 1.5;
+            text.scale = 1.5;*/
+
+            var html = document.createElement("div");
+            html.innerHTML = ""+node.text;
+            html.id = "test_"+node.id;
+            html.style.contenteditable="true";
+            //html.id="text_"+node.id;
+            //html.id="text_"+node.id;
+            //html.style.height = '50px';
+            //html.style.width = '100px';
+            //html.style.backgroundColor = '#000000';
+            /*html.style.position = "absolute";
+            html.style.top = (0).toString();
+            html.style.left = (0).toString();*/
+            //html.style.bottom = node.y;
+
+            //var content = document.createTextNode(""+node.id);
+            //html.appendChild(content);*/
+            document.getElementById("test").appendChild(html).contentEditable = "true";
+
+            var text1 = new createjs.DOMElement(html);
+            text1.id = node.id;
+            text1.name = "text_" + node.id;
+            text1.cursor = "pointer";
+            text1.x = node.x-textoffset;
+            text1.y = node.y-textoffset-3;
+
+            container.addChild(bitmap,text1);
         }
 
         function addEdgeBetweenNodes(nodes,edges)
@@ -268,7 +295,7 @@
 
                         let node_text = this.parent.getChildByName("text_"+selectedBitmap.id);
                         node_text.x=selectedBitmap.x-textoffset;
-                        node_text.y=selectedBitmap.y-textoffset;
+                        node_text.y=selectedBitmap.y-textoffset-3;
                         this.parent.addChild(node_text);
                     }
                     nodes.pop();
@@ -291,6 +318,8 @@
                     drawEdges(edges);
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
+                    let text = document.getElementById("test_"+nodes.length);
+                    text.parentNode.removeChild(text);
                     this.parent.removeChild(this);
                 }
                 else if(removeEdgeFlag==true)
@@ -337,7 +366,7 @@
                 }
                 var node_text = this.parent.getChildByName("text_"+this.id);
                 node_text.x=node.x-textoffset;//textoffset;
-                node_text.y=node.y-textoffset;//textoffset;
+                node_text.y=node.y-textoffset-3;//textoffset;
 
                 this.parent.addChild(node_text);
                 // indicate that the stage should be updated on the next tick:
@@ -352,6 +381,12 @@
             bitmap.on("rollout", function (evt) {
                 //this.scale = this.originalScale;
                 update = true;
+            });
+
+            bitmap.parent.getChildByName("text_"+bitmap.id).on("dblclick", function (evt)
+            {
+                let node_text = this;
+                node_text.text = "";
             });
         }
 
@@ -461,7 +496,10 @@
         <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
     </div>
 
+    <div id="test">
+    </div>
     <canvas style="z-index:1" id="testCanvas" width="960" height="400"></canvas>
+
 
 </div>
 </body>

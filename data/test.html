@@ -73,7 +73,7 @@
             }
         }
 
-        var canvas, stage;
+        var canvas, stage, context;
         var g;
 
         var mouseTarget;	// the display object currently under the mouse, or being dragged
@@ -92,8 +92,9 @@
             examples.showDistractor();
             // create stage and point it to the canvas:
             canvas = document.getElementById("testCanvas");
+            context = canvas.getContext("2d");
             stage = new createjs.Stage(canvas);
-            g = new createjs.Graphics();
+
             // enable touch interactions if supported on the current device:
             createjs.Touch.enable(stage);
 
@@ -111,8 +112,24 @@
             createjs.Ticker.removeEventListener("tick", tick);
         }
 
-        function drawEdges(edges) {
-            g.clear();
+        function drawEdges(edges,oldEdges=edges) {
+            g = new createjs.Graphics();
+            //g.clear();
+            context.beginPath();
+            console.log("new length: "+edges.length);
+            console.log("old length: "+oldEdges.length);
+            console.log(oldEdges);
+
+                for(let i = 0; i<oldEdges.length;i++)
+                {
+                    if(stage.getChildByName("line_"+oldEdges[i].id)!=null)
+                    {
+                        console.log("removing: "+stage.getChildByName("line_"+oldEdges[i].id));
+                        stage.getChildByName("line_"+oldEdges[i].id).graphics.clear();
+                        stage.removeChild(stage.getChildByName("line_"+oldEdges[i].id));
+                    }
+                }
+
             for(let i = 0; i<edges.length;i++)
             {
                 if(edges[i].nodes.length===2)
@@ -138,13 +155,53 @@
                     /*g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y);
                     g.lineTo(edges[i].nodes[1].x,edges[i].nodes[1].y);*/
                     //g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y)
-                    g.moveTo(start_x,start_y)
+                    g.moveTo(start_x,start_y);
                     g.lineTo(end_x,end_y);
                     g.endStroke();
+
+                    var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
+                    var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
+                    var length = Math.sqrt(dx * dx + dy * dy);
+
+                    start_x = start_x - Math.round(dx / ((length / (15))));
+                    start_y = start_y - Math.round(dy / ((length / (15))));
+                    end_x = end_x + Math.round(dx / ((length / (15))));
+                    end_y = end_y + Math.round(dy / ((length / (15))));
+
+                    // calculate the angle of the edge
+                    var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                    if (dx < 0) {
+                        deg += 180.0;
+                    }
+                    if (deg < 0) {
+                        deg += 360.0;
+                    }
+                    // calculate the angle for the two triangle points
+                    var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
+                    var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
+                    // calculate the triangle points
+                    var arrowx = [];
+                    var arrowy = [];
+                    arrowx[0] = end_x;
+                    arrowy[0] = end_y;
+                    arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
+                    arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
+                    arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
+                    arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
+
+                    g.beginFill("red");
+                    g.moveTo(arrowx[0], arrowy[0]);
+                    g.lineTo(arrowx[1], arrowy[1]);
+                    g.lineTo(arrowx[2], arrowy[2]);
+                    g.lineTo(arrowx[0], arrowy[0]);
+                    g.endFill();
+
                     var line = new createjs.Shape(g);
                     line.id=edges[i].id;
                     line.name="line_"+edges[i].id;
                     stage.addChild(line);
+
+
                 }
             }
         }
@@ -207,6 +264,7 @@
         }
         function removeEdgeBetweenNodes(nodes,edges)
         {
+            let oldEdges = edges.slice(0);
             //var edge = new Edge(edges.length,nodes);
             for(let i = 0; i<edges.length; i++)
             {
@@ -226,11 +284,12 @@
                     //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
                 }
             }
-            drawEdges(edges);
+            drawEdges(edges,oldEdges);
         }
         function removeAllEdgesFromNode(node,nodes,edges)
         {
             //var edge = new Edge(edges.length,nodes);
+            let oldEdges = edges.slice(0);
             for(let i = 0; i<edges.length; i++)
             {
                 console.log("id ndoe predaneho"+node.id);
@@ -243,14 +302,15 @@
                         edges[j]=edges[j+1];
                         edges[j].id=(edges[j].id)-1;
                     }
+                    //stage.removeChild(stage.getChildByName("line_"+edges[i].id));
                     edges.pop();
-                    console.log(edges);
-                    //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
+                    //console.log(edges);
+
                 }
 
             }
 
-            drawEdges(edges);
+            drawEdges(edges,oldEdges);
         }
 
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
@@ -280,6 +340,7 @@
                 }
                 else if(removeNodeFlag==true)
                 {
+                    let oldEdges = edges.slice(0);
                     console.log(nodes)
                     removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
                     //drawEdges(edges);
@@ -315,7 +376,7 @@
                         }
                     }
 
-                    drawEdges(edges);
+                    drawEdges(edges,oldEdges);
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
                     let text = document.getElementById("test_"+nodes.length);
@@ -344,6 +405,7 @@
 
             // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
             bitmap.on("pressmove", function (evt) {
+
                 node.x=evt.stageX + this.offset.x;
                 node.y=evt.stageY + this.offset.y;
                 this.x = node.x
@@ -443,12 +505,12 @@
                     var newEdge = new Edge(edges.length,)
                 }*/
                 stage.update(event)
-                for(let i =0; i<edges.length;i++)
+                /*for(let i =0; i<edges.length;i++)
                 {
                     console.log(""+stage.getChildByName("line_"+edges[i].id));
-                }
+                }*/
                 console.log("clicked");
-                drawEdges(edges);
+                //drawEdges(edges);
 
             });
 

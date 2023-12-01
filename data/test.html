@@ -7,6 +7,8 @@
     <link href="./assets/css/shared.css" rel="stylesheet" type="text/css"/>
     <link href="./assets/css/examples.css" rel="stylesheet" type="text/css"/>
     <script src="./assets/js/examples.js"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="./assets/js/script.js" defer></script>
 
     <script src="./lib/easeljs-NEXT.js"></script>
 
@@ -89,9 +91,10 @@
         var textoffset = 3;
 
         function init() {
+            console.log("?");
             examples.showDistractor();
             // create stage and point it to the canvas:
-            canvas = document.getElementById("testCanvas");
+            canvas = document.getElementById("canvas0");
             context = canvas.getContext("2d");
             stage = new createjs.Stage(canvas);
 
@@ -545,24 +548,108 @@
 
 </head>
 
-<body onload="init();">
-<header>
-    <h1>Proof of concept aplikace</h1>
-</header>
-
-<div>
-    <div class="menu">
-        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+<body onload = init();>
+<div class = "header">
+    <div class="search-bar">
+        <input class="city-input" type="text">
+        <button class="search-btn">Search</button>
     </div>
-
-    <div id="test">
-    </div>
-    <canvas style="z-index:1" id="testCanvas" width="960" height="400"></canvas>
-
-
 </div>
+<div class="container">
+    <div class="menu-container">
+        <div class="current-menu">
+            <div class="details">
+                <h2>N/A - N/A </h2>
+                <h6>Temperature: N/A°C</h6>
+                <h6>Humidity: N/A%</h6>
+                <h6>Wind Speed: N/A m/s</h6>
+            </div>
+        </div>
+        <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px;" id="back" class="back"></a>
+        <div class="menu-cards-container">
+            <h2>Menu</h2>
+            <ul class="menu-cards">
+                <button class="menuOption" id="menuOption0">
+
+                    <h3>Breadth-first search</h3>
+                    <h6>Temperature: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+
+                </button>
+                <button class="menuOption" id="menuOption1">
+
+                    <h3>Depth-first search</h3>
+                    <h6>Temp: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+
+                </button>
+                <button class="menuOption" id="menuOption2">
+
+                    <h3>N/A</h3>
+                    <h6>Temp: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+
+                </button>
+            </ul>
+            <ul class="menu-cards">
+                <button class="menuOption" id="menuOption3">
+                    <h3>N/A</h3>
+                    <h6>Temp: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+                </button>
+                <button class="menuOption" id="menuOption4">
+                    <h3>N/A</h3>
+                    <h6>Temp: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+                </button>
+                <button class="menuOption" id="menuOption5">
+                    <h3>N/A</h3>
+                    <h6>Temp: N/A°C</h6>
+                    <h6>Humidity: N/A%</h6>
+                    <h6>Wind Speed: N/A m/s</h6>
+                </button>
+            </ul>
+        </div>
+        <div id="map">
+            <div class = canvas-container-hidden id="canvas-container0">
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test">
+                    </div>
+                <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container1">
+                <canvas class="canvas" id="canvas1" width="100%" height="100%"></canvas>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container2">
+                <canvas class="canvas" id="canvas2" width="100%" height="100%"></canvas>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container3">
+                <canvas class="canvas" id="canvas3" width="100%" height="100%"></canvas>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container4">
+                <canvas class="canvas" id="canvas4" width="100%" height="100%"></canvas>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container5">
+                <canvas class="canvas" id="canvas5" width="100%" height="100%"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script>
 </body>
 </html>

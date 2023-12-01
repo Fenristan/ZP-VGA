@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title></title>
 
-    <link href="./assets/css/shared.css" rel="stylesheet" type="text/css"/>
-    <link href="./assets/css/examples.css" rel="stylesheet" type="text/css"/>
     <script src="./assets/js/examples.js"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
     <script src="./assets/js/script.js" defer></script>
@@ -75,7 +73,8 @@
             }
         }
 
-        var canvas, stage, context;
+
+
         var g;
 
         var mouseTarget;	// the display object currently under the mouse, or being dragged
@@ -91,19 +90,19 @@
         var textoffset = 3;
 
         function init() {
-            console.log("?");
             examples.showDistractor();
             // create stage and point it to the canvas:
-            canvas = document.getElementById("canvas0");
+            //canvas = document.getElementById("canvas"+1);
+            canvas = canvases[currentCanvasId];
             context = canvas.getContext("2d");
-            stage = new createjs.Stage(canvas);
+            //stage = new createjs.Stage(canvas);
 
             // enable touch interactions if supported on the current device:
-            createjs.Touch.enable(stage);
+            createjs.Touch.enable(stage[currentCanvasId]);
 
             // enabled mouse over / out events
-            stage.enableMouseOver(10);
-            stage.mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
+            stage[currentCanvasId].enableMouseOver(10);
+            stage[currentCanvasId].mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
 
             // load the source image:
             var image = new Image();
@@ -125,11 +124,11 @@
 
                 for(let i = 0; i<oldEdges.length;i++)
                 {
-                    if(stage.getChildByName("line_"+oldEdges[i].id)!=null)
+                    if(stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
                     {
-                        console.log("removing: "+stage.getChildByName("line_"+oldEdges[i].id));
-                        stage.getChildByName("line_"+oldEdges[i].id).graphics.clear();
-                        stage.removeChild(stage.getChildByName("line_"+oldEdges[i].id));
+                        console.log("removing: "+stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
+                        stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
+                        stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
                     }
                 }
 
@@ -202,7 +201,7 @@
                     var line = new createjs.Shape(g);
                     line.id=edges[i].id;
                     line.name="line_"+edges[i].id;
-                    stage.addChild(line);
+                    stage[currentCanvasId].addChild(line);
 
 
                 }
@@ -247,7 +246,7 @@
 
             //var content = document.createTextNode(""+node.id);
             //html.appendChild(content);*/
-            document.getElementById("test").appendChild(html).contentEditable = "true";
+            document.getElementById("test"+currentCanvasId).appendChild(html).contentEditable = "true";
 
             var text1 = new createjs.DOMElement(html);
             text1.id = node.id;
@@ -458,13 +457,20 @@
         function handleImageLoad(event) {
             var textoffset = 3;
             var bitmap;
-            var container = new createjs.Container();
+            var containers = [];
+            for(let i = 0; i < stage.length; i++)
+            {
+                containers[i] = new createjs.Container();
+            }
             var text;
             var node_image = "./assets/images/node.png";
             var add_edge_image = "./assets/images/addedge.png";
 
+            for(let i = 0; i < stage.length; i++)
+            {
+                stage[i].addChild(containers[i]);
+            }
 
-            stage.addChild(container);
 
             const nodes = [];
             const edges = [];
@@ -481,41 +487,45 @@
             for (var i = 0; i < nodes.length; i++) {
 
                 bitmap = new createjs.Bitmap(node_image);
-                addNodeToBitmap(nodes[i],container,bitmap);
+                addNodeToBitmap(nodes[i],containers[currentCanvasId],bitmap);
 
                 // using "on" binds the listener to the scope of the currentTarget by default
                 // in this case that means it executes in the scope of the button.
                 bindFunctionalityToBitmap(nodes[i],bitmap,edges, nodes);
             }
-            stage.on("stagemousedown", function(evt) {
-                if(addNodeFlag==true)
-                {
-                    var newNode = new Node(nodes.length,nodes.length,(evt.stageX),(evt.stageY))
-                    nodes.push(newNode);
-                    console.log(newNode);
-                    console.log(nodes);
-                    var bitmap = new createjs.Bitmap(node_image);
-                    addNodeToBitmap(newNode,container,bitmap);
-                    bindFunctionalityToBitmap(newNode,bitmap,edges,nodes);
-                    addNodeFlag=false;
-                    update = true;
-                }
-                /*else if(addEdge==true)
-                {
-                    selectedNodesNumber++;
-                    selectedNodes.push()
+            for(let i = 0; i < stage.length; i++)
+            {
+                stage[i].on("stagemousedown", function(evt) {
+                    if(addNodeFlag==true)
+                    {
+                        var newNode = new Node(nodes.length,nodes.length,(evt.stageX),(evt.stageY))
+                        nodes.push(newNode);
+                        console.log(newNode);
+                        console.log(nodes);
+                        var bitmap = new createjs.Bitmap(node_image);
+                        addNodeToBitmap(newNode,containers[currentCanvasId],bitmap);
+                        bindFunctionalityToBitmap(newNode,bitmap,edges,nodes);
+                        addNodeFlag=false;
+                        update = true;
+                    }
+                    /*else if(addEdge==true)
+                    {
+                        selectedNodesNumber++;
+                        selectedNodes.push()
 
-                    var newEdge = new Edge(edges.length,)
-                }*/
-                stage.update(event)
-                /*for(let i =0; i<edges.length;i++)
-                {
-                    console.log(""+stage.getChildByName("line_"+edges[i].id));
-                }*/
-                console.log("clicked");
-                //drawEdges(edges);
+                        var newEdge = new Edge(edges.length,)
+                    }*/
+                    stage[currentCanvasId].update(event)
+                    /*for(let i =0; i<edges.length;i++)
+                    {
+                        console.log(""+stage.getChildByName("line_"+edges[i].id));
+                    }*/
+                    console.log("clicked in canvas "+currentCanvasId);
+                    //drawEdges(edges);
 
-            });
+                });
+            }
+
 
             drawEdges(edges);
 
@@ -527,7 +537,7 @@
             // this set makes it so the stage only re-renders when an event handler indicates a change has happened.
             if (update) {
                 update = false; // only update once
-                stage.update(event);
+                stage[currentCanvasId].update(event);
             }
         }
 
@@ -625,31 +635,85 @@
                         <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                     </div>
 
-                    <div id="test">
+                    <div id="test0">
                     </div>
                 <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
+                </div>
             </div>
             <div class = canvas-container-hidden id="canvas-container1">
-                <canvas class="canvas" id="canvas1" width="100%" height="100%"></canvas>
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test1">
+                    </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
+                </div>
             </div>
             <div class = canvas-container-hidden id="canvas-container2">
-                <canvas class="canvas" id="canvas2" width="100%" height="100%"></canvas>
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test2">
+                    </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
+                </div>
             </div>
             <div class = canvas-container-hidden id="canvas-container3">
-                <canvas class="canvas" id="canvas3" width="100%" height="100%"></canvas>
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test3">
+                    </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
+                </div>
             </div>
             <div class = canvas-container-hidden id="canvas-container4">
-                <canvas class="canvas" id="canvas4" width="100%" height="100%"></canvas>
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test4">
+                    </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
+                </div>
             </div>
             <div class = canvas-container-hidden id="canvas-container5">
-                <canvas class="canvas" id="canvas5" width="100%" height="100%"></canvas>
+                <div>
+                    <div class="menu">
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                    </div>
+
+                    <div id="test5">
+                    </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 </div>
 
-<script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
-({key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", v: "weekly"});</script>
 </body>
 </html>

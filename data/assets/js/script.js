@@ -46,8 +46,25 @@ menuOptions.push(menuOption4);
 menuOptions.push(menuOption5);
 menuOptions.push(menuOption6);
 
+var stage = []
+
+for(let i = 0; i < canvases.length; i++)
+{
+    stage.push(new createjs.Stage(canvases[i]));
+}
+
+for(let i = 0; i < stage.length; i++)
+{
+
+}
+
+
 const menuCardsContainer = document.getElementsByClassName("menu-cards-container")[0];
 const BackToMenuButton = document.getElementById('back');
+
+var currentCanvasId = 0;
+var canvas;
+var context;
 BackToMenuButton.addEventListener("click", function(){
     menuCardsContainer.classList.remove('canvas-container-hidden');
     BackToMenuButton.classList.add('back');
@@ -74,8 +91,16 @@ function displayCanvas(evt)
 {
     menuCardsContainer.classList.add('canvas-container-hidden');
     BackToMenuButton.classList.remove('back');
+    currentCanvasId = evt.currentTarget.index;
 
-    canvasContainerId = "canvas-container"+evt.currentTarget.index;
+    let canvasContainerId = "canvas-container" + evt.currentTarget.index;
+    console.log("canvas: "+evt.currentTarget.index);
+
+    canvas = canvases[currentCanvasId];
+    context = canvas.getContext("2d");
+
+    stage[currentCanvasId].enableMouseOver(10);
+    stage[currentCanvasId].mouseMoveOutside = true;
 
     canvasContainers.forEach(function (canvasContainer){
         if(canvasContainer.id != canvasContainerId)
@@ -90,10 +115,11 @@ function displayCanvas(evt)
 
     console.log(evt.currentTarget.index);
     img = new Image();
-    const canvas = canvases[evt.currentTarget.index].getContext('2d');
-    img.src = "assets/images/image.png";
+    //const canvas = canvases[evt.currentTarget.index].getContext('2d');
+    //img.src = "assets/images/image.png";
     //canvas.drawImage(img, 0,0);
 
+    update = true;
 };
 
 const cityInput = document.querySelector(".city-input");

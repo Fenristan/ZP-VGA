@@ -73,7 +73,12 @@
             }
         }
 
+        /*const CanvasStorage = {
+            nodes: [],
+            edges: [],
+        }*/
 
+        var canvasStorages = [];
 
         var g;
 
@@ -232,7 +237,7 @@
 
             var html = document.createElement("div");
             html.innerHTML = ""+node.text;
-            html.id = "test_"+node.id;
+            html.id = "test_"+currentCanvasId+"_"+node.id;
             html.style.contenteditable="true";
             //html.id="text_"+node.id;
             //html.id="text_"+node.id;
@@ -381,7 +386,7 @@
                     drawEdges(edges,oldEdges);
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
-                    let text = document.getElementById("test_"+nodes.length);
+                    let text = document.getElementById("test_"+currentCanvasId+"_"+nodes.length);
                     text.parentNode.removeChild(text);
                     this.parent.removeChild(this);
                 }
@@ -472,39 +477,39 @@
             }
 
 
-            const nodes = [];
-            const edges = [];
+            //const nodes = [];
+            //const edges = [];
 
             for(var i = 0; i < 5; i++)
             {
-                nodes.push(new Node(i,i,(canvas.width * Math.random() | 0),(canvas.height * Math.random() | 0)));
+                canvasStorages[currentCanvasId].nodes.push(new Node(i,i,(canvas.width * Math.random() | 0),(canvas.height * Math.random() | 0)));
             }
 
-            edges.push(new Edge(0,[nodes[0],nodes[1]]));
-            edges.push(new Edge(1,[nodes[1],nodes[2]]));
+            canvasStorages[currentCanvasId].edges.push(new Edge(0,[canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]]));
+            canvasStorages[currentCanvasId].edges.push(new Edge(1,[canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]]));
 
             // create and populate the screen with random daisies:
-            for (var i = 0; i < nodes.length; i++) {
+            for (var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++) {
 
                 bitmap = new createjs.Bitmap(node_image);
-                addNodeToBitmap(nodes[i],containers[currentCanvasId],bitmap);
+                addNodeToBitmap(canvasStorages[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
 
                 // using "on" binds the listener to the scope of the currentTarget by default
                 // in this case that means it executes in the scope of the button.
-                bindFunctionalityToBitmap(nodes[i],bitmap,edges, nodes);
+                bindFunctionalityToBitmap(canvasStorages[currentCanvasId].nodes[i],bitmap,canvasStorages[currentCanvasId].edges, canvasStorages[currentCanvasId].nodes);
             }
             for(let i = 0; i < stage.length; i++)
             {
                 stage[i].on("stagemousedown", function(evt) {
                     if(addNodeFlag==true)
                     {
-                        var newNode = new Node(nodes.length,nodes.length,(evt.stageX),(evt.stageY))
-                        nodes.push(newNode);
+                        var newNode = new Node(canvasStorages[currentCanvasId].nodes.length,canvasStorages[currentCanvasId].nodes.length,(evt.stageX),(evt.stageY))
+                        canvasStorages[currentCanvasId].nodes.push(newNode);
                         console.log(newNode);
-                        console.log(nodes);
+                        console.log(canvasStorages[currentCanvasId].nodes);
                         var bitmap = new createjs.Bitmap(node_image);
                         addNodeToBitmap(newNode,containers[currentCanvasId],bitmap);
-                        bindFunctionalityToBitmap(newNode,bitmap,edges,nodes);
+                        bindFunctionalityToBitmap(newNode,bitmap,canvasStorages[currentCanvasId].edges,canvasStorages[currentCanvasId].nodes);
                         addNodeFlag=false;
                         update = true;
                     }
@@ -527,7 +532,7 @@
             }
 
 
-            drawEdges(edges);
+            drawEdges(canvasStorages[currentCanvasId].edges);
 
             examples.hideDistractor();
             createjs.Ticker.addEventListener("tick", tick);

@@ -51,6 +51,7 @@ var stage = []
 for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
+    canvasStorages.push({ nodes: [], edges: [] });
 }
 
 for(let i = 0; i < stage.length; i++)

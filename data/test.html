@@ -119,6 +119,59 @@
             createjs.Ticker.removeEventListener("tick", tick);
         }
 
+        function edgeBetweenNodes(nodeA, nodeB, edges)
+        {
+            //edges = canvasStorages[currentCanvasId].edges
+            for(let i = 0; i<edges.length;i++)
+            {
+                if((edges[i].nodes[0]==nodeA||edges[i].nodes[0]==nodeB)&&(edges[i].nodes[1]==nodeA||edges[i].nodes[1]==nodeB))
+                {
+                    return true
+                }
+                else
+                {
+                    return false
+                }
+            }
+            
+        }
+        function edgeBetweenNodesBothWays(nodeA, nodeB, edges)
+        {
+            //edges = canvasStorages[currentCanvasId].edges
+            var counter = 0
+            for(let i = 0; i<edges.length;i++)
+            {
+                if((edges[i].nodes[0]==nodeA||edges[i].nodes[0]==nodeB)&&(edges[i].nodes[1]==nodeA||edges[i].nodes[1]==nodeB))
+                {
+                    counter++
+                }
+            }
+            if(counter==2)
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+            
+        }
+        function edgeFromNodeToNode(nodeA, nodeB, edges)
+        {
+            //edges = canvasStorages[currentCanvasId].edges
+            for(let i = 0; i<edges.length;i++)
+            {
+                if((edges[i].nodes[0]==nodeA) &&(edges[i].nodes[1]==nodeB))
+                {
+                    return true
+                }
+                else
+                {
+                    return false
+                }
+            }
+        }
+
         function drawEdges(edges,oldEdges=edges) {
             g = new createjs.Graphics();
             //g.clear();
@@ -157,23 +210,91 @@
                     var end_x = edges[i].nodes[1].x + r_end*a/dist;
                     var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
-                    g.setStrokeStyle(3);
-                    g.beginStroke("red");
-                    /*g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y);
-                    g.lineTo(edges[i].nodes[1].x,edges[i].nodes[1].y);*/
-                    //g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y)
-                    g.moveTo(start_x,start_y);
-                    g.lineTo(end_x,end_y);
-                    g.endStroke();
+                    
 
-                    var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
-                    var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
+                    
+                    //test of bezier
+                    if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+                    {
+                        g.setStrokeStyle(3);
+                        g.beginStroke("red");
+
+                        var start_x = edges[i].nodes[0].x;
+                        var start_y = edges[i].nodes[0].y;
+
+                        console.log("there is already an edge between these nodes, doing bezier")
+                        g.moveTo(start_x,start_y);
+
+                        //calculate middle point between nodes
+                        var mp_x = (start_x + end_x)/2
+                        var mp_y = (start_y + end_y)/2
+
+                        var end_x = edges[i].nodes[1].x
+                        var end_y = edges[i].nodes[1].y
+
+                        /*
+                            x1 = mp_x, y1 = mp_y
+                            x2 = end_x, y2 = end_y
+                            
+                        */
+
+                        var s = 1/Math.sqrt(3)
+
+                        //var x3 = end_x + s*(mp_y - end_y)
+                        //var y3 = end_y + s*(end_x - mp_x)
+
+                        var x3 = mp_x + s*(end_y - mp_y)
+                        var y3 = mp_y + s*(mp_x - end_x)
+
+                        //calculate vector from node to node
+                        //var v = [end_x-start_x,end_y-start_y]
+                        //calculate normal 
+                        //var dx = end_x - start_x
+                        //var dy = end_y - start_y
+                        //var n = [-(dy),dx]
+
+
+
+                        //calculate control point
+                        var cp_x = x3
+                        var cp_y = y3
+
+
+                        g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y)
+
+                        //calculate end points for arrows of bezier
+                        var dx = edges[i].nodes[0].x - cp_x;
+                        var dy = edges[i].nodes[0].y - cp_y
+                    }
+                    else 
+                    {
+                        g.setStrokeStyle(3);
+                        g.beginStroke("red");
+                        /*g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y);
+                        g.lineTo(edges[i].nodes[1].x,edges[i].nodes[1].y);*/
+                        //g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y)
+                        g.moveTo(start_x,start_y);
+                        g.lineTo(end_x,end_y);
+
+                        //calculate end points for arrows of regular edges
+                        var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
+                        var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
+                    }
+
+                    
                     var length = Math.sqrt(dx * dx + dy * dy);
 
                     start_x = start_x - Math.round(dx / ((length / (15))));
                     start_y = start_y - Math.round(dy / ((length / (15))));
                     end_x = end_x + Math.round(dx / ((length / (15))));
                     end_y = end_y + Math.round(dy / ((length / (15))));
+
+                    if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+                    {
+                        end_x = end_x + Math.round(dx / ((length / (11))));
+                        end_y = end_y + Math.round(dy / ((length / (11))));
+                    }
+
 
                     // calculate the angle of the edge
                     var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
@@ -196,6 +317,8 @@
                     arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
                     arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
 
+                    
+
                     g.beginFill("red");
                     g.moveTo(arrowx[0], arrowy[0]);
                     g.lineTo(arrowx[1], arrowy[1]);
@@ -207,6 +330,7 @@
                     line.id=edges[i].id;
                     line.name="line_"+edges[i].id;
                     stage[currentCanvasId].addChild(line);
+                    stage[currentCanvasId].setChildIndex( line, 0);
 
 
                 }
@@ -265,9 +389,18 @@
 
         function addEdgeBetweenNodes(nodes,edges)
         {
-            var edge = new Edge(edges.length,nodes);
-            edges.push(edge);
-            drawEdges(edges);
+            if(edgeFromNodeToNode(nodes[0],nodes[1],edges))
+            {
+                console.log("there already is an edge between these nodes")
+            }
+            else
+            {
+                var edge = new Edge(edges.length,nodes);
+                edges.push(edge);
+                drawEdges(edges);
+            }
+            
+            
         }
         function removeEdgeBetweenNodes(nodes,edges)
         {
@@ -275,7 +408,7 @@
             //var edge = new Edge(edges.length,nodes);
             for(let i = 0; i<edges.length; i++)
             {
-                if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1]))
+                if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
                 {
                     for(let j = edges[i].id; j < edges.length-1; j++)
                     {

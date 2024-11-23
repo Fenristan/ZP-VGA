@@ -5,6 +5,13 @@ const canvas3 = document.getElementById('canvas3');
 const canvas4 = document.getElementById('canvas4');
 const canvas5 = document.getElementById('canvas5');
 
+canvas0.directed = false;
+canvas1.directed = true;
+canvas2.directed = true;
+canvas3.directed = true;
+canvas4.directed = true;
+canvas5.directed = true;
+
 const canvases = [];
 canvases.push(canvas0);
 canvases.push(canvas1);
@@ -122,95 +129,3 @@ function displayCanvas(evt)
 
     update = true;
 };
-
-const cityInput = document.querySelector(".city-input");
-const searchBtn = document.querySelector(".search-btn");
-const currentWeather = document.querySelector(".current-weather");
-const weatherCards = document.querySelector(".weather-cards");
-let map;
-
-const API_KEY = "209d211d218a71e4b96028b3ac90bc95";
-
-const createHtmlForDay = (name, weatherItem, day) => {
-    let weatherDate = `${weatherItem.dt_txt.split(" ")[0]}`
-    if(day == 0) { 
-        return `<div class="details">
-                    <h2>${name} - ${weatherDate}</h2>
-                    <h6>Temperature: ${(weatherItem.main.temp).toFixed()}°C</h6>
-                    <h6>Humidity: ${weatherItem.main.humidity}%</h6>
-                    <h6>Wind Speed: ${weatherItem.wind.speed} m/s</h6>
-                </div>
-                <div class="icon">
-                    <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
-                </div>`;
-    } else { 
-        return `<li class="card">
-                    <h3>${weatherDate}</h3>
-                    <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
-                    <h6>Temperature: ${(weatherItem.main.temp).toFixed()}°C</h6>
-                    <h6>Humidity: ${weatherItem.main.humidity}%</h6>
-                    <h6>Wind Speed: ${weatherItem.wind.speed} m/s</h6>
-                </li>`;
-    }
-}
-
-const getWeatherForCity = (name, latitude, longitude) => {
-    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`;
-    
-    cityInput.value = "";
-    currentWeather.innerHTML = "";
-    weatherCards.innerHTML = "";
-
-    fetch(WEATHER_API_URL).then(response => response.json()).then(data => {
-        let datesUnique = [];
-        let fiveDaysForecast = data.list.filter(dayForecast => {
-            let forecastDate = new Date(dayForecast.dt_txt).getDate();
-            if (!datesUnique.includes(forecastDate)) {
-                return datesUnique.push(forecastDate);
-            }
-        });
-
-        fiveDaysForecast.forEach((dayWeather, day) => {
-            let html = createHtmlForDay(name, dayWeather, day);
-            if (day == 0) {
-                currentWeather.insertAdjacentHTML("beforeend", html);
-            } else {
-                weatherCards.insertAdjacentHTML("beforeend", html);
-            }
-        });        
-    }).catch(() => {
-        alert("Nedokázal jsem fetchnout data z API");
-    });
-}
-
-const getCity = () => {
-    let cityName = cityInput.value;
-    if (cityName == "")
-        return;
-
-    let API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&units=metric&limit=1&appid=${API_KEY}`;
-    
-    fetch(API_URL).then(response => response.json()).then(data => {
-        if (!data.length) 
-            return alert(`${cityName} nebylo nalezeno.`);
-
-        let { name, lat, lon } = data[0];
-        getWeatherForCity(name, lat, lon);
-        initMap(lat,lon);
-    }).catch(() => {
-        alert("Nedokázal jsem fetchnout město z API");
-    });
-}
-
-
-async function initMap(latitude,longitude) {
-  const { Map } = await google.maps.importLibrary("maps");
-
-  map = new Map(document.getElementById("map"), {
-    center: { lat: latitude, lng: longitude },
-    zoom: 8,
-  });
-}
-
-searchBtn.addEventListener("click", getCity);
-cityInput.addEventListener("keyup", e => e.key === "Enter" && getCity());

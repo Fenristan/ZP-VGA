@@ -146,7 +146,7 @@
                     counter++
                 }
             }
-            if(counter==2)
+            if(counter>1)
             {
                 return true
             }
@@ -158,18 +158,15 @@
         }
         function edgeFromNodeToNode(nodeA, nodeB, edges)
         {
-            //edges = canvasStorages[currentCanvasId].edges
             for(let i = 0; i<edges.length;i++)
             {
                 if((edges[i].nodes[0]==nodeA) &&(edges[i].nodes[1]==nodeB))
                 {
+                    console.log("yes there is");
                     return true
                 }
-                else
-                {
-                    return false
-                }
             }
+            return false
         }
 
         function drawEdges(edges,oldEdges=edges) {
@@ -280,58 +277,62 @@
                         var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
                         var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
                     }
-
                     
-                    var length = Math.sqrt(dx * dx + dy * dy);
-
-                    start_x = start_x - Math.round(dx / ((length / (15))));
-                    start_y = start_y - Math.round(dy / ((length / (15))));
-                    end_x = end_x + Math.round(dx / ((length / (15))));
-                    end_y = end_y + Math.round(dy / ((length / (15))));
-
-                    if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+                    //don't draw arrows if graph is undirected
+                    if(canvas.directed == true)
                     {
-                        end_x = end_x + Math.round(dx / ((length / (11))));
-                        end_y = end_y + Math.round(dy / ((length / (11))));
+                        var length = Math.sqrt(dx * dx + dy * dy);
+
+                        start_x = start_x - Math.round(dx / ((length / (15))));
+                        start_y = start_y - Math.round(dy / ((length / (15))));
+                        end_x = end_x + Math.round(dx / ((length / (15))));
+                        end_y = end_y + Math.round(dy / ((length / (15))));
+
+                        //arrows of bezier point to a different spot
+                        if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+                        {
+                            end_x = end_x + Math.round(dx / ((length / (11))));
+                            end_y = end_y + Math.round(dy / ((length / (11))));
+                        }
+
+
+                        // calculate the angle of the edge
+                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                        if (dx < 0) {
+                            deg += 180.0;
+                        }
+                        if (deg < 0) {
+                            deg += 360.0;
+                        }
+                        // calculate the angle for the two triangle points
+                        var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
+                        var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
+                        // calculate the triangle points
+                        var arrowx = [];
+                        var arrowy = [];
+                        arrowx[0] = end_x;
+                        arrowy[0] = end_y;
+                        arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
+                        arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
+                        arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
+                        arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
+
+                        
+
+                        g.beginFill("red");
+                        g.moveTo(arrowx[0], arrowy[0]);
+                        g.lineTo(arrowx[1], arrowy[1]);
+                        g.lineTo(arrowx[2], arrowy[2]);
+                        g.lineTo(arrowx[0], arrowy[0]);
+                        g.endFill();
+
+                        
                     }
-
-
-                    // calculate the angle of the edge
-                    var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                    if (dx < 0) {
-                        deg += 180.0;
-                    }
-                    if (deg < 0) {
-                        deg += 360.0;
-                    }
-                    // calculate the angle for the two triangle points
-                    var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
-                    var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
-                    // calculate the triangle points
-                    var arrowx = [];
-                    var arrowy = [];
-                    arrowx[0] = end_x;
-                    arrowy[0] = end_y;
-                    arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
-                    arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
-                    arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
-                    arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
-
-                    
-
-                    g.beginFill("red");
-                    g.moveTo(arrowx[0], arrowy[0]);
-                    g.lineTo(arrowx[1], arrowy[1]);
-                    g.lineTo(arrowx[2], arrowy[2]);
-                    g.lineTo(arrowx[0], arrowy[0]);
-                    g.endFill();
-
                     var line = new createjs.Shape(g);
                     line.id=edges[i].id;
                     line.name="line_"+edges[i].id;
                     stage[currentCanvasId].addChild(line);
                     stage[currentCanvasId].setChildIndex( line, 0);
-
 
                 }
             }
@@ -716,12 +717,12 @@
             <ul class="menu-cards">
                 <button class="menuOption" id="menuOption0">
 
-                    <h2>Breadth-first search</h2>
+                    <h2>Undirected Graph</h2>
 
                 </button>
                 <button class="menuOption" id="menuOption1">
 
-                    <h2>Depth-first search</h2>
+                    <h2>Directed Graph</h2>
 
                 </button>
                 <button class="menuOption" id="menuOption2">

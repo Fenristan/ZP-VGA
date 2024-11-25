@@ -12,6 +12,13 @@ canvas3.directed = true;
 canvas4.directed = true;
 canvas5.directed = true;
 
+canvas0.weighted = false;
+canvas1.weighted = false;
+canvas2.weighted = true;
+canvas3.weighted = false;
+canvas4.weighted = false;
+canvas5.weighted = false;
+
 const canvases = [];
 canvases.push(canvas0);
 canvases.push(canvas1);
@@ -73,6 +80,7 @@ const BackToMenuButton = document.getElementById('back');
 var currentCanvasId = 0;
 var canvas;
 var context;
+
 BackToMenuButton.addEventListener("click", function(){
     menuCardsContainer.classList.remove('canvas-container-hidden');
     BackToMenuButton.classList.add('back');

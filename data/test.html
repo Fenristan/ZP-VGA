@@ -52,15 +52,19 @@
         }
 
         class Edge{
-            constructor(id, nodes) {
+            constructor(id, nodes, weight) {
                 this._id = id;
                 this._nodes=nodes;
+                this._weight=weight;
             }
             get id() {
                 return this._id;
             }
             get nodes() {
                 return this._nodes;
+            }
+            get weight() {
+                return this._weight;
             }
 
             set nodes(value) {
@@ -70,6 +74,10 @@
             set id(id)
             {
                 this._id=id;
+            }
+            set weight(weight)
+            {
+                this._weight=weight;
             }
         }
 
@@ -181,7 +189,7 @@
                 {
                     if(stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
                     {
-                        console.log("removing: "+stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
+                        console.log("removing: "+(stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
                         stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
                         stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
                     }
@@ -189,7 +197,7 @@
 
             for(let i = 0; i<edges.length;i++)
             {
-                if(edges[i].nodes.length===2)
+                if(edges[i].nodes.length===2) //if this edge has both nodes, draw
                 {
                     var r_start = 24;
                     var r_end = -24;//(edges[i].nodes[1].size/2)*-1
@@ -208,9 +216,9 @@
                     var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
                     
-
                     
-                    //test of bezier
+                    
+                    //if multigraph, do bezier
                     if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
                     {
                         g.setStrokeStyle(3);
@@ -222,26 +230,11 @@
                         console.log("there is already an edge between these nodes, doing bezier")
                         g.moveTo(start_x,start_y);
 
-                        //calculate middle point between nodes
-                        var mp_x = (start_x + end_x)/2
-                        var mp_y = (start_y + end_y)/2
-
-                        var end_x = edges[i].nodes[1].x
-                        var end_y = edges[i].nodes[1].y
-
                         /*
                             x1 = mp_x, y1 = mp_y
                             x2 = end_x, y2 = end_y
                             
                         */
-
-                        var s = 1/Math.sqrt(3)
-
-                        //var x3 = end_x + s*(mp_y - end_y)
-                        //var y3 = end_y + s*(end_x - mp_x)
-
-                        var x3 = mp_x + s*(end_y - mp_y)
-                        var y3 = mp_y + s*(mp_x - end_x)
 
                         //calculate vector from node to node
                         //var v = [end_x-start_x,end_y-start_y]
@@ -250,20 +243,35 @@
                         //var dy = end_y - start_y
                         //var n = [-(dy),dx]
 
+                        //calculate middle point between nodes
+                        var mp_x = (start_x + end_x)/2
+                        var mp_y = (start_y + end_y)/2
 
+                        var end_x = edges[i].nodes[1].x
+                        var end_y = edges[i].nodes[1].y
+
+                        var s = 1/Math.sqrt(3)
+
+                        var x3 = mp_x + s*(end_y - mp_y)
+                        var y3 = mp_y + s*(mp_x - end_x)
 
                         //calculate control point
                         var cp_x = x3
                         var cp_y = y3
-
 
                         g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y)
 
                         //calculate end points for arrows of bezier
                         var dx = edges[i].nodes[0].x - cp_x;
                         var dy = edges[i].nodes[0].y - cp_y
+
+                        //change location of edge weight texts
+                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                        edgeWeightDom.x = x3;
+                        edgeWeightDom.y = y3;
+
                     }
-                    else 
+                    else //draw a regular edge
                     {
                         g.setStrokeStyle(3);
                         g.beginStroke("red");
@@ -276,9 +284,22 @@
                         //calculate end points for arrows of regular edges
                         var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
                         var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
+
+                        var mp_x = (start_x + end_x)/2
+                        var mp_y = (start_y + end_y)/2
+
+                        console.log("moving: "+"edgeWeight_"+edges[i].id)
+                        console.log(edgeWeightDom)
+                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                        //if(edgeWeightDom!=null)
+                        //{
+                            edgeWeightDom.x = mp_x;
+                            edgeWeightDom.y = mp_y;
+                        //}
+                        
                     }
                     
-                    //don't draw arrows if graph is undirected
+                    //if directive, draw arrows
                     if(canvas.directed == true)
                     {
                         var length = Math.sqrt(dx * dx + dy * dy);
@@ -331,6 +352,7 @@
                     var line = new createjs.Shape(g);
                     line.id=edges[i].id;
                     line.name="line_"+edges[i].id;
+                    
                     stage[currentCanvasId].addChild(line);
                     stage[currentCanvasId].setChildIndex( line, 0);
 
@@ -362,7 +384,7 @@
 
             var html = document.createElement("div");
             html.innerHTML = ""+node.text;
-            html.id = "test_"+currentCanvasId+"_"+node.id;
+            html.id = "nodeNameText_"+currentCanvasId+"_"+node.id;
             html.style.contenteditable="true";
             //html.id="text_"+node.id;
             //html.id="text_"+node.id;
@@ -396,8 +418,28 @@
             }
             else
             {
-                var edge = new Edge(edges.length,nodes);
+                var edge = new Edge(edges.length,nodes,1);
                 edges.push(edge);
+
+                var html = document.createElement("div");
+                html.innerHTML = ""+edge.weight;
+                html.id = "edgeWeightText_"+currentCanvasId+"_"+edge.id;
+                html.style.contenteditable="true";
+
+                document.getElementById("test"+currentCanvasId).appendChild(html).contentEditable = "true";
+
+                console.log("creating edgeWeight_"+edge.id);
+                var edgeWeightDom = new createjs.DOMElement(html);
+                edgeWeightDom.id = edge.id;
+                edgeWeightDom.name = "edgeWeight_" + edge.id;
+                edgeWeightDom.cursor = "pointer";
+
+                console.log(edgeWeightDom.name);
+                
+
+                stage[currentCanvasId].addChild(edgeWeightDom);
+                console.log("edge Weight Dom name: "+edgeWeightDom.name)
+
                 drawEdges(edges);
             }
             
@@ -409,19 +451,76 @@
             //var edge = new Edge(edges.length,nodes);
             for(let i = 0; i<edges.length; i++)
             {
-                if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
+                //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
+                if((edges[i].nodes[0]==nodes[0]) && (edges[i].nodes[1]==nodes[1]))
                 {
+                    /*for(let j = edges[i].id; j < edges.length-1; j++)
+                    {
+                        let edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id)
+                        edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j+1])
+                        edgeWeight.id = (stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id))-1
+                        this.parent.addChild(edgeWeight);
+
+                    }*/
+                    console.log("removing edge: "+edges[i].id)
+                    console.log("removing "+(stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id)).name)
+                    //stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].length));
+
+                    //let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edges[i].id);
+                    //text.parentNode.removeChild(text);
+
+                    //drawEdges(edges,oldEdges);
+
                     for(let j = edges[i].id; j < edges.length-1; j++)
                     {
+                        
+                        
+                    }
+
+                    for(let j = edges[i].id; j < edges.length-1; j++)
+                    {
+                        
+                        console.log("id je:"+j)
+                        
+                        let edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id);
+                        edgeWeight.id = edgeWeight.id-1;
+                        stage[currentCanvasId].addChild(edgeWeight);
+                        
+                        
+                        let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edges[j].id);
+                        let index = edges[j].id+1
+                        console.log("zkousim edgeWeightText_:"+index);
+                        console.log("edges length: "+edges.length);
+                        let nextTextInnerHTML = (document.getElementById("edgeWeightText_"+currentCanvasId+"_"+(index))).innerHTML;
+                        text.innerHTML = nextTextInnerHTML;
+
+                        text.id = "edgeWeightText_"+currentCanvasId+"_"+edgeWeight.id;
+
                         edges[j]=edges[j+1];
                         edges[j].id=(edges[j].id)-1;
+
+                        
+
                         /*let selectedLine = this.parent.getChildByName("line_"+(i+1));
                         selectedLine.id=selectedLine.id-1;
                         selectedLine.name="bmp_"+i;
                         this.parent.addChild(selectedLine);*/
                     }
+                    stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+edges.length));
+
+                    let index = edges.length-1
+                    let edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+index);
+                    //text.parentNode.removeChild(text)
+                    edgeWeightText.remove();
+
                     edges.pop();
                     console.log(edges);
+                    
+
+
+                    
+
+                    
                     //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
                 }
             }
@@ -520,7 +619,7 @@
                     drawEdges(edges,oldEdges);
 
                     this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
-                    let text = document.getElementById("test_"+currentCanvasId+"_"+nodes.length);
+                    let text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
                     text.parentNode.removeChild(text);
                     this.parent.removeChild(this);
                 }
@@ -619,8 +718,13 @@
                 canvasStorages[currentCanvasId].nodes.push(new Node(i,i,(canvas.width * Math.random() | 0),(canvas.height * Math.random() | 0)));
             }
 
-            canvasStorages[currentCanvasId].edges.push(new Edge(0,[canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]]));
-            canvasStorages[currentCanvasId].edges.push(new Edge(1,[canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]]));
+            //canvasStorages[currentCanvasId].edges.push(new Edge(0,[canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]],1));
+            //canvasStorages[currentCanvasId].edges.push(new Edge(1,[canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]],1));
+
+            canvasStorages[currentCanvasId].edges = [];
+
+            addEdgeBetweenNodes([canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]],canvasStorages[currentCanvasId].edges);
+            addEdgeBetweenNodes([canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]],canvasStorages[currentCanvasId].edges);
 
             // create and populate the screen with random daisies:
             for (var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++) {

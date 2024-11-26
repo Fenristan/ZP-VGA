@@ -231,8 +231,8 @@
                         g.setStrokeStyle(3);
                         g.beginStroke("red");
 
-                        var start_x = edges[i].nodes[0].x;
-                        var start_y = edges[i].nodes[0].y;
+                        var start_x = edges[i].nodes[1].x;
+                        var start_y = edges[i].nodes[1].y;
 
                         console.log("there is already an edge between these nodes, doing bezier")
                         g.moveTo(start_x,start_y);
@@ -254,8 +254,8 @@
                         var mp_x = (start_x + end_x)/2
                         var mp_y = (start_y + end_y)/2
 
-                        var end_x = edges[i].nodes[1].x
-                        var end_y = edges[i].nodes[1].y
+                        var end_x = edges[i].nodes[0].x
+                        var end_y = edges[i].nodes[0].y
 
                         var s = 1/Math.sqrt(3)
 
@@ -269,12 +269,12 @@
                         g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y)
 
                         //calculate end points for arrows of bezier
-                        var dx = edges[i].nodes[0].x - cp_x;
-                        var dy = edges[i].nodes[0].y - cp_y
+                        var dx = edges[i].nodes[1].x - cp_x;
+                        var dy = edges[i].nodes[1].y - cp_y;
 
                         //change location of edge weight texts
-                        console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+i);
-                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+i);
+                        console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
+                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                         edgeWeightDom.x = x3;
                         edgeWeightDom.y = y3;
                         stage[currentCanvasId].addChild(edgeWeightDom);
@@ -297,9 +297,9 @@
                         var mp_x = (start_x + end_x)/2
                         var mp_y = (start_y + end_y)/2
 
-                        console.log("moving: "+"edgeWeight_"+i)
+                        console.log("moving: "+"edgeWeight_"+edges[i].id)
                         console.log(edgeWeightDom)
-                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+i);
+                        var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                         //if(edgeWeightDom!=null)
                         //{
                             edgeWeightDom.x = mp_x;
@@ -509,11 +509,16 @@
                     let indexDeleted = edges[i].id;
                     console.log("indexDeleted je:"+indexDeleted)
                     console.log("edges length je:"+edges.length)
-                    stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+indexDeleted));
+
+                    
 
                     let edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+indexDeleted);
                     //text.parentNode.removeChild(text)
+                    console.log("deleting : "+edgeWeightText.id)
                     edgeWeightText.remove();
+                    
+                    stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+indexDeleted));
+                    
 
                     for(let j = edges[i].id+1; j < edges.length; j++)
                     {
@@ -533,13 +538,13 @@
                         
                         
                         let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+j);
-                        indexDeleted = j
-                        console.log("zkousim edgeWeightText_:"+indexDeleted);
+                        let indexNext = j-1
+                        console.log("zkousim edgeWeightText_:"+indexNext);
                         console.log("edges length: "+edges.length);
                         //let nextTextInnerHTML = (document.getElementById("edgeWeightText_"+currentCanvasId+"_"+(indexDeleted))).innerHTML;
                         //text.innerHTML = nextTextInnerHTML;
 
-                        text.id = "edgeWeightText_"+currentCanvasId+"_"+j-1;
+                        text.id = "edgeWeightText_"+currentCanvasId+"_"+indexNext;
 
                     }
 
@@ -583,14 +588,16 @@
         {
             //var edge = new Edge(edges.length,nodes);
             let oldEdges = edges.slice(0);
-            for(let i = 0; i<edges.length; i++)
+            var edgesToBeRemoved = []
+            /*for(let i = 0; i<edges.length; i++)
             {
                 console.log("id ndoe predaneho"+node.id);
-
+                
                 //if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
                 if((edges[i].nodes[0]==node||edges[i].nodes[1]==node))
                 {
-                    for(let j = edges[i].id; j < edges.length-1; j++)
+                    //edgesToBeRemoved.push(edges[i])
+                    /*for(let j = edges[i].id; j < edges.length-1; j++)
                     {
                         edges[j]=edges[j+1];
                         edges[j].id=(edges[j].id)-1;
@@ -600,7 +607,25 @@
                     //console.log(edges);
 
                 }
+                for(let i = 0; i<edgesToBeRemoved.length; i++)
+                {
+                    //removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes,edges);
+                }
+                
+            }*/
 
+            for(let i = edges.length-1; i>=0; i--)
+            {
+                if((edges[i].nodes[0]==node||edges[i].nodes[1]==node))
+                {
+                    console.log("delam")
+                    edgesToBeRemoved.push(edges[i]);
+                }
+            }
+
+            for(let i = 0; i<edgesToBeRemoved.length; i++)
+            {
+                removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes,edges);
             }
 
             drawEdges(edges,oldEdges);

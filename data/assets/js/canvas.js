@@ -77,6 +77,8 @@ for(let i = 0; i < stage.length; i++)
 const menuCardsContainer = document.getElementsByClassName("menu-cards-container")[0];
 const BackToMenuButton = document.getElementById('back');
 const SaveButton = document.getElementById('save');
+const LoadButton = document.getElementById("load");
+const file = document.getElementById("file");
 
 var currentCanvasId = 0;
 var canvas;
@@ -86,6 +88,7 @@ BackToMenuButton.addEventListener("click", function(){
     menuCardsContainer.classList.remove('canvas-container-hidden');
     BackToMenuButton.classList.add('back');
     SaveButton.classList.add('save');
+    LoadButton.classList.add('load');
 
     canvasContainers.forEach(function (canvasContainer){
             canvasContainer.classList.remove('canvas-container-visible');
@@ -110,6 +113,7 @@ function displayCanvas(evt)
     menuCardsContainer.classList.add('canvas-container-hidden');
     BackToMenuButton.classList.remove('back');
     SaveButton.classList.remove('save');
+    LoadButton.classList.remove('load');
     currentCanvasId = evt.currentTarget.index;
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;

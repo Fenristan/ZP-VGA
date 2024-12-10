@@ -51,6 +51,15 @@
             }
 
         }
+        Node.prototype.toJSON = function () {
+        return {
+            id: this.id,
+            text: this.text,
+            x: this.x,
+            y: this.y,
+            size: this.size
+        };
+        };
 
         class Edge{
             constructor(id, nodes, weight) {
@@ -81,6 +90,13 @@
                 this._weight=weight;
             }
         }
+        Edge.prototype.toJSON = function () {
+        return {
+            id: this.id,
+            nodes: this.nodes,
+            weight: this.weight
+        };
+        };
 
         /*const CanvasStorage = {
             nodes: [],
@@ -102,6 +118,9 @@
         var selectedNodesNumber = 0;
         var selectedNodes = [];
         var textoffset = 3;
+        var node_image = "./assets/images/node.png";
+        var add_edge_image = "./assets/images/addedge.png";
+        var containers = [];
 
         function init() {
             examples.showDistractor();
@@ -632,6 +651,53 @@
             drawEdges(edges,oldEdges);
         }
 
+        function removeNode(bitmap, nodes, edges)
+        {
+            let oldEdges = edges.slice(0);
+            var parent = bitmap.parent;
+                    console.log(nodes)
+                    removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
+                    //drawEdges(edges);
+                    for(let i = bitmap.id; i < nodes.length-1; i++)
+                    {
+                        console.log("stalo se");
+                        nodes[i]=nodes[i+1];
+                        nodes[i].id=(nodes[i].id)-1;
+                        let selectedBitmap = parent.getChildByName("bmp_"+(i+1));
+                        selectedBitmap.id=selectedBitmap.id-1;
+                        selectedBitmap.name="bmp_"+i;
+                        parent.addChild(selectedBitmap);
+
+                        let node_text = parent.getChildByName("text_"+selectedBitmap.id);
+                        node_text.x=selectedBitmap.x-textoffset;
+                        node_text.y=selectedBitmap.y-textoffset-3;
+                        parent.addChild(node_text);
+                    }
+                    nodes.pop();
+
+                    //cleanupnu smycku vytvorenou mezi smazanym edgem
+                    for(let i = 0; i<edges.length; i++)
+                    {
+                        if((edges[i].nodes[0].id===edges[i].nodes[1].id))
+                        {
+                            console.log("HALO HALO");
+                            for(let j = edges[i].id; j < edges.length-1; j++)
+                            {
+                                edges[j]=edges[j+1];
+                                edges[j].id=(edges[j].id)-1;
+                            }
+                            edges.pop();
+                        }
+                    }
+
+                    drawEdges(edges,oldEdges);
+
+                    parent.removeChild(parent.getChildByName("text_"+nodes.length));
+                    let text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
+                    text.parentNode.removeChild(text);
+                    parent.removeChild(bitmap);
+        }
+
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
 
             bitmap.on("mousedown", function (evt) {
@@ -660,48 +726,9 @@
                 }
                 else if(removeNodeFlag==true)
                 {
-                    let oldEdges = edges.slice(0);
-                    console.log(nodes)
-                    removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
-                    //drawEdges(edges);
-                    for(let i = bitmap.id; i < nodes.length-1; i++)
-                    {
-                        console.log("stalo se");
-                        nodes[i]=nodes[i+1];
-                        nodes[i].id=(nodes[i].id)-1;
-                        let selectedBitmap = this.parent.getChildByName("bmp_"+(i+1));
-                        selectedBitmap.id=selectedBitmap.id-1;
-                        selectedBitmap.name="bmp_"+i;
-                        this.parent.addChild(selectedBitmap);
-
-                        let node_text = this.parent.getChildByName("text_"+selectedBitmap.id);
-                        node_text.x=selectedBitmap.x-textoffset;
-                        node_text.y=selectedBitmap.y-textoffset-3;
-                        this.parent.addChild(node_text);
-                    }
-                    nodes.pop();
-
-                    //cleanupnu smycku vytvorenou mezi smazanym edgem
-                    for(let i = 0; i<edges.length; i++)
-                    {
-                        if((edges[i].nodes[0].id===edges[i].nodes[1].id))
-                        {
-                            console.log("HALO HALO");
-                            for(let j = edges[i].id; j < edges.length-1; j++)
-                            {
-                                edges[j]=edges[j+1];
-                                edges[j].id=(edges[j].id)-1;
-                            }
-                            edges.pop();
-                        }
-                    }
-
-                    drawEdges(edges,oldEdges);
-
-                    this.parent.removeChild(this.parent.getChildByName("text_"+nodes.length));
-                    let text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
-                    text.parentNode.removeChild(text);
-                    this.parent.removeChild(this);
+                    console.log("this je v tomhle pripade:");
+                    console.log(this);
+                    removeNode(bitmap,nodes,edges);
                 }
                 else if(removeEdgeFlag==true)
                 {
@@ -775,14 +802,13 @@
         function handleImageLoad(event) {
             var textoffset = 3;
             var bitmap;
-            var containers = [];
+            
             for(let i = 0; i < stage.length; i++)
             {
                 containers[i] = new createjs.Container();
             }
             var text;
-            var node_image = "./assets/images/node.png";
-            var add_edge_image = "./assets/images/addedge.png";
+            
 
             for(let i = 0; i < stage.length; i++)
             {
@@ -895,8 +921,13 @@
                 <h2 style="text-align: center">Ukázka Vizualizace grafových algoritmů </h2>
             </div>
         </div>
-        <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="back" class="back"></a>
-        <a><img src="assets/images/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; margin-right: 370px;" id="save" class="save"></a>
+        <div class="navigation-container">
+            <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="back" class="back"></a>
+            <a><img src="assets/images/load.png" alt="Load a graph from file" style="width:42px;height:42px; margin-top: 15px; float: right;" id="load" class="load"></a>
+            <a><img src="assets/images/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; " id="save" class="save"></a>
+        </div>
+        <input type="file" id="file" accept=".json">
+        <div id=result></div>
         <div class="menu-cards-container">
             <h2>Menu</h2>
             <ul class="menu-cards">

@@ -257,6 +257,10 @@ body.embedded {
   display: none;
 }
 
-.navigation-container{
-  width:960px;
+.navigation-container {
+	width: 960px;
+	margin-top: 8px;
+	background: white;
+	padding-left: 5px;
+	margin-bottom: -2px;
 }

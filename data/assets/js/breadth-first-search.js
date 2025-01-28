@@ -1,35 +1,42 @@
-<script src="adjacency-list.js" defer></script>;
+
 
 function startBFS(){
     var numberOfNodes = canvasStorages[currentCanvasId].nodes.length;
     adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
     {
-        adjacencyList = convertToAdjacencyListUndirected();
+        adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
     }
     else
     {
-        adjacencyList = convertToAdjacencyListDirected();
+        adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
     }
     
-    let visited = new Array(numberOfNodes).fill(false);
+    var visited = new Array(numberOfNodes).fill(false);
+    var path = [];
 
-    for (let i = 0; i < this.numberOfNodes; i++) {
-        if (!visited[i]) {
+
+    for (var i = 0; i < numberOfNodes; i++) {
+        if (visited[i] == false) {
+            
             var queue = [];
             visited[i] = true;
             queue.push(i);
 
-            while (queue.length !== 0) {
-                var s = queue.shift();
-                process.stdout.write(s + " ");
-                for (var n of adjacencyList[s]) {
-                    if (!visited[n]) {
-                        visited[n] = true;
-                        queue.push(n);
+            while (queue.length > 0) {
+                
+                var v = queue.shift();
+                path.push(canvasStorages[currentCanvasId].nodes[v].text);
+                console.log(v);
+                for (var w of adjacencyList[v]) {
+                    if (visited[w] == false) {
+                        visited[w] = true;
+                        queue.push(w); 
                     }
                 }
             }
         }
     }
-}
+    console.log(path);
+
+};

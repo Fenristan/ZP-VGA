@@ -6,8 +6,11 @@
 
     <script src="./assets/js/setup.js"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="./assets/js/adjacency-list.js" defer></script>
+    <script src="./assets/js/breadth-first-search.js" defer></script>
     <script src="./assets/js/canvas.js" defer></script>
     <script src="./assets/js/save-load-instance.js" defer></script>
+    
 
     <script src="./lib/easeljs-NEXT.js"></script>
 
@@ -48,6 +51,9 @@
             set id(id)
             {
                 this._id=id;
+            }
+            set text(text){
+                this._text=text;
             }
 
         }
@@ -902,6 +908,15 @@
         function removeEdgeBtnClicked() {
             removeEdgeFlag=!removeEdgeFlag;
         }
+        /*function startSimulation() {
+            console.log("starting simulation");
+
+            if(currentCanvasId == 0)
+            {
+                startBSF();
+            }
+        }*/
+
 
     </script>
 
@@ -975,6 +990,7 @@
                     </div>
                 <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
                 </div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container1">
                 <div>
@@ -989,6 +1005,7 @@
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
                 </div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container2">
                 <div>
@@ -1003,6 +1020,7 @@
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
                 </div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container3">
                 <div>
@@ -1017,6 +1035,7 @@
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
                 </div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container4">
                 <div>
@@ -1031,6 +1050,7 @@
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
                 </div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container5">
                 <div>
@@ -1044,10 +1064,21 @@
                     <div id="test5">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
+                    
                 </div>
+                
+
             </div>
+            
+        </div>
+        <div class="simulation-container">
+            <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="restart" class="restart"></a>
+            <a><img src="assets/images/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+            <a><img src="assets/images/play_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+            <a><img src="assets/images/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; " id="stepforward" class="stepforward"></a>
         </div>
     </div>
+    
 </div>
 </div>
 

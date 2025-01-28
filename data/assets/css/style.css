@@ -85,13 +85,12 @@ body {
   font-size: 20px;
 }
 
-.header
-{
-  background: #313050;
-  font-size: 1.75rem;
-  text-align: center;
-  padding: 20px 0;
-  color: #fff;
+.header {
+	/* background: #313050; */
+	font-size: 1.75rem;
+	text-align: center;
+	padding: 20px 0;
+	color: #fff;
 }
 
 .container {
@@ -136,7 +135,7 @@ body {
 
 #map
 {
-  height: 100%;
+
   margin-top: 5px;
 }
 
@@ -262,5 +261,62 @@ body.embedded {
 	margin-top: 8px;
 	background: white;
 	padding-left: 5px;
+	margin-bottom: -4px;
+}
+
+.simulation-container {
+	width: 960px;
+	margin-top: -4px;
+	background: white;
+	padding-left: 5px;
 	margin-bottom: -2px;
+}
+
+.start
+{
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.stepback{
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.stepforward{
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.restart{
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
 }

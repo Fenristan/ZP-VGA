@@ -1,3 +1,5 @@
+
+
 const canvas0 = document.getElementById('canvas0');
 const canvas1 = document.getElementById('canvas1');
 const canvas2 = document.getElementById('canvas2');
@@ -79,6 +81,10 @@ const BackToMenuButton = document.getElementById('back');
 const SaveButton = document.getElementById('save');
 const LoadButton = document.getElementById("load");
 const file = document.getElementById("file");
+const RestartButton = document.getElementById('restart');
+const StartButton = document.getElementById('start');
+
+
 
 var currentCanvasId = 0;
 var canvas;
@@ -89,12 +95,28 @@ BackToMenuButton.addEventListener("click", function(){
     BackToMenuButton.classList.add('back');
     SaveButton.classList.add('save');
     LoadButton.classList.add('load');
+    RestartButton.classList.add('restart');
+    StartButton.classList.add('start');
 
     canvasContainers.forEach(function (canvasContainer){
             canvasContainer.classList.remove('canvas-container-visible');
             canvasContainer.classList.add('canvas-container-hidden');
     });
 
+});
+
+StartButton.addEventListener("click", function(){
+
+    // after the start simulation button has been clicked, each node is assigned it's given name (text)
+    canvasStorages[currentCanvasId].nodes.forEach(node => {
+        console.log("assigning name to node: "+node.id);
+        canvasStorages[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+        node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+        console.log("node is now called: " + canvasStorages[currentCanvasId].nodes[node.id].text);
+    });
+
+    console.log("starting simulation");
+    startBFS();
 });
 
 function setFunctionToMenuOption(menuOption, index)
@@ -114,6 +136,8 @@ function displayCanvas(evt)
     BackToMenuButton.classList.remove('back');
     SaveButton.classList.remove('save');
     LoadButton.classList.remove('load');
+    RestartButton.classList.remove('restart');
+    StartButton.classList.remove('start');
     currentCanvasId = evt.currentTarget.index;
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
@@ -144,3 +168,5 @@ function displayCanvas(evt)
 
     update = true;
 };
+
+

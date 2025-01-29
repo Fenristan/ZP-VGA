@@ -127,6 +127,8 @@
         var node_image = "./assets/images/node.png";
         var add_edge_image = "./assets/images/addedge.png";
         var containers = [];
+        var selectedEdge;
+        var stepForwardFlag = false;
 
         function init() {
             examples.showDistractor();
@@ -248,14 +250,40 @@
                     var end_x = edges[i].nodes[1].x + r_end*a/dist;
                     var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
+                    console.log("selectedNodes: ");
+                    console.log(canvasStorages[currentCanvasId].selectedNodes);
+
+                    console.log("visitedEdges: ");
+                    console.log(canvasStorages[currentCanvasId].visitedEdges);
                     
+                    if(canvasStorages[currentCanvasId].visitedEdges.includes(edges[i]))
+                    {
+                        console.log("yep already there");
+                        g.beginStroke("blue");
+                    }
+                    //if the edge that is about to be draw is the one, that we have just visited, then change color
+                    else if(edges[i].nodes[0] == canvasStorages[currentCanvasId].selectedNodes[0] && edges[i].nodes[1] == canvasStorages[currentCanvasId].selectedNodes[1])
+                    {
+                        g.beginStroke("red");
+                        if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
+                        {
+                            canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
+                        }
+                        canvasStorages[currentCanvasId].selectedNodes.shift();
+                        canvasStorages[currentCanvasId].selectedNodes.shift();
+                        //canvasStorages[currentCanvasId].selectedNodes=[];
+                    }
+                    else
+                    {
+                        g.beginStroke("black");
+                    }
                     
                     
                     //if multigraph, do bezier
                     if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
                     {
                         g.setStrokeStyle(3);
-                        g.beginStroke("red");
+                        
 
                         var start_x = edges[i].nodes[1].x;
                         var start_y = edges[i].nodes[1].y;
@@ -309,7 +337,7 @@
                     else //draw a regular edge
                     {
                         g.setStrokeStyle(3);
-                        g.beginStroke("red");
+                        
                         /*g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y);
                         g.lineTo(edges[i].nodes[1].x,edges[i].nodes[1].y);*/
                         //g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y)
@@ -376,7 +404,7 @@
 
                         
 
-                        g.beginFill("red");
+                        g.beginFill("white");
                         g.moveTo(arrowx[0], arrowy[0]);
                         g.lineTo(arrowx[1], arrowy[1]);
                         g.lineTo(arrowx[2], arrowy[2]);
@@ -908,6 +936,9 @@
         function removeEdgeBtnClicked() {
             removeEdgeFlag=!removeEdgeFlag;
         }
+        function stepForwardBtnClicked() {
+            stepForwardFlag=true;
+        }
         /*function startSimulation() {
             console.log("starting simulation");
 
@@ -1074,8 +1105,9 @@
         <div class="simulation-container">
             <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="restart" class="restart"></a>
             <a><img src="assets/images/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
-            <a><img src="assets/images/play_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-            <a><img src="assets/images/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; " id="stepforward" class="stepforward"></a>
+            <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+            <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+            
         </div>
     </div>
     

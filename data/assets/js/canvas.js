@@ -67,7 +67,7 @@ var stage = []
 for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
-    canvasStorages.push({ nodes: [], edges: [] });
+    canvasStorages.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [] });
 }
 
 for(let i = 0; i < stage.length; i++)
@@ -83,6 +83,7 @@ const LoadButton = document.getElementById("load");
 const file = document.getElementById("file");
 const RestartButton = document.getElementById('restart');
 const StartButton = document.getElementById('start');
+const StepForwardButton = document.getElementById('stepforward');
 
 
 
@@ -97,6 +98,7 @@ BackToMenuButton.addEventListener("click", function(){
     LoadButton.classList.add('load');
     RestartButton.classList.add('restart');
     StartButton.classList.add('start');
+    StepForwardButton.classList.add('stepforward');
 
     canvasContainers.forEach(function (canvasContainer){
             canvasContainer.classList.remove('canvas-container-visible');
@@ -104,6 +106,10 @@ BackToMenuButton.addEventListener("click", function(){
     });
 
 });
+
+function createClickListenerPromise (target) {
+    return new Promise((resolve) => target.addEventListener('click', resolve))
+}
 
 StartButton.addEventListener("click", function(){
 
@@ -116,8 +122,16 @@ StartButton.addEventListener("click", function(){
     });
 
     console.log("starting simulation");
-    startBFS();
+    startBFS(createClickListenerPromise(StepForwardButton));
 });
+
+
+  
+
+/*StepForwardButton.addEventListener("click", function(){
+
+    stepForwardFlag = true;
+});*/
 
 function setFunctionToMenuOption(menuOption, index)
 {
@@ -138,6 +152,7 @@ function displayCanvas(evt)
     LoadButton.classList.remove('load');
     RestartButton.classList.remove('restart');
     StartButton.classList.remove('start');
+    StepForwardButton.classList.remove('stepforward');
     currentCanvasId = evt.currentTarget.index;
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;

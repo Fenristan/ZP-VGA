@@ -69,8 +69,9 @@ file.addEventListener("change", function(){
             canvasStorages[currentCanvasId].nodes.push(node);
             addNodeToBitmap(node,containers[currentCanvasId],bitmap);
             bindFunctionalityToBitmap(node,bitmap,canvasStorages[currentCanvasId].edges,canvasStorages[currentCanvasId].nodes);
+            
             //update = true;
-            //stage[currentCanvasId].update(new Event("stagemousedown"));
+            stage[currentCanvasId].update(new Event("stagemousedown"));
         });
         loadedCanvas.edges.forEach(edge => {
             console.log("pridavam edge");
@@ -80,7 +81,7 @@ file.addEventListener("change", function(){
             //update = true;
             //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
-        update = true;
+        
         /*for (var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++) {
             bitmap = new createjs.Bitmap(node_image);
             addNodeToBitmap(canvasStorages[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);

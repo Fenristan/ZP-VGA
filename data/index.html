@@ -177,7 +177,7 @@
             var counter = 0
             for(let i = 0; i<edges.length;i++)
             {
-                if((edges[i].nodes[0]==nodeA||edges[i].nodes[0]==nodeB)&&(edges[i].nodes[1]==nodeA||edges[i].nodes[1]==nodeB))
+                if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
                 {
                     counter++
                 }
@@ -196,7 +196,7 @@
         {
             for(let i = 0; i<edges.length;i++)
             {
-                if((edges[i].nodes[0]==nodeA) &&(edges[i].nodes[1]==nodeB))
+                if((edges[i].nodes[0].id==nodeA.id) &&(edges[i].nodes[1].id==nodeB.id))
                 {
                     console.log("yes there is");
                     return true

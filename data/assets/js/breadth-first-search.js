@@ -22,6 +22,14 @@ async function startBFS(waitUntilForwardClicked){
             var queue = [];
             visited[i] = true;
             queue.push(i);
+
+            containers[currentCanvasId].getChildByName("bmp_"+i).image=visitedNodeImage;
+            g.clear;
+            drawEdges(canvasStorages[currentCanvasId].edges);
+            update=true;
+            await waitUntilForwardClicked;
+            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+            
             
 
             while (queue.length > 0) {
@@ -32,11 +40,15 @@ async function startBFS(waitUntilForwardClicked){
                 path.push(canvasStorages[currentCanvasId].nodes[v].text);
                 
                 
-
+                containers[currentCanvasId].getChildByName("bmp_"+v).image=selectedNodeImage;
                 for (var w of adjacencyList[v]) {
+                    
                     if (visited[w] == false) {
                         visited[w] = true;
                         queue.push(w); 
+                        containers[currentCanvasId].getChildByName("bmp_"+w).image=visitedNodeImage;
+
+                        //containers[currentCanvasId].getChildByName("bmp_"+w).image=selectedNodeImage;
 
                         console.log(v);
                         console.log(w);
@@ -61,7 +73,7 @@ async function startBFS(waitUntilForwardClicked){
                         console.log("unpausing");
                     }
                 }
-                
+                containers[currentCanvasId].getChildByName("bmp_"+v).image=completedNodeImage;
             }
         }
     }

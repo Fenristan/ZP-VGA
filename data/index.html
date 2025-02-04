@@ -130,6 +130,10 @@
         var selectedEdge;
         var stepForwardFlag = false;
 
+        var completedNodeImage = new Image();
+        var selectedNodeImage = new Image();
+        var visitedNodeImage = new Image();
+
         function init() {
             examples.showDistractor();
             // create stage and point it to the canvas:
@@ -149,6 +153,11 @@
             var image = new Image();
             image.src = "./assets/images/node.png";
             image.onload = handleImageLoad;
+
+            completedNodeImage.src = "./assets/images/nodeCompleted.png";
+            selectedNodeImage.src = "./assets/images/nodeSelected2.png";
+            visitedNodeImage.src = "./assets/images/nodeVisited.png";
+            
         }
 
         function stop() {
@@ -160,7 +169,7 @@
             //edges = canvasStorages[currentCanvasId].edges
             for(let i = 0; i<edges.length;i++)
             {
-                if((edges[i].nodes[0]==nodeA||edges[i].nodes[0]==nodeB)&&(edges[i].nodes[1]==nodeA||edges[i].nodes[1]==nodeB))
+                if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
                 {
                     return true
                 }
@@ -179,7 +188,7 @@
             {
                 if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
                 {
-                    counter++
+                    counter++;
                 }
             }
             if(counter>1)
@@ -261,17 +270,21 @@
                         console.log("yep already there");
                         g.beginStroke("blue");
                     }
-                    //if the edge that is about to be draw is the one, that we have just visited, then change color
-                    else if(edges[i].nodes[0] == canvasStorages[currentCanvasId].selectedNodes[0] && edges[i].nodes[1] == canvasStorages[currentCanvasId].selectedNodes[1])
+                    //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
+                    else if(canvasStorages[currentCanvasId].selectedNodes[0] != null && canvasStorages[currentCanvasId].selectedNodes[1] != null)
                     {
-                        g.beginStroke("red");
-                        if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
+                        if(edges[i].nodes[0].id == canvasStorages[currentCanvasId].selectedNodes[0].id && edges[i].nodes[1].id == canvasStorages[currentCanvasId].selectedNodes[1].id)
                         {
-                            canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
+                            g.beginStroke("red");
+                            if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
+                            {
+                                canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
+                            }
+                            canvasStorages[currentCanvasId].selectedNodes.shift();
+                            canvasStorages[currentCanvasId].selectedNodes.shift();
+                            //canvasStorages[currentCanvasId].selectedNodes=[];
                         }
-                        canvasStorages[currentCanvasId].selectedNodes.shift();
-                        canvasStorages[currentCanvasId].selectedNodes.shift();
-                        //canvasStorages[currentCanvasId].selectedNodes=[];
+                        
                     }
                     else
                     {
@@ -516,7 +529,7 @@
             for(let i = 0; i<edges.length; i++)
             {
                 //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
-                if((edges[i].nodes[0]==nodes[0]) && (edges[i].nodes[1]==nodes[1]))
+                if((edges[i].nodes[0].id==nodes[0].id) && (edges[i].nodes[1].id==nodes[1].id))
                 {
                     /*for(let j = edges[i].id; j < edges.length-1; j++)
                     {
@@ -579,9 +592,6 @@
                         
                         console.log("id je:"+j)
                         
-                        //tohle je špatně
-                        
-
                         let edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+j);
                         //edgeWeight.id = edgeWeight.id-1;
                         let index = j-1
@@ -670,7 +680,7 @@
 
             for(let i = edges.length-1; i>=0; i--)
             {
-                if((edges[i].nodes[0]==node||edges[i].nodes[1]==node))
+                if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
                 {
                     console.log("delam")
                     edgesToBeRemoved.push(edges[i]);

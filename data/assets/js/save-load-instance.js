@@ -69,9 +69,22 @@ file.addEventListener("change", function(){
             canvasStorages[currentCanvasId].nodes.push(node);
             addNodeToBitmap(node,containers[currentCanvasId],bitmap);
             bindFunctionalityToBitmap(node,bitmap,canvasStorages[currentCanvasId].edges,canvasStorages[currentCanvasId].nodes);
+
+            //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
+            for(var i = 0; i < loadedCanvas.edges.length; i++)
+            {
+                if(node.id===loadedCanvas.edges[i].nodes[0].id)
+                {
+                    loadedCanvas.edges[i].nodes[0]=node;
+                }
+                else if(node.id===loadedCanvas.edges[i].nodes[1].id)
+                {
+                    loadedCanvas.edges[i].nodes[1]=node;
+                }
+            }
             
             //update = true;
-            stage[currentCanvasId].update(new Event("stagemousedown"));
+            //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
         loadedCanvas.edges.forEach(edge => {
             console.log("pridavam edge");
@@ -81,6 +94,8 @@ file.addEventListener("change", function(){
             //update = true;
             //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
+
+        
         
         /*for (var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++) {
             bitmap = new createjs.Bitmap(node_image);
@@ -89,6 +104,13 @@ file.addEventListener("change", function(){
 
     });
     reader.readAsText(file.files[0]);
+
+    console.log("=======================================================loaded edges:");
+    console.log(canvasStorages[currentCanvasId].edges);
+
+
+    
+
     
 });
 

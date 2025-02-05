@@ -14,24 +14,10 @@ async function startBFS(waitUntilForwardClicked){
     
     var visited = new Array(numberOfNodes).fill(false);
     var path = [];
-
-
-    
-    for (var i = 0; i < numberOfNodes; i++) {
-        if (visited[i] == false) {
+    var queue = [];
             
-            var queue = [];
-            visited[i] = true;
-            queue.push(i);
-
-            containers[currentCanvasId].getChildByName("bmp_"+i).image=visitedNodeImage;
-            g.clear;
-            drawEdges(canvasStorages[currentCanvasId].edges);
-            update=true;
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-            
-            
+            visited[canvasStorages[currentCanvasId].startingNode.id] = true;
+            queue.push(canvasStorages[currentCanvasId].startingNode.id);
 
             while (queue.length > 0) {
                 
@@ -82,8 +68,7 @@ async function startBFS(waitUntilForwardClicked){
                 }
                 containers[currentCanvasId].getChildByName("bmp_"+v).image=completedNodeImage;
             }
-        }
-    }
+
     console.log(path);
 
 };

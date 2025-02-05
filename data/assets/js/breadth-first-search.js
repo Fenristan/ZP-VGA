@@ -16,6 +16,7 @@ async function startBFS(waitUntilForwardClicked){
     var path = [];
 
 
+    
     for (var i = 0; i < numberOfNodes; i++) {
         if (visited[i] == false) {
             
@@ -39,8 +40,14 @@ async function startBFS(waitUntilForwardClicked){
                 
                 path.push(canvasStorages[currentCanvasId].nodes[v].text);
                 
-                
+                //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
+                drawEdges(canvasStorages[currentCanvasId].edges);
+
                 containers[currentCanvasId].getChildByName("bmp_"+v).image=selectedNodeImage;
+                update=true;
+                await waitUntilForwardClicked;
+                waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+
                 for (var w of adjacencyList[v]) {
                     
                     if (visited[w] == false) {

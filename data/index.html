@@ -130,6 +130,7 @@
         var selectedEdge;
         var stepForwardFlag = false;
 
+        var nodeImage = new Image();
         var completedNodeImage = new Image();
         var selectedNodeImage = new Image();
         var visitedNodeImage = new Image();
@@ -154,6 +155,7 @@
             image.src = "./assets/images/node.png";
             image.onload = handleImageLoad;
 
+            nodeImage.src = "./assets/images/node.png";
             completedNodeImage.src = "./assets/images/nodeCompleted.png";
             selectedNodeImage.src = "./assets/images/nodeSelected2.png";
             visitedNodeImage.src = "./assets/images/nodeVisited.png";
@@ -840,6 +842,16 @@
             {
                 let node_text = this;
                 node_text.text = "";
+            });
+            bitmap.on("dblclick", function (evt) {
+                
+                for(var i = 0; i<canvasStorages[currentCanvasId].nodes.length; i++)
+                {
+                    containers[currentCanvasId].getChildByName("bmp_"+i).image=nodeImage;
+                }
+                this.image = selectedNodeImage;
+                canvasStorages[currentCanvasId].startingNode=node;
+                update = true;
             });
         }
 

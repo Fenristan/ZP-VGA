@@ -44,6 +44,7 @@ async function startBFS(waitUntilForwardClicked){
                         //containers[currentCanvasId].getChildByName("bmp_"+w).image=selectedNodeImage;
 
                         console.log(v);
+                        console.log("var W je: "+w);
                         console.log(w);
 
                         /*if(canvasStorages[currentCanvasId].selectedNodes.length!=0)
@@ -52,8 +53,9 @@ async function startBFS(waitUntilForwardClicked){
                             canvasStorages[currentCanvasId].selectedNodes.pop()
                         }*/
 
-                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[v]);
                         canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[w]);
+                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[v]);
+                        
                         console.log("selected nodes: ");
                         console.log(canvasStorages[currentCanvasId].selectedNodes);
                         g.clear;

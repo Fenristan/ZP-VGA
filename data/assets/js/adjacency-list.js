@@ -16,7 +16,7 @@ function convertToAdjacencyListUndirected(numberOfNodes) {
     return adjacencyList;
 }
 
-  function convertToAdjacencyListDirected(numVertices) {
+  function convertToAdjacencyListDirected(numberOfNodes) {
 
     var adjacencyList = Array.from({ length: numberOfNodes }, () => []);
     var edges = canvasStorages[currentCanvasId].edges;
@@ -29,5 +29,7 @@ function convertToAdjacencyListUndirected(numberOfNodes) {
       adjacencyList[source].push(destination);
 
     });
+    console.log("adjacencyLisT:")
+    console.log(adjacencyList);
     return adjacencyList;
 }

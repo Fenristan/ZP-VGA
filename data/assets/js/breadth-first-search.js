@@ -52,9 +52,9 @@ async function startBFS(waitUntilForwardClicked){
                             canvasStorages[currentCanvasId].selectedNodes.pop()
                             canvasStorages[currentCanvasId].selectedNodes.pop()
                         }*/
-
-                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[w]);
                         canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[v]);
+                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[w]);
+                        
                         
                         console.log("selected nodes: ");
                         console.log(canvasStorages[currentCanvasId].selectedNodes);

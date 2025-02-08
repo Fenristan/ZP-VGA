@@ -276,7 +276,25 @@
                     else if(canvasStorages[currentCanvasId].selectedNodes[0] != null && canvasStorages[currentCanvasId].selectedNodes[1] != null)
                     {
                         //if(edgeBetweenNodes(edges[i].nodes[0],edges[i].nodes[1],edges))
-                        if(edgeFromNodeToNode(canvasStorages[currentCanvasId].selectedNodes[0],canvasStorages[currentCanvasId].selectedNodes[1],edges))
+                        if(canvas.directed == false)
+                        {
+                            if((canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
+                            {
+                                g.beginStroke("red");
+                                if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
+                                {
+                                    canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
+                                }
+                                canvasStorages[currentCanvasId].selectedNodes.shift();
+                                canvasStorages[currentCanvasId].selectedNodes.shift();
+                            }
+                            else 
+                            {
+                                g.beginStroke("black");
+                            }
+                            
+                        }
+                        else if((canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
                         {
                             g.beginStroke("red");
                             if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
@@ -287,7 +305,7 @@
                             canvasStorages[currentCanvasId].selectedNodes.shift();
                             //canvasStorages[currentCanvasId].selectedNodes=[];
                         }
-                        else
+                        else 
                         {
                             g.beginStroke("black");
                         }

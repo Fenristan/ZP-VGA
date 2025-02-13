@@ -7,7 +7,7 @@ const canvas3 = document.getElementById('canvas3');
 const canvas4 = document.getElementById('canvas4');
 const canvas5 = document.getElementById('canvas5');
 
-canvas0.directed = false;
+canvas0.directed = true;
 canvas1.directed = true;
 canvas2.directed = true;
 canvas3.directed = true;
@@ -108,6 +108,7 @@ BackToMenuButton.addEventListener("click", function(){
 });
 
 function createClickListenerPromise (target) {
+    
     return new Promise((resolve) => target.addEventListener('click', resolve))
 }
 
@@ -122,7 +123,15 @@ StartButton.addEventListener("click", function(){
     });
 
     console.log("starting simulation");
-    startBFS(createClickListenerPromise(StepForwardButton));
+    if(currentCanvasId == 0)
+    {
+        startDFS(createClickListenerPromise(StepForwardButton));
+    }
+    else if(currentCanvasId == 1)
+    {
+        startBFS(createClickListenerPromise(StepForwardButton));
+    }
+    
 });
 
 
@@ -183,5 +192,28 @@ function displayCanvas(evt)
 
     update = true;
 };
+
+function checkBoxDirectedClicked(evt)
+{
+    for(node of canvasStorages[currentCanvasId].nodes)
+    {
+        removeAllEdgesFromNode(node,canvasStorages[currentCanvasId].nodes,canvasStorages[currentCanvasId].edges);
+    }
+    
+    canvases[currentCanvasId].directed =! canvases[currentCanvasId].directed;
+    update=true;
+}
+
+function setFunctionToCheckboxDirected(checkboxDirected)
+{
+    checkboxDirected.addEventListener("click",checkBoxDirectedClicked);
+}   
+
+canvasContainers.forEach(function (canvasContainer){
+    checkboxDirected = canvasContainer.querySelector("#checkboxDirected");
+    setFunctionToCheckboxDirected(checkboxDirected);
+});
+
+
 
 

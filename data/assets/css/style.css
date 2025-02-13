@@ -14,7 +14,7 @@ body {
 .menu-container {
   width: 100%;
 }
-.menu-container .current-menu {
+.current-menu {
   background: #4d431d;
   border-radius: 5px;
   padding: 20px 70px 20px 20px;
@@ -22,6 +22,8 @@ body {
   justify-content: space-between;
   border: #fdd663 solid 2px;
   color: #fff;
+  margin-left: 25%;
+  margin-right: 25%;
 }
 .current-menu .icon {
   text-align: center;
@@ -174,7 +176,8 @@ body {
 .canvas-container-visible
 {
   width:100%;
-  height:500px;
+  height:100%;
+  display: inline-flex;
 }
 
 .canvas
@@ -188,7 +191,8 @@ body {
 {
   background: white;
   width:960px;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
+  display: inline-flex;
 }
 
 div[contenteditable] {
@@ -261,15 +265,13 @@ body.embedded {
 	margin-top: 8px;
 	background: white;
 	padding-left: 5px;
-	margin-bottom: -4px;
 }
 
 .simulation-container {
 	width: 960px;
-	margin-top: -4px;
+	margin-top: 4px;
 	background: white;
-	padding-left: 5px;
-	margin-bottom: -2px;
+	padding-left: 4px;
 }
 
 .start
@@ -320,3 +322,49 @@ body.embedded {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
+
+.sidebar {
+	width: 20%;
+	background: white;
+  height:490px;
+	margin-left: 20px;
+}
+
+
+.settings-grid {
+  display: grid;
+  gap: 8px;
+  margin-right: 12px;
+  text-align: right;
+  column-gap: 20px;
+}
+  
+
+.cell2 {
+  grid-column-start: 1;
+  grid-row-start: 3;
+}
+
+.cell3 {
+  grid-column-start: 2;
+  grid-row-start: 1;
+}
+
+.cell4 {
+  grid-row-start: 3;
+}
+
+.menu-tools{
+ float:left;
+}
+
+.menu-settings{
+  /*! float:right; */
+  margin-left: auto;
+  align-items: center;
+  display: inherit;
+  box-shadow: -1px 0 0 #000;
+  padding-left: 20px;
+ }
+
+ 

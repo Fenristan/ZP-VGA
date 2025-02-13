@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./assets/css/style.css">
     <script src="./assets/js/adjacency-list.js" defer></script>
     <script src="./assets/js/breadth-first-search.js" defer></script>
+    <script src="./assets/js/depth-first-search.js" defer></script>
     <script src="./assets/js/canvas.js" defer></script>
     <script src="./assets/js/save-load-instance.js" defer></script>
     
@@ -224,6 +225,8 @@
             console.log("old length: "+oldEdges.length);
             console.log(oldEdges);
 
+            //canvas = canvases[currentCanvasId];
+
             for(let i = 0; i<edges.length; i++)
                     {
                             let index = edges[i].id
@@ -275,9 +278,6 @@
                     //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
                     else if(canvasStorages[currentCanvasId].selectedNodes[0] != null && canvasStorages[currentCanvasId].selectedNodes[1] != null)
                     {
-                        //if(edgeBetweenNodes(edges[i].nodes[0],edges[i].nodes[1],edges))
-                        if(canvas.directed == false)
-                        {
                             if((canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
                             {
                                 g.beginStroke("red");
@@ -291,24 +291,7 @@
                             else 
                             {
                                 g.beginStroke("black");
-                            }
-                            
-                        }
-                        else if((canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
-                        {
-                            g.beginStroke("red");
-                            if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
-                            {
-                                canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
-                            }
-                            canvasStorages[currentCanvasId].selectedNodes.shift();
-                            canvasStorages[currentCanvasId].selectedNodes.shift();
-                            //canvasStorages[currentCanvasId].selectedNodes=[];
-                        }
-                        else 
-                        {
-                            g.beginStroke("black");
-                        }
+                            }       
                     }
                     else
                     {
@@ -400,7 +383,7 @@
                         
                     }
                     
-                    //if directive, draw arrows
+                    //if directed, draw arrows
                     if(canvas.directed == true)
                     {
                         var length = Math.sqrt(dx * dx + dy * dy);
@@ -1000,13 +983,16 @@
 <body onload = init();>
 <div class = "header">
 </div>
+
+<div class="current-menu">
+    <div class="details" style="width: 100%">
+        <h2 style="text-align: center">Ukázka Vizualizace grafových algoritmů </h2>
+    </div>
+</div>
+
 <div class="container">
     <div class="menu-container">
-        <div class="current-menu">
-            <div class="details" style="width: 100%">
-                <h2 style="text-align: center">Ukázka Vizualizace grafových algoritmů </h2>
-            </div>
-        </div>
+        
         <div class="navigation-container">
             <a><img src="assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="back" class="back"></a>
             <a><img src="assets/images/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="load" class="load"></a>
@@ -1019,12 +1005,12 @@
             <ul class="menu-cards">
                 <button class="menuOption" id="menuOption0">
 
-                    <h2>Undirected Graph</h2>
+                    <h2>DEPTH-FIRST SEARCH</h2>
 
                 </button>
                 <button class="menuOption" id="menuOption1">
 
-                    <h2>Directed Graph</h2>
+                    <h2>BREADTH-FIRST SEARCH</h2>
 
                 </button>
                 <button class="menuOption" id="menuOption2">
@@ -1053,87 +1039,177 @@
         </div>
         <div id="map">
             <div class = canvas-container-hidden id="canvas-container0">
-                <div>
+                <div style = "float:left">
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test0">
                     </div>
                 <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
                 </div>
-
+                <div class="sidebar"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container1">
                 <div>
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test1">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
                 </div>
-
+                <div class="sidebar"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container2">
                 <div>
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test2">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
                 </div>
-
+                <div class="sidebar"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container3">
                 <div>
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test3">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
                 </div>
-
+                <div class="sidebar"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container4">
                 <div>
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test4">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
                 </div>
-
+                <div class="sidebar"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container5">
                 <div>
                     <div class="menu">
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                        <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                        <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        <div class="menu-tools">
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                        </div>
+                        <div class="menu-settings">                           
+                            <div class="settings-grid">
+                                <div class="cell1">
+                                    <input type="checkbox" checked="checked" id="checkboxDirected">
+                                </div>
+                                <div class="cell2">
+                                    <input type="checkbox" checked="checked" id="checkboxWeighted">
+                                </div>
+                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                <div class="cell3">Directed</div>
+                                <div class="cell4">Weighted</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="test5">
@@ -1141,7 +1217,7 @@
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
                     
                 </div>
-                
+                <div class="sidebar"></div>
 
             </div>
             
@@ -1153,9 +1229,11 @@
             <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
             
         </div>
-    </div>
     
+        
+    </div>
 </div>
+
 </div>
 
 </body>

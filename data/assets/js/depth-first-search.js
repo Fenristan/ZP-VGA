@@ -1,8 +1,9 @@
+var nodes = [];
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN
 async function DFS_visit(u,waitUntilForwardClicked)
 {
-
+    //console.log("printing u.id: "+u.id);
             
     u.color = "PURPLE";
     containers[currentCanvasId].getChildByName("bmp_"+u.id).image=visitedNodeImage;
@@ -15,13 +16,14 @@ async function DFS_visit(u,waitUntilForwardClicked)
     
     for (var v of adjacencyList[u.id]) {
         console.log("jdu z: "+u.id+" do: "+v);
-        if(canvasStorages[currentCanvasId].nodes[v].color=="BLUE")
+        console.log(nodes);
+        if(getNodeUsingId(v).color=="BLUE")
         {
 
-            console.log("norim do: "+canvasStorages[currentCanvasId].nodes[v].id);
-            console.log("jeho color je: "+canvasStorages[currentCanvasId].nodes[v].color);
+            console.log("norim do: "+getNodeUsingId(v).id);
+            console.log("jeho color je: "+getNodeUsingId(v).color);
 
-            await DFS_visit(canvasStorages[currentCanvasId].nodes[v],waitUntilForwardClicked);
+            await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
 
             console.log("pausing");
             await waitUntilForwardClicked;
@@ -43,7 +45,14 @@ async function DFS_visit(u,waitUntilForwardClicked)
 }
 
 async function startDFS(waitUntilForwardClicked){
-    var numberOfNodes = canvasStorages[currentCanvasId].nodes.length;
+     nodes = canvasStorages[currentCanvasId].nodes.slice();
+    var spliced = nodes.splice(canvasStorages[currentCanvasId].startingNode.id)
+    spliced.reverse().forEach((node) => nodes.unshift(node));
+
+    console.log("novy order nodes je: ")
+    console.log(nodes)
+
+    var numberOfNodes = nodes.length;
     adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
     {
@@ -56,11 +65,12 @@ async function startDFS(waitUntilForwardClicked){
     
     var path = [];
 
-    for (var u of canvasStorages[currentCanvasId].nodes) {
+    for (var u of nodes) {
         u.color = "BLUE";
     }
 
-    for (var u of canvasStorages[currentCanvasId].nodes) {
+    
+    for (var u of nodes) {
         if(u.color == "BLUE")
         {
             console.log("pausing");

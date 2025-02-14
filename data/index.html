@@ -749,6 +749,18 @@
                     parent.removeChild(bitmap);
         }
 
+        function getNodeUsingId(id)
+        {
+            for(var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++)
+            {
+                if(canvasStorages[currentCanvasId].nodes[i].id == id)
+                {
+                    return canvasStorages[currentCanvasId].nodes[i];
+                }
+            }
+            return null;
+        }
+
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
 
             bitmap.on("mousedown", function (evt) {

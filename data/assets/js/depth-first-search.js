@@ -6,7 +6,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
     //console.log("printing u.id: "+u.id);
             
     u.color = "PURPLE";
-    containers[currentCanvasId].getChildByName("bmp_"+u.id).image=visitedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
     update=true;
 
     console.log("pausing");
@@ -22,6 +22,16 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
             console.log("norim do: "+getNodeUsingId(v).id);
             console.log("jeho color je: "+getNodeUsingId(v).color);
+
+            if(u.id != canvasGraph[currentCanvasId].startingNode.id && u.distance == null)
+            {
+                getNodeUsingId(v).distance = null;
+            }
+            else
+            {
+                getNodeUsingId(v).distance = u.distance+1;
+                updateDistanceFromSourceForNodeInCanvas(getNodeUsingId(v));
+            }
 
             await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
 
@@ -39,14 +49,14 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
 
     u.color = "GREEN";
-    containers[currentCanvasId].getChildByName("bmp_"+u.id).image=completedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
     
 }
 
 async function startDFS(waitUntilForwardClicked){
-     nodes = canvasStorages[currentCanvasId].nodes.slice();
-    var spliced = nodes.splice(canvasStorages[currentCanvasId].startingNode.id)
+    nodes = canvasGraph[currentCanvasId].nodes.slice();
+    var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
     spliced.reverse().forEach((node) => nodes.unshift(node));
 
     console.log("novy order nodes je: ")
@@ -67,8 +77,13 @@ async function startDFS(waitUntilForwardClicked){
 
     for (var u of nodes) {
         u.color = "BLUE";
+        u.distance = null;
     }
 
+    canvasGraph[currentCanvasId].startingNode.distance = 0;
+    updateDistanceFromSourceForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
+
+    
     
     for (var u of nodes) {
         if(u.color == "BLUE")
@@ -83,5 +98,7 @@ async function startDFS(waitUntilForwardClicked){
     }
 
     console.log(path);
+
+    console.log(nodes);
 
 };

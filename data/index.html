@@ -110,7 +110,7 @@
             edges: [],
         }*/
 
-        var canvasStorages = [];
+        var canvasGraph = [];
 
         var g;
 
@@ -169,7 +169,7 @@
 
         function edgeBetweenNodes(nodeA, nodeB, edges)
         {
-            //edges = canvasStorages[currentCanvasId].edges
+            //edges = canvasGraph[currentCanvasId].edges
             for(let i = 0; i<edges.length;i++)
             {
                 if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
@@ -185,7 +185,7 @@
         }
         function edgeBetweenNodesBothWays(nodeA, nodeB, edges)
         {
-            //edges = canvasStorages[currentCanvasId].edges
+            //edges = canvasGraph[currentCanvasId].edges
             var counter = 0
             for(let i = 0; i<edges.length;i++)
             {
@@ -265,28 +265,28 @@
                     var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
                     console.log("selectedNodes: ");
-                    console.log(canvasStorages[currentCanvasId].selectedNodes);
+                    console.log(canvasGraph[currentCanvasId].selectedNodes);
 
                     console.log("visitedEdges: ");
-                    console.log(canvasStorages[currentCanvasId].visitedEdges);
+                    console.log(canvasGraph[currentCanvasId].visitedEdges);
                     
-                    if(canvasStorages[currentCanvasId].visitedEdges.includes(edges[i]))
+                    if(canvasGraph[currentCanvasId].visitedEdges.includes(edges[i]))
                     {
                         console.log("yep already there");
                         g.beginStroke("purple");
                     }
                     //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
-                    else if(canvasStorages[currentCanvasId].selectedNodes[0] != null && canvasStorages[currentCanvasId].selectedNodes[1] != null)
+                    else if(canvasGraph[currentCanvasId].selectedNodes[0] != null && canvasGraph[currentCanvasId].selectedNodes[1] != null)
                     {
-                            if((canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasStorages[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasStorages[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
+                            if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
                             {
                                 g.beginStroke("red");
-                                if(!(edges[i] in canvasStorages[currentCanvasId].visitedEdges))
+                                if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
                                 {
-                                    canvasStorages[currentCanvasId].visitedEdges.push(edges[i]);
+                                    canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);
                                 }
-                                canvasStorages[currentCanvasId].selectedNodes.shift();
-                                canvasStorages[currentCanvasId].selectedNodes.shift();
+                                canvasGraph[currentCanvasId].selectedNodes.shift();
+                                canvasGraph[currentCanvasId].selectedNodes.shift();
                             }
                             else 
                             {
@@ -445,8 +445,6 @@
         }
 
         function addNodeToBitmap(node,container,bitmap) {
-            var text  = new createjs.Text(node.id);
-
             bitmap.x = node.x;
             bitmap.y = node.y;
             //bitmap.rotation = 360 * Math.random() | 0;
@@ -454,14 +452,14 @@
             bitmap.regY = bitmap.image.height / 2 | 0;
             //bitmap.scale = bitmap.originalScale = Math.random() * 0.4 + 0.6;
             bitmap.scale = 0.7;
-            bitmap.name = "bmp_" + node.id;
+            bitmap.name = "bmpNode_" + node.id;
             bitmap.id = (node.id);
             bitmap.cursor = "pointer";
             node.size=(bitmap.getBounds().width);
 
             /*text.x = node.x-textoffset;
             text.y = node.y-textoffset;
-            text.name = "text_" + node.id;
+            text.name = "nodeNameText_" + node.id;
             text.id = (node.id);
             text.cursor = "pointer";
             text.scale = 1.5;*/
@@ -470,8 +468,8 @@
             html.innerHTML = ""+node.text;
             html.id = "nodeNameText_"+currentCanvasId+"_"+node.id;
             html.style.contenteditable="true";
-            //html.id="text_"+node.id;
-            //html.id="text_"+node.id;
+            //html.id="nodeNameText_"+node.id;
+            //html.id="nodeNameText_"+node.id;
             //html.style.height = '50px';
             //html.style.width = '100px';
             //html.style.backgroundColor = '#000000';
@@ -482,16 +480,26 @@
 
             //var content = document.createTextNode(""+node.id);
             //html.appendChild(content);*/
-            document.getElementById("test"+currentCanvasId).appendChild(html).contentEditable = "true";
+            document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
 
-            var text1 = new createjs.DOMElement(html);
-            text1.id = node.id;
-            text1.name = "text_" + node.id;
-            text1.cursor = "pointer";
-            text1.x = node.x-textoffset;
-            text1.y = node.y-textoffset-3;
+            var textName = new createjs.DOMElement(html);
+            textName.id = node.id;
+            textName.name = "nodeNameText_" + node.id;
+            textName.cursor = "pointer";
+            textName.x = node.x-textoffset;
+            textName.y = node.y-textoffset-3;
 
-            container.addChild(bitmap,text1);
+            container.addChild(bitmap,textName);
+
+            var textDistanceFromSource = new createjs.Text("∞","16px Arial","red");
+            textDistanceFromSource.x = node.x+(bitmap.image.width/3)
+            textDistanceFromSource.y = node.y-(bitmap.image.height/3)
+            textDistanceFromSource.id = node.id;
+            textDistanceFromSource.name = "nodeDistanceFromSourceText_" + node.id;
+            textDistanceFromSource.visible = false;
+
+            container.addChild(bitmap,textDistanceFromSource);
+
         }
 
         function addEdgeBetweenNodes(nodes,edges)
@@ -510,7 +518,7 @@
                 html.id = "edgeWeightText_"+currentCanvasId+"_"+edge.id;
                 html.style.contenteditable="true";
 
-                document.getElementById("test"+currentCanvasId).appendChild(html).contentEditable = "true";
+                document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
 
                 console.log("creating edgeWeight_"+edge.id);
                 var edgeWeightDom = new createjs.DOMElement(html);
@@ -629,7 +637,7 @@
                         
                         /*let selectedLine = this.parent.getChildByName("line_"+(i+1));
                         selectedLine.id=selectedLine.id-1;
-                        selectedLine.name="bmp_"+i;
+                        selectedLine.name="bmpNode_"+i;
                         this.parent.addChild(selectedLine);*/
                     }
                     
@@ -704,35 +712,41 @@
 
         function removeNode(bitmap, nodes, edges)
         {
-            let oldEdges = edges.slice(0);
+            var oldEdges = edges.slice(0);
             var parent = bitmap.parent;
                     console.log(nodes)
                     removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
                     //drawEdges(edges);
-                    for(let i = bitmap.id; i < nodes.length-1; i++)
+                    for(var i = bitmap.id; i < nodes.length-1; i++)
                     {
                         console.log("stalo se");
                         nodes[i]=nodes[i+1];
                         nodes[i].id=(nodes[i].id)-1;
-                        let selectedBitmap = parent.getChildByName("bmp_"+(i+1));
+                        var selectedBitmap = parent.getChildByName("bmpNode_"+(i+1));
                         selectedBitmap.id=selectedBitmap.id-1;
-                        selectedBitmap.name="bmp_"+i;
+                        selectedBitmap.name="bmpNode_"+i;
                         parent.addChild(selectedBitmap);
 
-                        let node_text = parent.getChildByName("text_"+selectedBitmap.id);
-                        node_text.x=selectedBitmap.x-textoffset;
-                        node_text.y=selectedBitmap.y-textoffset-3;
-                        parent.addChild(node_text);
+                        var textName = parent.getChildByName("nodeNameText_"+selectedBitmap.id);
+                        textName.x=selectedBitmap.x-textoffset;
+                        textName.y=selectedBitmap.y-textoffset-3;
+                        parent.addChild(textName);
+
+                        var textDistanceFromSource =  parent.getChildByName("nodeDistanceFromSourceText_"+selectedBitmap.id);
+                        textDistanceFromSource.x = node.x+(bitmap.image.width/3)
+                        textDistanceFromSource.y = node.y-(bitmap.image.height/3)
+                        parent.addChild(textDistanceFromSource);
+
                     }
                     nodes.pop();
 
                     //cleanupnu smycku vytvorenou mezi smazanym edgem
-                    for(let i = 0; i<edges.length; i++)
+                    for(var i = 0; i<edges.length; i++)
                     {
                         if((edges[i].nodes[0].id===edges[i].nodes[1].id))
                         {
                             console.log("HALO HALO");
-                            for(let j = edges[i].id; j < edges.length-1; j++)
+                            for(var j = edges[i].id; j < edges.length-1; j++)
                             {
                                 edges[j]=edges[j+1];
                                 edges[j].id=(edges[j].id)-1;
@@ -743,22 +757,38 @@
 
                     drawEdges(edges,oldEdges);
 
-                    parent.removeChild(parent.getChildByName("text_"+nodes.length));
-                    let text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
-                    text.parentNode.removeChild(text);
+                    parent.removeChild(parent.getChildByName("nodeNameText_"+nodes.length));
+                    var textName = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
+                    textName.parentNode.removeChild(textName);
+
+                    parent.removeChild(parent.getChildByName("nodeDistanceFromSourceText_"+nodes.length));
+                    
                     parent.removeChild(bitmap);
         }
 
         function getNodeUsingId(id)
         {
-            for(var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++)
+            for(var i = 0; i < canvasGraph[currentCanvasId].nodes.length; i++)
             {
-                if(canvasStorages[currentCanvasId].nodes[i].id == id)
+                if(canvasGraph[currentCanvasId].nodes[i].id == id)
                 {
-                    return canvasStorages[currentCanvasId].nodes[i];
+                    return canvasGraph[currentCanvasId].nodes[i];
                 }
             }
             return null;
+        }
+
+        function showDistancesFromSource()
+        {
+            canvasGraph[currentCanvasId].nodes.forEach(node => {
+                containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible=true;
+            });
+        }
+
+        function updateDistanceFromSourceForNodeInCanvas(node)
+        {
+            containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = node.distance;
+            update=true;
         }
 
         function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
@@ -836,11 +866,16 @@
                         drawEdges(edges);
                     }
                 }
-                var node_text = this.parent.getChildByName("text_"+this.id);
-                node_text.x=node.x-textoffset;//textoffset;
-                node_text.y=node.y-textoffset-3;//textoffset;
+                var textName = this.parent.getChildByName("nodeNameText_"+this.id);
+                textName.x=node.x-textoffset;//textoffset;
+                textName.y=node.y-textoffset-3;//textoffset;
+                this.parent.addChild(textName);
 
-                this.parent.addChild(node_text);
+                var textDistanceFromSource = this.parent.getChildByName("nodeDistanceFromSourceText_"+this.id);
+                textDistanceFromSource.x = node.x+(bitmap.image.width/3)
+                textDistanceFromSource.y = node.y-(bitmap.image.height/3)
+                this.parent.addChild(textDistanceFromSource);
+
                 // indicate that the stage should be updated on the next tick:
                 update = true;
             });
@@ -855,19 +890,19 @@
                 update = true;
             });
 
-            bitmap.parent.getChildByName("text_"+bitmap.id).on("dblclick", function (evt)
+            bitmap.parent.getChildByName("nodeNameText_"+bitmap.id).on("dblclick", function (evt)
             {
-                let node_text = this;
-                node_text.text = "";
+                let textName = this;
+                textName.text = "";
             });
             bitmap.on("dblclick", function (evt) {
                 
-                for(var i = 0; i<canvasStorages[currentCanvasId].nodes.length; i++)
+                for(var i = 0; i<canvasGraph[currentCanvasId].nodes.length; i++)
                 {
-                    containers[currentCanvasId].getChildByName("bmp_"+i).image=nodeImage;
+                    containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
                 }
                 this.image = selectedNodeImage;
-                canvasStorages[currentCanvasId].startingNode=node;
+                canvasGraph[currentCanvasId].startingNode=node;
                 update = true;
             });
         }
@@ -894,39 +929,39 @@
 
             for(var i = 0; i < 5; i++)
             {
-                canvasStorages[currentCanvasId].nodes.push(new Node(i,i,(canvas.width * Math.random() | 0),(canvas.height * Math.random() | 0)));
+                canvasGraph[currentCanvasId].nodes.push(new Node(i,i,(canvas.width * Math.random() | 0),(canvas.height * Math.random() | 0)));
             }
 
-            //canvasStorages[currentCanvasId].edges.push(new Edge(0,[canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]],1));
-            //canvasStorages[currentCanvasId].edges.push(new Edge(1,[canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]],1));
+            //canvasGraph[currentCanvasId].edges.push(new Edge(0,[canvasGraph[currentCanvasId].nodes[0],canvasGraph[currentCanvasId].nodes[1]],1));
+            //canvasGraph[currentCanvasId].edges.push(new Edge(1,[canvasGraph[currentCanvasId].nodes[1],canvasGraph[currentCanvasId].nodes[2]],1));
 
-            canvasStorages[currentCanvasId].edges = [];
+            canvasGraph[currentCanvasId].edges = [];
 
-            addEdgeBetweenNodes([canvasStorages[currentCanvasId].nodes[0],canvasStorages[currentCanvasId].nodes[1]],canvasStorages[currentCanvasId].edges);
-            addEdgeBetweenNodes([canvasStorages[currentCanvasId].nodes[1],canvasStorages[currentCanvasId].nodes[2]],canvasStorages[currentCanvasId].edges);
+            addEdgeBetweenNodes([canvasGraph[currentCanvasId].nodes[0],canvasGraph[currentCanvasId].nodes[1]],canvasGraph[currentCanvasId].edges);
+            addEdgeBetweenNodes([canvasGraph[currentCanvasId].nodes[1],canvasGraph[currentCanvasId].nodes[2]],canvasGraph[currentCanvasId].edges);
 
             // create and populate the screen with random daisies:
-            for (var i = 0; i < canvasStorages[currentCanvasId].nodes.length; i++) {
+            for (var i = 0; i < canvasGraph[currentCanvasId].nodes.length; i++) {
 
                 bitmap = new createjs.Bitmap(node_image);
-                addNodeToBitmap(canvasStorages[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
+                addNodeToBitmap(canvasGraph[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
 
                 // using "on" binds the listener to the scope of the currentTarget by default
                 // in this case that means it executes in the scope of the button.
-                bindFunctionalityToBitmap(canvasStorages[currentCanvasId].nodes[i],bitmap,canvasStorages[currentCanvasId].edges, canvasStorages[currentCanvasId].nodes);
+                bindFunctionalityToBitmap(canvasGraph[currentCanvasId].nodes[i],bitmap,canvasGraph[currentCanvasId].edges, canvasGraph[currentCanvasId].nodes);
             }
             for(let i = 0; i < stage.length; i++)
             {
                 stage[i].on("stagemousedown", function(evt) {
                     if(addNodeFlag==true)
                     {
-                        var newNode = new Node(canvasStorages[currentCanvasId].nodes.length,canvasStorages[currentCanvasId].nodes.length,(evt.stageX),(evt.stageY))
-                        canvasStorages[currentCanvasId].nodes.push(newNode);
+                        var newNode = new Node(canvasGraph[currentCanvasId].nodes.length,canvasGraph[currentCanvasId].nodes.length,(evt.stageX),(evt.stageY))
+                        canvasGraph[currentCanvasId].nodes.push(newNode);
                         console.log(newNode);
-                        console.log(canvasStorages[currentCanvasId].nodes);
+                        console.log(canvasGraph[currentCanvasId].nodes);
                         var bitmap = new createjs.Bitmap(node_image);
                         addNodeToBitmap(newNode,containers[currentCanvasId],bitmap);
-                        bindFunctionalityToBitmap(newNode,bitmap,canvasStorages[currentCanvasId].edges,canvasStorages[currentCanvasId].nodes);
+                        bindFunctionalityToBitmap(newNode,bitmap,canvasGraph[currentCanvasId].edges,canvasGraph[currentCanvasId].nodes);
                         addNodeFlag=false;
                         update = true;
                     }
@@ -949,7 +984,7 @@
             }
 
 
-            drawEdges(canvasStorages[currentCanvasId].edges);
+            drawEdges(canvasGraph[currentCanvasId].edges);
 
             examples.hideDistractor();
             createjs.Ticker.addEventListener("tick", tick);
@@ -1074,7 +1109,7 @@
                         </div>
                     </div>
 
-                    <div id="test0">
+                    <div id="editableTextCanvas0">
                     </div>
                 <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
                 </div>
@@ -1104,7 +1139,7 @@
                         </div>
                     </div>
 
-                    <div id="test1">
+                    <div id="editableTextCanvas1">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
                 </div>
@@ -1134,7 +1169,7 @@
                         </div>
                     </div>
 
-                    <div id="test2">
+                    <div id="editableTextCanvas2">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
                 </div>
@@ -1164,7 +1199,7 @@
                         </div>
                     </div>
 
-                    <div id="test3">
+                    <div id="editableTextCanvas3">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
                 </div>
@@ -1194,7 +1229,7 @@
                         </div>
                     </div>
 
-                    <div id="test4">
+                    <div id="editableTextCanvas4">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
                 </div>
@@ -1224,7 +1259,7 @@
                         </div>
                     </div>
 
-                    <div id="test5">
+                    <div id="editableTextCanvas5">
                     </div>
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
                     

@@ -1,7 +1,7 @@
 
 
 async function startBFS(waitUntilForwardClicked){
-    var numberOfNodes = canvasStorages[currentCanvasId].nodes.length;
+    var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
     adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
     {
@@ -16,20 +16,20 @@ async function startBFS(waitUntilForwardClicked){
     var path = [];
     var queue = [];
             
-            visited[canvasStorages[currentCanvasId].startingNode.id] = true;
-            queue.push(canvasStorages[currentCanvasId].startingNode.id);
+            visited[canvasGraph[currentCanvasId].startingNode.id] = true;
+            queue.push(canvasGraph[currentCanvasId].startingNode.id);
 
             while (queue.length > 0) {
                 
                 var v = queue.shift();
-                //canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[i]);
+                //canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[i]);
                 
-                path.push(canvasStorages[currentCanvasId].nodes[v].text);
+                path.push(canvasGraph[currentCanvasId].nodes[v].text);
                 
                 //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
-                drawEdges(canvasStorages[currentCanvasId].edges);
+                drawEdges(canvasGraph[currentCanvasId].edges);
 
-                containers[currentCanvasId].getChildByName("bmp_"+v).image=selectedNodeImage;
+                containers[currentCanvasId].getChildByName("bmpNode_"+v).image=selectedNodeImage;
                 update=true;
                 await waitUntilForwardClicked;
                 waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
@@ -39,27 +39,27 @@ async function startBFS(waitUntilForwardClicked){
                     if (visited[w] == false) {
                         visited[w] = true;
                         queue.push(w); 
-                        containers[currentCanvasId].getChildByName("bmp_"+w).image=visitedNodeImage;
+                        containers[currentCanvasId].getChildByName("bmpNode_"+w).image=visitedNodeImage;
 
-                        //containers[currentCanvasId].getChildByName("bmp_"+w).image=selectedNodeImage;
+                        //containers[currentCanvasId].getChildByName("bmpNode_"+w).image=selectedNodeImage;
 
                         console.log(v);
                         console.log("var W je: "+w);
                         console.log(w);
 
-                        /*if(canvasStorages[currentCanvasId].selectedNodes.length!=0)
+                        /*if(canvasGraph[currentCanvasId].selectedNodes.length!=0)
                         {
-                            canvasStorages[currentCanvasId].selectedNodes.pop()
-                            canvasStorages[currentCanvasId].selectedNodes.pop()
+                            canvasGraph[currentCanvasId].selectedNodes.pop()
+                            canvasGraph[currentCanvasId].selectedNodes.pop()
                         }*/
-                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[v]);
-                        canvasStorages[currentCanvasId].selectedNodes.push(canvasStorages[currentCanvasId].nodes[w]);
+                        canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[v]);
+                        canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[w]);
                         
                         
                         console.log("selected nodes: ");
-                        console.log(canvasStorages[currentCanvasId].selectedNodes);
+                        console.log(canvasGraph[currentCanvasId].selectedNodes);
                         g.clear;
-                        drawEdges(canvasStorages[currentCanvasId].edges);
+                        drawEdges(canvasGraph[currentCanvasId].edges);
                         update=true;
 
                         console.log("pausing");
@@ -68,7 +68,7 @@ async function startBFS(waitUntilForwardClicked){
                         console.log("unpausing");
                     }
                 }
-                containers[currentCanvasId].getChildByName("bmp_"+v).image=completedNodeImage;
+                containers[currentCanvasId].getChildByName("bmpNode_"+v).image=completedNodeImage;
             }
 
     console.log(path);

@@ -67,7 +67,7 @@ var stage = []
 for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
-    canvasStorages.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null });
+    canvasGraph.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null });
 }
 
 for(let i = 0; i < stage.length; i++)
@@ -115,16 +115,17 @@ function createClickListenerPromise (target) {
 StartButton.addEventListener("click", function(){
 
     // after the start simulation button has been clicked, each node is assigned it's given name (text)
-    canvasStorages[currentCanvasId].nodes.forEach(node => {
+    canvasGraph[currentCanvasId].nodes.forEach(node => {
         console.log("assigning name to node: "+node.id);
-        canvasStorages[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+        canvasGraph[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
         node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-        console.log("node is now called: " + canvasStorages[currentCanvasId].nodes[node.id].text);
+        console.log("node is now called: " + canvasGraph[currentCanvasId].nodes[node.id].text);
     });
 
     console.log("starting simulation");
     if(currentCanvasId == 0)
     {
+        showDistancesFromSource();
         startDFS(createClickListenerPromise(StepForwardButton));
     }
     else if(currentCanvasId == 1)
@@ -195,9 +196,9 @@ function displayCanvas(evt)
 
 function checkBoxDirectedClicked(evt)
 {
-    for(node of canvasStorages[currentCanvasId].nodes)
+    for(node of canvasGraph[currentCanvasId].nodes)
     {
-        removeAllEdgesFromNode(node,canvasStorages[currentCanvasId].nodes,canvasStorages[currentCanvasId].edges);
+        removeAllEdgesFromNode(node,canvasGraph[currentCanvasId].nodes,canvasGraph[currentCanvasId].edges);
     }
     
     canvases[currentCanvasId].directed =! canvases[currentCanvasId].directed;

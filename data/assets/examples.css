@@ -37,7 +37,7 @@ header p {
 }
 
 .loading:after {
-    //content: url("../art/loading.gif");
+    content: url("../art/loading.gif");
     position: absolute;
     left: 50%;
     top: 50%;

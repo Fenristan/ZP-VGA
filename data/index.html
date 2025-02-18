@@ -278,6 +278,28 @@
                     //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
                     else if(canvasGraph[currentCanvasId].selectedNodes[0] != null && canvasGraph[currentCanvasId].selectedNodes[1] != null)
                     {
+                        // 
+                        if(canvas.directed == true)
+                        {
+                            if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
+                            {
+                                g.beginStroke("red");
+                                if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
+                                {
+                                    canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);
+                                }
+                                canvasGraph[currentCanvasId].selectedNodes.shift();
+                                canvasGraph[currentCanvasId].selectedNodes.shift();
+                            }
+                            else 
+                            {
+                                g.beginStroke("black");
+                            } 
+                            
+                        }
+                        else
+                        {
+                            //if undirected, then the edge can go from nodes A to B or B to A
                             if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
                             {
                                 g.beginStroke("red");
@@ -291,7 +313,8 @@
                             else 
                             {
                                 g.beginStroke("black");
-                            }       
+                            }     
+                        }      
                     }
                     else
                     {
@@ -305,8 +328,11 @@
                         g.setStrokeStyle(3);
                         
 
-                        var start_x = edges[i].nodes[1].x;
-                        var start_y = edges[i].nodes[1].y;
+                        var start_x = edges[i].nodes[0].x;
+                        var start_y = edges[i].nodes[0].y;
+
+                        var end_x = edges[i].nodes[1].x
+                        var end_y = edges[i].nodes[1].y
 
                         console.log("there is already an edge between these nodes, doing bezier")
                         g.moveTo(start_x,start_y);
@@ -328,29 +354,23 @@
                         var mp_x = (start_x + end_x)/2
                         var mp_y = (start_y + end_y)/2
 
-                        var end_x = edges[i].nodes[0].x
-                        var end_y = edges[i].nodes[0].y
-
                         var s = 1/Math.sqrt(3)
 
-                        var x3 = mp_x + s*(end_y - mp_y)
-                        var y3 = mp_y + s*(mp_x - end_x)
-
                         //calculate control point
-                        var cp_x = x3
-                        var cp_y = y3
+                        var cp_x = mp_x + s*(end_y - mp_y)
+                        var cp_y = mp_y + s*(mp_x - end_x)
 
                         g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y)
 
                         //calculate end points for arrows of bezier
-                        var dx = edges[i].nodes[1].x - cp_x;
-                        var dy = edges[i].nodes[1].y - cp_y;
+                        var dx = end_x - cp_x;
+                        var dy = end_y - cp_y;
 
                         //change location of edge weight texts
                         console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
                         var edgeWeightDom = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                        edgeWeightDom.x = x3;
-                        edgeWeightDom.y = y3;
+                        edgeWeightDom.x = cp_x;
+                        edgeWeightDom.y = cp_y;
                         stage[currentCanvasId].addChild(edgeWeightDom);
 
                     }
@@ -366,7 +386,7 @@
 
                         //calculate end points for arrows of regular edges
                         var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
-                        var dy = edges[i].nodes[0].y - edges[i].nodes[1].y
+                        var dy = edges[i].nodes[0].y - edges[i].nodes[1].y;
 
                         var mp_x = (start_x + end_x)/2
                         var mp_y = (start_y + end_y)/2
@@ -386,6 +406,12 @@
                     //if directed, draw arrows
                     if(canvas.directed == true)
                     {
+                         /*start_x = edges[i].nodes[0].x;
+                         start_y = edges[i].nodes[0].y;
+
+                         end_x = edges[i].nodes[1].x;
+                         end_y = edges[i].nodes[1].y;*/
+
                         var length = Math.sqrt(dx * dx + dy * dy);
 
                         start_x = start_x - Math.round(dx / ((length / (15))));
@@ -393,25 +419,48 @@
                         end_x = end_x + Math.round(dx / ((length / (15))));
                         end_y = end_y + Math.round(dy / ((length / (15))));
 
-                        //arrows of bezier point to a different spot
+                        //arrows of bezier point to a different spot and the degree is inverse
                         if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
                         {
+                            //extend the end point so that it points to the edge of the node
                             end_x = end_x + Math.round(dx / ((length / (11))));
                             end_y = end_y + Math.round(dy / ((length / (11))));
+
+                            //rotate the end point around the center of the node
+                            var radians = (Math.PI / 180) * 180;
+                            cos = Math.cos(radians);
+                            sin = Math.sin(radians);
+                            end_x = (cos * (end_x - edges[i].nodes[1].x)) + (sin * (end_y - edges[i].nodes[1].y)) + edges[i].nodes[1].x;
+                            end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;
+
+                            // calculate the angle of the edge
+                            var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                            if (dx < 0) {
+                                deg -= 180.0;
+                            }
+                            if (deg < 0) {
+                                deg -= 360.0;
+                            }
+                            // calculate the angle for the two triangle points
+                            var deg1 = ((deg - 25 - 90) % 360) * Math.PI * 2 / 360.0;
+                            var deg2 = ((deg - 335 - 90) % 360) * Math.PI * 2 / 360.0;
+                        }
+                        else
+                        {
+                            // calculate the angle of the edge
+                            var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                            if (dx < 0) {
+                                deg += 180.0;
+                            }
+                            if (deg < 0) {
+                                deg += 360.0;
+                            }
+                            // calculate the angle for the two triangle points
+                            var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
+                            var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
+                            
                         }
 
-
-                        // calculate the angle of the edge
-                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                        if (dx < 0) {
-                            deg += 180.0;
-                        }
-                        if (deg < 0) {
-                            deg += 360.0;
-                        }
-                        // calculate the angle for the two triangle points
-                        var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
-                        var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
                         // calculate the triangle points
                         var arrowx = [];
                         var arrowy = [];
@@ -421,7 +470,6 @@
                         arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
                         arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
                         arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
-
                         
 
                         g.beginFill("white");
@@ -734,8 +782,8 @@
                         parent.addChild(textName);
 
                         var textDistanceFromSource =  parent.getChildByName("nodeDistanceFromSourceText_"+selectedBitmap.id);
-                        textDistanceFromSource.x = node.x+(bitmap.image.width/3)
-                        textDistanceFromSource.y = node.y-(bitmap.image.height/3)
+                        textDistanceFromSource.x = nodes[bitmap.id].x+(bitmap.image.width/3)
+                        textDistanceFromSource.y = nodes[bitmap.id].y-(bitmap.image.height/3)
                         parent.addChild(textDistanceFromSource);
 
                     }

@@ -70,6 +70,8 @@ async function startBFS(waitUntilForwardClicked){
                 }
                 containers[currentCanvasId].getChildByName("bmpNode_"+v).image=completedNodeImage;
             }
+        
+    drawEdges(canvasGraph[currentCanvasId].edges);
 
     console.log(path);
 

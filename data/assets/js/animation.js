@@ -115,6 +115,8 @@ var selectedEdge;
 var stepForwardFlag = false;
 var stopFlag = false;
 
+var nodeRadius;
+
 var nodeImage = new Image();
 var completedNodeImage = new Image();
 var selectedNodeImage = new Image();
@@ -173,10 +175,14 @@ function edgeBetweenNodesBothWays(nodeA, nodeB, edges)
     var counter = 0
     for(let i = 0; i<edges.length;i++)
     {
-        if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
+        if(edges[i].nodes[0].id != edges[i].nodes[1].id)
         {
-            counter++;
+            if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
+            {
+                counter++;
+            }
         }
+        
     }
     if(counter>1)
     {
@@ -305,9 +311,50 @@ function drawEdges(edges,oldEdges=edges) {
                 g.beginStroke("black");
             }
             
-            
+            if(edges[i].nodes[0].id == edges[i].nodes[1].id)
+            {
+                console.log("This edge leads to the same node where it started, doing bezier");
+                console.log("node radius je: "+nodeRadius);
+
+                g.setStrokeStyle(3);
+
+                var start_x = edges[i].nodes[0].x-nodeRadius/2;
+                var start_y = edges[i].nodes[0].y;
+
+                var end_x = edges[i].nodes[0].x
+                var end_y = edges[i].nodes[0].y-nodeRadius/2;
+
+                g.moveTo(start_x,start_y);
+
+                //I do nodeRadius *2 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
+                var cp1_x = start_x - nodeRadius*2;
+                var cp1_y = start_y;
+
+                var cp3_x = end_x;
+                var cp3_y = end_y - nodeRadius*2;
+
+                var cp2_x = cp1_x;
+                var cp2_y = cp3_y;
+
+                g.bezierCurveTo(cp1_x,cp1_y,cp3_x,cp3_y,end_x,end_y);
+
+                //calculate end points for arrows of bezier
+                var dx = end_x - cp3_x;
+                var dy = end_y - cp3_y;
+
+                //calculate points where I will place the edge weight text element
+                var mp_x = cp2_x + nodeRadius;
+                var mp_y = cp2_y + nodeRadius;
+
+
+                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                edgeWeightDom.x = mp_x;
+                edgeWeightDom.y = mp_y;
+                containers[currentCanvasId].addChild(edgeWeightDom);
+
+            }
             //if multigraph, do bezier
-            if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+            else if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
             {
                 g.setStrokeStyle(3);
                 
@@ -335,23 +382,23 @@ function drawEdges(edges,oldEdges=edges) {
                 //var n = [-(dy),dx]
 
                 //calculate middle point between nodes
-                var mp_x = (start_x + end_x)/2
-                var mp_y = (start_y + end_y)/2
+                var mp_x = (start_x + end_x)/2;
+                var mp_y = (start_y + end_y)/2;
 
-                var s = 1/Math.sqrt(3)
+                var s = 1/Math.sqrt(3);
 
                 //calculate control point
-                var cp_x = mp_x + s*(end_y - mp_y)
-                var cp_y = mp_y + s*(mp_x - end_x)
+                var cp_x = mp_x + s*(end_y - mp_y);
+                var cp_y = mp_y + s*(mp_x - end_x);
 
-                g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y)
+                g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y);
 
                 //calculate end points for arrows of bezier
                 var dx = end_x - cp_x;
                 var dy = end_y - cp_y;
 
                 //change location of edge weight texts
-                console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
+                //console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = cp_x;
                 edgeWeightDom.y = cp_y;
@@ -490,6 +537,7 @@ function addNodeToBitmap(node,container,bitmap) {
     bitmap.cursor = "pointer";
     node.size=(bitmap.getBounds().width);
 
+    nodeRadius = bitmap.image.width / 2;
     /*text.x = node.x-textoffset;
     text.y = node.y-textoffset;
     text.name = "nodeNameText_" + node.id;

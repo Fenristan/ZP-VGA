@@ -113,6 +113,7 @@ var add_edge_image = "./assets/images/addedge.png";
 var containers = [];
 var selectedEdge;
 var stepForwardFlag = false;
+var stopFlag = false;
 
 var nodeImage = new Image();
 var completedNodeImage = new Image();
@@ -814,16 +815,31 @@ function getNodeUsingId(id)
     return null;
 }
 
-function showDistancesFromSource()
+function toggleDistancesFromSourceVisibility()
 {
     canvasGraph[currentCanvasId].nodes.forEach(node => {
-        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible=true;
+        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible ^= true;
+    });
+}
+
+function disableDistancesFromSourceVisibility()
+{
+    canvasGraph[currentCanvasId].nodes.forEach(node => {
+        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible = false;
     });
 }
 
 function updateDistanceFromSourceForNodeInCanvas(node)
 {
-    containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = node.distance;
+    if(node.distance!=null)
+    {
+        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = node.distance;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = "∞";
+    }
+    
     update=true;
 }
 

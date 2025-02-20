@@ -123,9 +123,10 @@ StartButton.addEventListener("click", function(){
     });
 
     console.log("starting simulation");
+    stopFlag = false;
     if(currentCanvasId == 0)
     {
-        showDistancesFromSource();
+        toggleDistancesFromSourceVisibility();
         startDFS(createClickListenerPromise(StepForwardButton));
     }
     else if(currentCanvasId == 1)
@@ -135,7 +136,21 @@ StartButton.addEventListener("click", function(){
     
 });
 
+RestartButton.addEventListener("click", function(){
+    //if there is a running simulation, stop it
+    stopFlag = true;
+    StepForwardButton.click();
 
+    //if there wasn't a running simulation (it could have already finished), then we need to return the graph to it's original form
+    canvasGraph[currentCanvasId].visitedEdges = [];
+    for(var node of canvasGraph[currentCanvasId].nodes)
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+    }
+    disableDistancesFromSourceVisibility();
+    drawEdges(canvasGraph[currentCanvasId].edges);
+
+});
   
 
 /*StepForwardButton.addEventListener("click", function(){

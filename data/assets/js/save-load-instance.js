@@ -3,6 +3,8 @@ SaveButton.addEventListener("click", function(){
 });
 
 LoadButton.addEventListener("click", function(){
+    //if there is a running simulation, finish it first
+    RestartButton.click();
     file.click();
     console.log(document.getElementById('file').innerText);
 });

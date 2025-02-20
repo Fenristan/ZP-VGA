@@ -9,10 +9,12 @@ async function DFS_visit(u,waitUntilForwardClicked)
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
     update=true;
 
-    console.log("pausing");
-    await waitUntilForwardClicked;
-    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-    console.log("unpausing");
+    if(stopFlag != true)
+    {
+        await waitUntilForwardClicked;
+        waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+    }
+    
     
     for (var v of adjacencyList[u.id]) {
 
@@ -38,10 +40,13 @@ async function DFS_visit(u,waitUntilForwardClicked)
             update=true;
 
             //wait for the next step
-            console.log("pausing");
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-            console.log("unpausing");
+            
+            if(stopFlag != true)
+                {
+                    await waitUntilForwardClicked;
+                    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                }
+            
 
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
@@ -60,10 +65,13 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
             await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
 
-            console.log("pausing");
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-            console.log("unpausing");
+            
+            if(stopFlag != true)
+                {
+                    await waitUntilForwardClicked;
+                    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                }
+            
             
         }
         else
@@ -74,19 +82,22 @@ async function DFS_visit(u,waitUntilForwardClicked)
             //update = true;
             canvasGraph[currentCanvasId].visitedEdges.pop();
 
-            console.log("pausing");
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-            console.log("unpausing");
+            
+            if(stopFlag != true)
+            {
+                await waitUntilForwardClicked;
+                waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+            }
+            
 
             
             drawEdges(canvasGraph[currentCanvasId].edges);
             
         }
-        /*console.log("pausing");
+        /*
         await waitUntilForwardClicked;
         waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-        console.log("unpausing");*/
+        */
     }
 
 
@@ -94,10 +105,13 @@ async function DFS_visit(u,waitUntilForwardClicked)
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
 
-    console.log("pausing");
-    await waitUntilForwardClicked;
-    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-    console.log("unpausing");
+    
+    if(stopFlag != true)
+    {
+        await waitUntilForwardClicked;
+        waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+    }
+    
     
 }
 
@@ -125,6 +139,7 @@ async function startDFS(waitUntilForwardClicked){
     for (var u of nodes) {
         u.color = "BLUE";
         u.distance = null;
+        updateDistanceFromSourceForNodeInCanvas(u)
     }
 
     canvasGraph[currentCanvasId].startingNode.distance = 0;
@@ -135,17 +150,34 @@ async function startDFS(waitUntilForwardClicked){
     for (var u of nodes) {
         if(u.color == "BLUE")
         {
-            console.log("pausing");
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
-            console.log("unpausing");
+            
+            if(stopFlag != true)
+            {
+                await waitUntilForwardClicked;
+                waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+            }
+            
 
             await DFS_visit(u,waitUntilForwardClicked);
         }
     }
 
+    if(stopFlag == true)
+    {
+        canvasGraph[currentCanvasId].visitedEdges = [];
+        for(var node of canvasGraph[currentCanvasId].nodes)
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        }
+        disableDistancesFromSourceVisibility();
+        stopFlag = false;
+    }
+
     //draw edges at the end so that the last selected edge isn't left colored as currently selected
     drawEdges(canvasGraph[currentCanvasId].edges);
+
+    
+
 
     console.log(path);
 

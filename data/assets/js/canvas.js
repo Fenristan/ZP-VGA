@@ -201,7 +201,8 @@ function checkBoxDirectedClicked(evt)
         removeAllEdgesFromNode(node,canvasGraph[currentCanvasId].nodes,canvasGraph[currentCanvasId].edges);
     }
     
-    canvases[currentCanvasId].directed =! canvases[currentCanvasId].directed;
+    canvases[currentCanvasId].directed ^= true;
+    console.log(canvases)
     update=true;
 }
 
@@ -210,11 +211,25 @@ function setFunctionToCheckboxDirected(checkboxDirected)
     checkboxDirected.addEventListener("click",checkBoxDirectedClicked);
 }   
 
+function checkBoxWeightedClicked(evt)
+{
+    canvases[currentCanvasId].weighted ^= true;
+    toggleWeightedEdgesVisibility();
+    update=true;
+}
+
+function setFunctionToCheckboxWeighted(checkboxWeighted)
+{
+    checkboxWeighted.addEventListener("click",checkBoxWeightedClicked);
+}   
+
+
 canvasContainers.forEach(function (canvasContainer){
     checkboxDirected = canvasContainer.querySelector("#checkboxDirected");
     setFunctionToCheckboxDirected(checkboxDirected);
+
+    checkboxWeighted = canvasContainer.querySelector("#checkboxWeighted");
+    setFunctionToCheckboxWeighted(checkboxWeighted);
 });
-
-
 
 

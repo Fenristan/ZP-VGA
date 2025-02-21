@@ -5,7 +5,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
 {
     //console.log("printing u.id: "+u.id);
             
-    u.color = "PURPLE";
+    u.color = "RED";
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
     update=true;
 
@@ -19,6 +19,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
     for (var v of adjacencyList[u.id]) {
 
         //every time we go from this node to another, highlight it as the currently selected Node
+        u.color = "RED";
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
         update=true;
         
@@ -36,6 +37,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             drawEdges(canvasGraph[currentCanvasId].edges);
 
             //highlight the newly visited node as visited
+            u.color = "PURPLE";
             containers[currentCanvasId].getChildByName("bmpNode_"+getNodeUsingId(v).id).image=visitedNodeImage;
             update=true;
 
@@ -49,6 +51,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             
 
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
+            u.color = "PURPLE";
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
             update=true;
             drawEdges(canvasGraph[currentCanvasId].edges);
@@ -117,8 +120,15 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
 async function startDFS(waitUntilForwardClicked){
     nodes = canvasGraph[currentCanvasId].nodes.slice();
-    var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
-    spliced.reverse().forEach((node) => nodes.unshift(node));
+    //var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
+    //spliced.reverse().forEach((node) => nodes.unshift(node));
+
+    var splicedNode = nodes.splice(canvasGraph[currentCanvasId].startingNode.id,1);
+    console.log("splcied node je: ");
+    console.log(splicedNode);
+
+
+    nodes.unshift(splicedNode[0]);
 
     console.log("novy order nodes je: ")
     console.log(nodes)
@@ -167,6 +177,7 @@ async function startDFS(waitUntilForwardClicked){
         canvasGraph[currentCanvasId].visitedEdges = [];
         for(var node of canvasGraph[currentCanvasId].nodes)
         {
+            u.color = "BLUE";
             containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         }
         disableDistancesFromSourceVisibility();

@@ -576,7 +576,7 @@ function addNodeToBitmap(node,container,bitmap) {
     textDistanceFromSource.x = node.x+(bitmap.image.width/3)
     textDistanceFromSource.y = node.y-(bitmap.image.height/3)
     textDistanceFromSource.id = node.id;
-    textDistanceFromSource.name = "nodeDistanceFromSourceText_" + node.id;
+    textDistanceFromSource.name = "nodeInformationQuadrantIText_" + node.id;
     textDistanceFromSource.visible = false;
 
     container.addChild(bitmap,textDistanceFromSource);
@@ -817,7 +817,7 @@ function removeNode(bitmap, nodes, edges)
                 textName.y=selectedBitmap.y-textoffset-3;
                 parent.addChild(textName);
 
-                var textDistanceFromSource =  parent.getChildByName("nodeDistanceFromSourceText_"+selectedBitmap.id);
+                var textDistanceFromSource =  parent.getChildByName("nodeInformationQuadrantIText_"+selectedBitmap.id);
                 textDistanceFromSource.x = nodes[bitmap.id].x+(bitmap.image.width/3)
                 textDistanceFromSource.y = nodes[bitmap.id].y-(bitmap.image.height/3)
                 parent.addChild(textDistanceFromSource);
@@ -846,7 +846,7 @@ function removeNode(bitmap, nodes, edges)
             var textName = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes.length);
             textName.parentNode.removeChild(textName);
 
-            parent.removeChild(parent.getChildByName("nodeDistanceFromSourceText_"+nodes.length));
+            parent.removeChild(parent.getChildByName("nodeInformationQuadrantIText_"+nodes.length));
             
             parent.removeChild(bitmap);
 }
@@ -863,29 +863,40 @@ function getNodeUsingId(id)
     return null;
 }
 
-function toggleDistancesFromSourceVisibility()
+
+function toggleNodeInformationQuadrantIVisibility()
 {
     canvasGraph[currentCanvasId].nodes.forEach(node => {
-        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible ^= true;
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).visible ^= true;
     });
 }
 
-function disableDistancesFromSourceVisibility()
+function disableNodeInformationQuadrantIVisibility()
 {
     canvasGraph[currentCanvasId].nodes.forEach(node => {
-        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).visible = false;
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).visible = false;
     });
 }
 
-function updateDistanceFromSourceForNodeInCanvas(node)
+function updateNodeInformationQuadrantIForNodeInCanvas(node)
 {
-    if(node.distance!=null)
+    if(node.timeDiscovered!=null)
     {
-        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = node.distance;
+        var timeDiscoveredCompletedText = "" + node.timeDiscovered + "/";
+        if(node.timeCompleted!=null)
+        {
+            timeDiscoveredCompletedText += "" + node.timeCompleted;
+        }
+        console.log("time discovered completed text: "+timeDiscoveredCompletedText);
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
+    }
+    else if(node.distance!=null)
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = node.distance;
     }
     else
     {
-        containers[currentCanvasId].getChildByName("nodeDistanceFromSourceText_"+node.id).text = "∞";
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "∞";
     }
     
     update=true;
@@ -979,7 +990,7 @@ function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
         textName.y=node.y-textoffset-3;//textoffset;
         this.parent.addChild(textName);
 
-        var textDistanceFromSource = this.parent.getChildByName("nodeDistanceFromSourceText_"+this.id);
+        var textDistanceFromSource = this.parent.getChildByName("nodeInformationQuadrantIText_"+this.id);
         textDistanceFromSource.x = node.x+(bitmap.image.width/3)
         textDistanceFromSource.y = node.y-(bitmap.image.height/3)
         this.parent.addChild(textDistanceFromSource);

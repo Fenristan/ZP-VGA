@@ -1,9 +1,13 @@
 var nodes = [];
-
-// WHITE = BLUE, GREY = PURPLE, BLACK = GREEN
+var time;
+// WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
 async function DFS_visit(u,waitUntilForwardClicked)
 {
     //console.log("printing u.id: "+u.id);
+
+    time += 1;
+    u.timeDiscovered = time;
+    updateNodeInformationQuadrantIForNodeInCanvas(u);
             
     u.color = "RED";
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
@@ -41,6 +45,9 @@ async function DFS_visit(u,waitUntilForwardClicked)
             containers[currentCanvasId].getChildByName("bmpNode_"+getNodeUsingId(v).id).image=visitedNodeImage;
             update=true;
 
+            getNodeUsingId(v).timeDiscovered = time+1;
+            updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));
+
             //wait for the next step
             
             if(stopFlag != true)
@@ -63,7 +70,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             else
             {
                 getNodeUsingId(v).distance = u.distance+1;
-                updateDistanceFromSourceForNodeInCanvas(getNodeUsingId(v));
+                updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));
             }
 
             await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
@@ -108,6 +115,10 @@ async function DFS_visit(u,waitUntilForwardClicked)
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
 
+    time += 1;
+    u.timeCompleted = time;
+    updateNodeInformationQuadrantIForNodeInCanvas(u);
+
     
     if(stopFlag != true)
     {
@@ -148,14 +159,15 @@ async function startDFS(waitUntilForwardClicked){
 
     for (var u of nodes) {
         u.color = "BLUE";
-        u.distance = null;
-        updateDistanceFromSourceForNodeInCanvas(u)
+        u.parent = null;
+        //u.distance = null;
+        //updateNodeInformationQuadrantIForNodeInCanvas(u)
     }
 
-    canvasGraph[currentCanvasId].startingNode.distance = 0;
-    updateDistanceFromSourceForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
+    //canvasGraph[currentCanvasId].startingNode.distance = 0;
+    //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
 
-    
+    time = 0;
     
     for (var u of nodes) {
         if(u.color == "BLUE")
@@ -180,7 +192,7 @@ async function startDFS(waitUntilForwardClicked){
             u.color = "BLUE";
             containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         }
-        disableDistancesFromSourceVisibility();
+        disableNodeInformationQuadrantIVisibility();
         stopFlag = false;
     }
 

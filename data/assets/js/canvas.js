@@ -126,7 +126,7 @@ StartButton.addEventListener("click", function(){
     stopFlag = false;
     if(currentCanvasId == 0)
     {
-        toggleDistancesFromSourceVisibility();
+        toggleNodeInformationQuadrantIVisibility();
         startDFS(createClickListenerPromise(StepForwardButton));
     }
     else if(currentCanvasId == 1)
@@ -147,7 +147,7 @@ RestartButton.addEventListener("click", function(){
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
-    disableDistancesFromSourceVisibility();
+    disableNodeInformationQuadrantIVisibility();
     drawEdges(canvasGraph[currentCanvasId].edges);
 
 });

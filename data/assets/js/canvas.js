@@ -131,6 +131,7 @@ StartButton.addEventListener("click", function(){
     }
     else if(currentCanvasId == 1)
     {
+        toggleNodeInformationQuadrantIVisibility();
         startBFS(createClickListenerPromise(StepForwardButton));
     }
     

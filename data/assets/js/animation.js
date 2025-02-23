@@ -892,11 +892,7 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
     }
     else if(node.distance!=null)
     {
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = node.distance;
-    }
-    else
-    {
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "∞";
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
     }
     
     update=true;

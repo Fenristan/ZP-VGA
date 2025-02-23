@@ -2,7 +2,7 @@
 
 async function startBFS(waitUntilForwardClicked){
     var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
-    adjacencyList = [];
+    var adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
     {
         adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
@@ -12,60 +12,57 @@ async function startBFS(waitUntilForwardClicked){
         adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
     }
     
-    var visited = new Array(numberOfNodes).fill(false);
-    var path = [];
+    for(var u of canvasGraph[currentCanvasId].nodes)
+    {
+        u.color = "WHITE";
+        u.distance = "∞";
+        u.parent = null;
+        //updateNodeInformationQuadrantIForNodeInCanvas(u);
+    }
+
+    canvasGraph[currentCanvasId].startingNode.color = "GRAY";
+    canvasGraph[currentCanvasId].startingNode.distance = 0;
+    updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
+    //canvasGraph[currentCanvasId].startingNode.parent = null;
+
     var queue = [];
-            
-    visited[canvasGraph[currentCanvasId].startingNode.id] = true;
-    queue.push(canvasGraph[currentCanvasId].startingNode.id);
+    queue.push(canvasGraph[currentCanvasId].startingNode);
 
     while (queue.length > 0) {
         
-        var v = queue.shift();
-        //canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[i]);
-        
-        path.push(canvasGraph[currentCanvasId].nodes[v].text);
-        
+        var u = queue.shift();
+
         //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
         drawEdges(canvasGraph[currentCanvasId].edges);
 
-        containers[currentCanvasId].getChildByName("bmpNode_"+v).image=selectedNodeImage;
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
         update=true;
+
         if(stopFlag != true)
         {
             await waitUntilForwardClicked;
             waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
         }
 
-        for (var w of adjacencyList[v]) {
-            
-            if (visited[w] == false) {
-                visited[w] = true;
-                queue.push(w); 
-                containers[currentCanvasId].getChildByName("bmpNode_"+w).image=visitedNodeImage;
+        for (var vId of adjacencyList[u.id]) {
+            var v =  getNodeUsingId(vId);
 
-                //containers[currentCanvasId].getChildByName("bmpNode_"+w).image=selectedNodeImage;
+            if (v.color == "WHITE") {
+                v.color = "GRAY";
+                v.distance = u.distance + 1;
+                console.log("distance "+v.id+" je: " + v.distance)
+                updateNodeInformationQuadrantIForNodeInCanvas(v);
+                v.parent = u;
+                queue.push(v);
 
-                console.log(v);
-                console.log("var W je: "+w);
-                console.log(w);
+                containers[currentCanvasId].getChildByName("bmpNode_"+v.id).image=visitedNodeImage;
 
-                /*if(canvasGraph[currentCanvasId].selectedNodes.length!=0)
-                {
-                    canvasGraph[currentCanvasId].selectedNodes.pop()
-                    canvasGraph[currentCanvasId].selectedNodes.pop()
-                }*/
-                canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[v]);
-                canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[w]);
+                canvasGraph[currentCanvasId].selectedNodes.push(u);
+                canvasGraph[currentCanvasId].selectedNodes.push(v);
                 
-                
-                console.log("selected nodes: ");
-                console.log(canvasGraph[currentCanvasId].selectedNodes);
-                g.clear;
+                //g.clear;
                 drawEdges(canvasGraph[currentCanvasId].edges);
-                update=true;
 
-                
                 if(stopFlag != true)
                 {
                     await waitUntilForwardClicked;
@@ -74,8 +71,12 @@ async function startBFS(waitUntilForwardClicked){
                 
             }
         }
-        containers[currentCanvasId].getChildByName("bmpNode_"+v).image=completedNodeImage;
+        //u.color = "WHITE";
+        //containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
+        u.color = "BLACK";
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     }
+    
         
     if(stopFlag == true)
     {
@@ -84,12 +85,12 @@ async function startBFS(waitUntilForwardClicked){
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         }
-        //toggleDistancesFromSourceVisibility();
+        disableNodeInformationQuadrantIVisibility();
         stopFlag = false;
     }        
 
     drawEdges(canvasGraph[currentCanvasId].edges);
 
-    console.log(path);
+    //console.log(path);
 
 };

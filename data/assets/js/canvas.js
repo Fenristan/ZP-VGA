@@ -81,9 +81,18 @@ const BackToMenuButton = document.getElementById('back');
 const SaveButton = document.getElementById('save');
 const LoadButton = document.getElementById("load");
 const file = document.getElementById("file");
-const RestartButton = document.getElementById('restart');
-const StartButton = document.getElementById('start');
-const StepForwardButton = document.getElementById('stepforward');
+//const RestartButton = document.getElementById('restart');
+//const StartButton = document.getElementById('start');
+//const StepForwardButton = document.getElementById('stepforward');
+
+const RestartButtons = document.getElementsByClassName("restart");
+const StartButtons = document.getElementsByClassName("start");
+const StepForwardButtons = document.getElementsByClassName("stepforward");
+
+var CurrentRestartButton = null;
+var CurrentStartButton = null;
+var CurrentStepForwardButton = null;
+
 
 
 
@@ -96,9 +105,9 @@ BackToMenuButton.addEventListener("click", function(){
     BackToMenuButton.classList.add('back');
     SaveButton.classList.add('save');
     LoadButton.classList.add('load');
-    RestartButton.classList.add('restart');
-    StartButton.classList.add('start');
-    StepForwardButton.classList.add('stepforward');
+    //RestartButton.classList.add('restart');
+    //StartButton.classList.add('start');
+    //StepForwardButton.classList.add('stepforward');
 
     canvasContainers.forEach(function (canvasContainer){
             canvasContainer.classList.remove('canvas-container-visible');
@@ -112,46 +121,55 @@ function createClickListenerPromise (target) {
     return new Promise((resolve) => target.addEventListener('click', resolve))
 }
 
-StartButton.addEventListener("click", function(){
+for(var StartButton of StartButtons)
+{
+    StartButton.addEventListener("click", function(){
 
-    // after the start simulation button has been clicked, each node is assigned it's given name (text)
-    canvasGraph[currentCanvasId].nodes.forEach(node => {
-        console.log("assigning name to node: "+node.id);
-        canvasGraph[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-        node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-        console.log("node is now called: " + canvasGraph[currentCanvasId].nodes[node.id].text);
-    });
+        CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
 
-    console.log("starting simulation");
-    stopFlag = false;
-    if(currentCanvasId == 0)
-    {
-        toggleNodeInformationQuadrantIVisibility();
-        startDFS(createClickListenerPromise(StepForwardButton));
-    }
-    else if(currentCanvasId == 1)
-    {
-        toggleNodeInformationQuadrantIVisibility();
-        startBFS(createClickListenerPromise(StepForwardButton));
-    }
+        // after the start simulation button has been clicked, each node is assigned it's given name (text)
+        canvasGraph[currentCanvasId].nodes.forEach(node => {
+            console.log("assigning name to node: "+node.id);
+            canvasGraph[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+            node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+            console.log("node is now called: " + canvasGraph[currentCanvasId].nodes[node.id].text);
+        });
     
-});
+        console.log("starting simulation");
+        stopFlag = false;
+        if(currentCanvasId == 0)
+        {
+            toggleNodeInformationQuadrantIVisibility();
+            startDFS(createClickListenerPromise(CurrentStepForwardButton));
+        }
+        else if(currentCanvasId == 1)
+        {
+            toggleNodeInformationQuadrantIVisibility();
+            startBFS(createClickListenerPromise(CurrentStepForwardButton));
+        }
+        
+    });
+}
 
-RestartButton.addEventListener("click", function(){
-    //if there is a running simulation, stop it
-    stopFlag = true;
-    StepForwardButton.click();
+for(var RestartButton of RestartButtons)
+{
+    RestartButton.addEventListener("click", function(){
+        //if there is a running simulation, stop it
+        stopFlag = true;
+        CurrentStepForwardButton.click();
+    
+        //if there wasn't a running simulation (it could have already finished), then we need to return the graph to it's original form
+        canvasGraph[currentCanvasId].visitedEdges = [];
+        for(var node of canvasGraph[currentCanvasId].nodes)
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        }
+        disableNodeInformationQuadrantIVisibility();
+        drawEdges(canvasGraph[currentCanvasId].edges);
+    
+    });
+}
 
-    //if there wasn't a running simulation (it could have already finished), then we need to return the graph to it's original form
-    canvasGraph[currentCanvasId].visitedEdges = [];
-    for(var node of canvasGraph[currentCanvasId].nodes)
-    {
-        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-    }
-    disableNodeInformationQuadrantIVisibility();
-    drawEdges(canvasGraph[currentCanvasId].edges);
-
-});
   
 
 /*StepForwardButton.addEventListener("click", function(){
@@ -176,10 +194,14 @@ function displayCanvas(evt)
     BackToMenuButton.classList.remove('back');
     SaveButton.classList.remove('save');
     LoadButton.classList.remove('load');
-    RestartButton.classList.remove('restart');
-    StartButton.classList.remove('start');
-    StepForwardButton.classList.remove('stepforward');
+    //RestartButton.classList.remove('restart');
+    //StartButton.classList.remove('start');
+    //StepForwardButton.classList.remove('stepforward');
     currentCanvasId = evt.currentTarget.index;
+
+    CurrentRestartButton = RestartButtons[currentCanvasId];
+    CurrentStartButton = StartButtons[currentCanvasId];
+    CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
     console.log("canvas: "+evt.currentTarget.index);

@@ -5,6 +5,7 @@
     <title></title>
     <link rel="stylesheet" href="./assets/css/style.css">
 
+    
     <script src="./assets/js/animation.js" defer></script>
     <script src="./assets/js/setup.js"></script>
     <script src="./assets/js/adjacency-list.js" defer></script>
@@ -12,9 +13,11 @@
     <script src="./assets/js/depth-first-search.js" defer></script>
     <script src="./assets/js/canvas.js" defer></script>
     <script src="./assets/js/save-load-instance.js" defer></script>
+    <script src="./assets/js/vis.js" defer></script>
     
-
+    <script src="./lib/vis-network.min.js"></script>
     <script src="./lib/easeljs-NEXT.js"></script>
+
 </head>
 
 <body onload = init();>
@@ -76,196 +79,250 @@
         </div>
         <div id="map">
             <div class = canvas-container-hidden id="canvas-container0">
-                <div style = "float:left">
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas0">
+                        <div id="editableTextCanvas0">
+                        </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
                     </div>
-                <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas0" class="visNetwork"></div>
+
             </div>
             <div class = canvas-container-hidden id="canvas-container1">
-                <div>
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas1">
-                    </div>
+                        <div id="editableTextCanvas1">
+                        </div>
                     <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
+                    </div>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas1" class="visNetwork"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container2">
-                <div>
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas2">
-                    </div>
+                        <div id="editableTextCanvas2">
+                        </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
+                    </div>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas2" class="visNetwork"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container3">
-                <div>
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas3">
-                    </div>
+                        <div id="editableTextCanvas3">
+                        </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
+                    </div>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas3" class="visNetwork"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container4">
-                <div>
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas4">
-                    </div>
+                        <div id="editableTextCanvas4">
+                        </div>
                     <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
+                    </div>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas4" class="visNetwork"></div>
             </div>
             <div class = canvas-container-hidden id="canvas-container5">
-                <div>
-                    <div class="menu">
-                        <div class="menu-tools">
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                            <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                            <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
-                        </div>
-                        <div class="menu-settings">                           
-                            <div class="settings-grid">
-                                <div class="cell1">
-                                    <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                <div class = canvas-container-row>
+                    <div style = "float:left">
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="./assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="./assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
                                 </div>
-                                <div class="cell2">
-                                    <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
-                                </div>
-                                <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
-                                <div class="cell3">Directed</div>
-                                <div class="cell4">Weighted</div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="editableTextCanvas5">
-                    </div>
+                        <div id="editableTextCanvas5">
+                        </div>
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
-                    
+                    </div>
+                    <div class="sidebar"></div>
                 </div>
-                <div class="sidebar"></div>
+                <div class="simulation-container">
+                    <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
+                </div>
+
+                <div id="visNetworkCanvas5" class="visNetwork"></div>
 
             </div>
             
         </div>
-        <div class="simulation-container">
-            <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-            <a><img src="assets/images/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="stepback" class="stepback"></a>
-            <a><img src="assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-            <a><img src="assets/images/play_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-            
-        </div>
+        
     
         
     </div>

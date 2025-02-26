@@ -878,6 +878,13 @@ function disableNodeInformationQuadrantIVisibility()
     });
 }
 
+function clearNodeInformationQuadrantIText()
+{
+    canvasGraph[currentCanvasId].nodes.forEach(node => {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
+    });
+}
+
 function updateNodeInformationQuadrantIForNodeInCanvas(node)
 {
     if(node.timeDiscovered!=null)

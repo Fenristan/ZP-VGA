@@ -41,7 +41,7 @@ async function startBFS(waitUntilForwardClicked){
         if(stopFlag != true)
         {
             await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
         }
 
         for (var vId of adjacencyList[u.id]) {
@@ -66,7 +66,7 @@ async function startBFS(waitUntilForwardClicked){
                 if(stopFlag != true)
                 {
                     await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                 }
                 
             }

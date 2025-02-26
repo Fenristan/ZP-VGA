@@ -12,11 +12,12 @@ async function DFS_visit(u,waitUntilForwardClicked)
     u.color = "RED";
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
     update=true;
+    drawTreeDFS();
 
     if(stopFlag != true)
     {
         await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
     }
     
     
@@ -26,6 +27,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
         u.color = "RED";
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
         update=true;
+        drawTreeDFS();
         
         console.log("jdu z: "+u.id+" do: "+v);
         console.log(nodes);
@@ -38,12 +40,19 @@ async function DFS_visit(u,waitUntilForwardClicked)
             //highlight edge between these nodes red
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[u.id]);
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            u.color = "RED";
+            getNodeUsingId(v).color = "PURPLE";
             drawEdges(canvasGraph[currentCanvasId].edges);
 
+            getNodeUsingId(v).parent = u;
+            
+            drawTreeDFS();
+
             //highlight the newly visited node as visited
-            u.color = "PURPLE";
+            //u.color = "PURPLE";
             containers[currentCanvasId].getChildByName("bmpNode_"+getNodeUsingId(v).id).image=visitedNodeImage;
             update=true;
+            //drawTreeDFS();
 
             getNodeUsingId(v).timeDiscovered = time+1;
             updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));
@@ -53,7 +62,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             if(stopFlag != true)
                 {
                     await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                 }
             
 
@@ -62,6 +71,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
             update=true;
             drawEdges(canvasGraph[currentCanvasId].edges);
+            
 
             if(u.id != canvasGraph[currentCanvasId].startingNode.id && u.distance == null)
             {
@@ -73,13 +83,16 @@ async function DFS_visit(u,waitUntilForwardClicked)
                 updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));
             }
 
+            
+            drawTreeDFS();
+            
             await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
 
             
             if(stopFlag != true)
                 {
                     await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                 }
             
             
@@ -91,12 +104,13 @@ async function DFS_visit(u,waitUntilForwardClicked)
             drawEdges(canvasGraph[currentCanvasId].edges);
             //update = true;
             canvasGraph[currentCanvasId].visitedEdges.pop();
+            drawTreeDFS();
 
             
             if(stopFlag != true)
             {
                 await waitUntilForwardClicked;
-                waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
             }
             
 
@@ -106,7 +120,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
         }
         /*
         await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
         */
     }
 
@@ -114,6 +128,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
     u.color = "GREEN";
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
+    drawTreeDFS();
 
     time += 1;
     u.timeCompleted = time;
@@ -123,7 +138,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
     if(stopFlag != true)
     {
         await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
     }
     
     
@@ -176,7 +191,7 @@ async function startDFS(waitUntilForwardClicked){
             if(stopFlag != true)
             {
                 await waitUntilForwardClicked;
-                waitUntilForwardClicked=createClickListenerPromise(StepForwardButton);
+                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
             }
             
 
@@ -187,11 +202,15 @@ async function startDFS(waitUntilForwardClicked){
     if(stopFlag == true)
     {
         canvasGraph[currentCanvasId].visitedEdges = [];
-        for(var node of canvasGraph[currentCanvasId].nodes)
+        for(var u of canvasGraph[currentCanvasId].nodes)
         {
             u.color = "BLUE";
-            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+            u.timeDiscovered = null;
+            u.timeCompleted = null;
+            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
         }
+        
+        clearNodeInformationQuadrantIText();
         disableNodeInformationQuadrantIVisibility();
         stopFlag = false;
     }

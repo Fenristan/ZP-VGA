@@ -68,9 +68,31 @@ function drawTreeDFS()
 
     for(edge of canvasGraph[currentCanvasId].visitedEdges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id });
+      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
+    }
+    for(edge of canvasGraph[currentCanvasId].edges)
+    {
+      if(!canvasGraph[currentCanvasId].visitedEdges.includes(edge))
+      {
+        if(edge.nodes[0].timeDiscovered < edge.nodes[1].timeDiscovered)
+        {
+          currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: "black" });
+        }
+        else if(edge.nodes[0].timeDiscovered > edge.nodes[1].timeDiscovered)
+        {
+          currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: "black" });
+        }
+        
+      }
     }
 
+    var arrowsEnabled = canvases[currentCanvasId].directed;
+    /*if(canvases[currentCanvasId].directed == true)
+    {
+
+          currentVisGraph.edges.arrows.to.enabled = "enabled";
+    }*/
+    
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
     var data = {
@@ -85,6 +107,12 @@ function drawTreeDFS()
             forceDirection: "vertical",
             roundness: 0.4,
         },
+        arrows: {
+          to: {
+            enabled: arrowsEnabled,
+            type: "arrow"
+          },
+        }
         },
         layout: {
         hierarchical: {

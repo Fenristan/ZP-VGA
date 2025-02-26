@@ -264,6 +264,7 @@ function drawEdges(edges,oldEdges=edges) {
             {
                 console.log("yep already there");
                 g.beginStroke("purple");
+                edges[i].color = "purple";
             }
             //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
             else if(canvasGraph[currentCanvasId].selectedNodes[0] != null && canvasGraph[currentCanvasId].selectedNodes[1] != null)
@@ -274,6 +275,7 @@ function drawEdges(edges,oldEdges=edges) {
                     if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
                     {
                         g.beginStroke("red");
+                        edges[i].color = "red";
                         if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
                         {
                             canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);
@@ -293,6 +295,7 @@ function drawEdges(edges,oldEdges=edges) {
                     if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
                     {
                         g.beginStroke("red");
+                        edges[i].color = "red";
                         if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
                         {
                             canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);

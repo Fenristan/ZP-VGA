@@ -46,13 +46,13 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
             getNodeUsingId(v).parent = u;
 
-            drawTreeDFS();
+            //drawTreeDFS();
 
             //highlight the newly visited node as visited
             //u.color = "PURPLE";
             containers[currentCanvasId].getChildByName("bmpNode_"+getNodeUsingId(v).id).image=visitedNodeImage;
             update=true;
-            //drawTreeDFS();
+            drawTreeDFS();
 
             getNodeUsingId(v).timeDiscovered = time+1;
             updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));

@@ -237,8 +237,21 @@ async function startDFS(waitUntilForwardClicked){
         }
     }
 
-    //if(stopFlag == true)
-    //{
+    //draw edges at the end so that the last selected edge isn't left colored as currently selected
+    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawTreeDFS();
+
+    console.log("waiting for Restart button");
+    //this DFS has finished, await till it is restarted
+    if(stopFlag != true)
+    {
+        await createClickListenerPromise(CurrentRestartButton);
+        console.log("Restart button pressed");
+    }
+    
+    if(stopFlag == true)
+    {
+        console.log("ending this DFS and cleaning up");
         canvasGraph[currentCanvasId].visitedEdges = [];
         for(var u of canvasGraph[currentCanvasId].nodes)
         {
@@ -255,12 +268,14 @@ async function startDFS(waitUntilForwardClicked){
         
         clearNodeInformationQuadrantIText();
         disableNodeInformationQuadrantIVisibility();
-        stopFlag = false;
-    //}
 
-    //draw edges at the end so that the last selected edge isn't left colored as currently selected
-    drawEdges(canvasGraph[currentCanvasId].edges);
-    drawTreeDFS();
+        drawEdges(canvasGraph[currentCanvasId].edges);
+        drawTreeDFS();
+
+        stopFlag = false;
+    }
+
+    
 
     
 

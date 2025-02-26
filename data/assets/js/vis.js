@@ -111,7 +111,7 @@ function drawTreeDFS()
       }
     }
   
-    var arrowsEnabled = canvases[currentCanvasId].directed;
+    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);

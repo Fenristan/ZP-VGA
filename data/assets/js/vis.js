@@ -109,11 +109,11 @@ function drawTreeDFS()
         {
           if(isInTheSameTree(edge.nodes[1],edge.nodes[0]))
           {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: "black" });
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: edge.color });
           }
           else
           {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: "black" });
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: edge.color });
           }
           
         }
@@ -121,11 +121,11 @@ function drawTreeDFS()
         {
           if(isInTheSameTree(edge.nodes[0],edge.nodes[1]))
           {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: "black" });
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: edge.color });
           }
           else
           {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: "black" });
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: edge.color });
           }
           
         }

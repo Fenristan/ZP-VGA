@@ -286,6 +286,7 @@ function drawEdges(edges,oldEdges=edges) {
                     else 
                     {
                         g.beginStroke("black");
+                        edges[i].color = "black";
                     } 
                     
                 }
@@ -306,12 +307,14 @@ function drawEdges(edges,oldEdges=edges) {
                     else 
                     {
                         g.beginStroke("black");
+                        edges[i].color = "black";
                     }     
                 }      
             }
             else
             {
                 g.beginStroke("black");
+                edges[i].color = "black";
             }
             
             if(edges[i].nodes[0].id == edges[i].nodes[1].id)

@@ -45,7 +45,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
             drawEdges(canvasGraph[currentCanvasId].edges);
 
             getNodeUsingId(v).parent = u;
-            
+
             drawTreeDFS();
 
             //highlight the newly visited node as visited
@@ -217,6 +217,7 @@ async function startDFS(waitUntilForwardClicked){
 
     //draw edges at the end so that the last selected edge isn't left colored as currently selected
     drawEdges(canvasGraph[currentCanvasId].edges);
+    drawTreeDFS();
 
     
 

@@ -59,6 +59,7 @@ function drawTreeDFS()
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = 0;
+            node.label = node.text;
             getLevel(node);
             currentVisGraph.nodes.push(node);
             console.log(currentVisGraph.nodes);

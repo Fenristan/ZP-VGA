@@ -270,8 +270,8 @@ async function startDFS(waitUntilForwardClicked){
         disableNodeInformationQuadrantIVisibility();
 
         drawEdges(canvasGraph[currentCanvasId].edges);
-        drawTreeDFS();
-
+        //drawTreeDFS();
+        destroy();
         stopFlag = false;
     }
 

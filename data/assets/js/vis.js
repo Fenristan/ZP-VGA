@@ -83,6 +83,7 @@ function drawTreeDFS()
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
 
+    //add all visited, completed and currently selected nodes to an array of nodes to be drawn
     for(node of canvasGraph[currentCanvasId].nodes)
     {
         //node = canvasGraph[currentCanvasId].nodes.slice(node.id,1);
@@ -96,49 +97,21 @@ function drawTreeDFS()
         }
     }
 
-    for(edge of canvasGraph[currentCanvasId].visitedEdges)
-    {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
-    }
+
+    //add all edges to the array of edges to be draw
     for(edge of canvasGraph[currentCanvasId].edges)
     {
-      if(!canvasGraph[currentCanvasId].visitedEdges.includes(edge))
+      if(canvasGraph[currentCanvasId].visitedEdges.includes(edge))
       {
-        
-        if(edge.nodes[0].timeDiscovered < edge.nodes[1].timeDiscovered)
-        {
-          if(isInTheSameTree(edge.nodes[1],edge.nodes[0]))
-          {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: edge.color });
-          }
-          else
-          {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: edge.color });
-          }
-          
-        }
-        else if(edge.nodes[0].timeDiscovered > edge.nodes[1].timeDiscovered)
-        {
-          if(isInTheSameTree(edge.nodes[0],edge.nodes[1]))
-          {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: edge.color });
-          }
-          else
-          {
-            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: edge.color });
-          }
-          
-        }
-        
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
+      }
+      else
+      {
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
       }
     }
-
+  
     var arrowsEnabled = canvases[currentCanvasId].directed;
-    /*if(canvases[currentCanvasId].directed == true)
-    {
-
-          currentVisGraph.edges.arrows.to.enabled = "enabled";
-    }*/
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);

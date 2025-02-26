@@ -207,6 +207,28 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
     return false
 }
 
+function getEdgeFromNodeToNode(nodeA, nodeB)
+{
+    for(edge of canvasGraph[currentCanvasId].edges)
+    {
+        if(currentCanvas.directed == true)
+        {
+            if((nodeA.id == edge.nodes[0].id)&&(nodeB.id == edge.nodes[1].id))
+            {
+                return edge;
+            }
+        }
+        else
+        {
+            if((nodeA.id == edge.nodes[0].id)&&(nodeB.id == edge.nodes[1].id)||(nodeA.id == edge.nodes[1].id)&&(nodeB.id == edge.nodes[0].id))
+            {
+                return edge;
+            }
+        }
+    }
+    
+}
+
 function drawEdges(edges,oldEdges=edges) {
     g = new createjs.Graphics();
     //g.clear();

@@ -1,5 +1,35 @@
 var nodes = [];
 var time;
+
+function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
+{
+    var edge = getEdgeFromNodeToNode(nodeA,nodeB);
+    if(nodeA.timeDiscovered < nodeB.timeDiscovered)
+    {
+        if(isInTheSameTree(nodeB,nodeA))
+        {
+            edge.label = "F";
+        }
+        else
+        {
+            edge.label = "C";
+        }
+        
+    }
+    else if(nodeA.timeDiscovered > nodeB.timeDiscovered)
+    {
+        if(isInTheSameTree(nodeA,nodeB))
+        {
+            edge.label = "B";
+        }
+        else
+        {
+            edge.label = "C";
+        }
+        
+    }
+}
+
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
 async function DFS_visit(u,waitUntilForwardClicked)
 {
@@ -71,9 +101,9 @@ async function DFS_visit(u,waitUntilForwardClicked)
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
             update=true;
             drawEdges(canvasGraph[currentCanvasId].edges);
-            
+            drawTreeDFS();
 
-            if(u.id != canvasGraph[currentCanvasId].startingNode.id && u.distance == null)
+            /*if(u.id != canvasGraph[currentCanvasId].startingNode.id && u.distance == null)
             {
                 getNodeUsingId(v).distance = null;
             }
@@ -81,30 +111,34 @@ async function DFS_visit(u,waitUntilForwardClicked)
             {
                 getNodeUsingId(v).distance = u.distance+1;
                 updateNodeInformationQuadrantIForNodeInCanvas(getNodeUsingId(v));
-            }
+            }*/
 
             
-            drawTreeDFS();
+            
             
             await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
 
             
             if(stopFlag != true)
-                {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                }
+            {
+                await waitUntilForwardClicked;
+                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+            }
             
             
         }
-        else
+        else //tady pak pridam paratenthesis
         {
+            console.log("ted udelam paranthesisis");
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[u.id]);
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[getNodeUsingId(v).id]);
+
+            doParenthesisForEdgeBetweenNodes(canvasGraph[currentCanvasId].selectedNodes[0],canvasGraph[currentCanvasId].selectedNodes[1]);
+
             drawEdges(canvasGraph[currentCanvasId].edges);
-            //update = true;
-            canvasGraph[currentCanvasId].visitedEdges.pop();
             drawTreeDFS();
+            canvasGraph[currentCanvasId].visitedEdges.pop();
+            
 
             
             if(stopFlag != true)
@@ -116,7 +150,7 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
             
             drawEdges(canvasGraph[currentCanvasId].edges);
-            
+            drawTreeDFS(); //I guess?
         }
         /*
         await waitUntilForwardClicked;
@@ -203,8 +237,8 @@ async function startDFS(waitUntilForwardClicked){
         }
     }
 
-    if(stopFlag == true)
-    {
+    //if(stopFlag == true)
+    //{
         canvasGraph[currentCanvasId].visitedEdges = [];
         for(var u of canvasGraph[currentCanvasId].nodes)
         {
@@ -213,11 +247,16 @@ async function startDFS(waitUntilForwardClicked){
             u.timeCompleted = null;
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
         }
+
+        for(var e of canvasGraph[currentCanvasId].edges)
+        {
+            e.label = "";
+        }
         
         clearNodeInformationQuadrantIText();
         disableNodeInformationQuadrantIVisibility();
         stopFlag = false;
-    }
+    //}
 
     //draw edges at the end so that the last selected edge isn't left colored as currently selected
     drawEdges(canvasGraph[currentCanvasId].edges);

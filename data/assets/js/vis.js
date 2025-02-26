@@ -43,7 +43,37 @@ function getLevel(node)
     node.level = level;
     return;
   }
-  
+}
+
+function searchParents(currentNode, lookingForNode)
+{
+  console.log("I am currently in node: "+currentNode.id+" and I am looking for: "+ lookingForNode.id);
+  if(currentNode.parent == null)
+  {
+    return false;
+  }
+  else if(currentNode.parent == lookingForNode)
+  {
+    console.log("The parent I am looking for");
+    return true;
+  }
+  else
+  {
+    return searchParents(currentNode.parent, lookingForNode);
+  }
+}
+
+function isInTheSameTree(startingNode, lookingForNode)
+{
+  if(startingNode.parent != null)
+  {
+    return searchParents(startingNode,lookingForNode);
+  }
+  else
+  {
+    return false;
+  }
+
 }
 
 function drawTreeDFS()
@@ -74,13 +104,30 @@ function drawTreeDFS()
     {
       if(!canvasGraph[currentCanvasId].visitedEdges.includes(edge))
       {
+        
         if(edge.nodes[0].timeDiscovered < edge.nodes[1].timeDiscovered)
         {
-          currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: "black" });
+          if(isInTheSameTree(edge.nodes[1],edge.nodes[0]))
+          {
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "F", color: "black" });
+          }
+          else
+          {
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: "black" });
+          }
+          
         }
         else if(edge.nodes[0].timeDiscovered > edge.nodes[1].timeDiscovered)
         {
-          currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: "black" });
+          if(isInTheSameTree(edge.nodes[0],edge.nodes[1]))
+          {
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "B", color: "black" });
+          }
+          else
+          {
+            currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: "C", color: "black" });
+          }
+          
         }
         
       }

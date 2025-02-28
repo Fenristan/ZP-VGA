@@ -140,6 +140,7 @@ for(var StartButton of StartButtons)
         if(currentCanvasId == 0)
         {
             toggleNodeInformationQuadrantIVisibility();
+            showCurrentVisNetwork();
             startDFS(createClickListenerPromise(CurrentStepForwardButton));
         }
         else if(currentCanvasId == 1)
@@ -270,4 +271,17 @@ canvasContainers.forEach(function (canvasContainer){
     setFunctionToCheckboxWeighted(checkboxWeighted);
 });
 
+function showCurrentVisNetwork()
+{
+    var visNetwork = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    visNetwork.classList.remove('hidden');
+    visNetwork.classList.add('visNetwork');
 
+}
+
+function hideCurrentVisNetwork()
+{
+    var visNetwork = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    visNetwork.classList.remove('visNetwork');
+    visNetwork.classList.add('hidden');
+}

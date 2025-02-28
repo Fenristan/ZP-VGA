@@ -380,3 +380,7 @@ body.embedded {
   height: 400px;
   background-color: white;
 }
+
+.hidden{
+  display:none;
+}

@@ -221,6 +221,8 @@ async function startDFS(waitUntilForwardClicked){
     //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
 
     time = 0;
+
+    drawTreeDFS();
     
     for (var u of nodes) {
         if(u.color == "BLUE")

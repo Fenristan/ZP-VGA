@@ -126,6 +126,9 @@ function drawTreeDFS()
             type: "cubicBezier",
             forceDirection: "vertical",
             roundness: 0.4,
+            /*type: "curvedCW",
+            forceDirection: "vertical",
+            roundness: -2.1,*/
         },
         arrows: {
           to: {
@@ -136,10 +139,14 @@ function drawTreeDFS()
         },
         layout: {
         hierarchical: {
-            direction: "UD",
+            direction: "UD"
         },
         },
-        physics: false,
+        physics: { //physics:false
+          "hierarchicalRepulsion": {
+            "avoidOverlap": 1
+          },
+        }
     };
     network = new vis.Network(container, data, options);
 }

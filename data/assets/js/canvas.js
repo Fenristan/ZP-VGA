@@ -146,6 +146,7 @@ for(var StartButton of StartButtons)
         else if(currentCanvasId == 1)
         {
             toggleNodeInformationQuadrantIVisibility();
+            showCurrentVisNetwork();
             startBFS(createClickListenerPromise(CurrentStepForwardButton));
         }
         

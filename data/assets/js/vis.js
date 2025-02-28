@@ -1,19 +1,23 @@
 //import * as vis from "./lib/vis-network.min.js";
 
 visGraphs = [];
+visNetworks = [];
+
+var currentVisNetwork = null;
 
 for(let i = 0; i < canvases.length; i++)
 {
     visGraphs.push({ nodes: [], edges: []});
+    visNetworks.push(null);
 }
 
-var network = null;
+//var network = null;
 //var directionInput = document.getElementById("direction");
 
 function destroy() {
-  if (network !== null) {
-    network.destroy();
-    network = null;
+  if (currentVisNetwork !== null) {
+    currentVisNetwork.destroy();
+    currentVisNetwork = null;
   }
 }
 
@@ -73,12 +77,12 @@ function isInTheSameTree(startingNode, lookingForNode)
   {
     return false;
   }
-
 }
 
 function drawTreeDFS()
 {
     currentVisGraph = visGraphs[currentCanvasId];
+    currentVisNetwork = visNetworks[currentCanvasId];
     destroy();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
@@ -148,78 +152,82 @@ function drawTreeDFS()
           },
         }
     };
-    network = new vis.Network(container, data, options);
+    currentVisNetwork = new vis.Network(container, data, options);
 }
 
-function draw() {
-  currentVisGraph = visGraphs[currentCanvasId];
-  destroy();
-  currentVisGraph.nodes = [];
-  currentVisGraph.edges = [];
-  var connectionCount = [];
+function drawTreeBFS()
+{
+    currentVisGraph = visGraphs[currentCanvasId];
+    destroy();
+    currentVisGraph.nodes = [];
+    currentVisGraph.edges = [];
 
-  // randomly create some nodes and edges
-  for (var i = 0; i < 15; i++) {
-    currentVisGraph.nodes.push({ id: i, label: String(i) });
-  }
-  currentVisGraph.edges.push({ from: 0, to: 1 });
-  currentVisGraph.edges.push({ from: 0, to: 6 });
-  currentVisGraph.edges.push({ from: 0, to: 13 });
-  currentVisGraph.edges.push({ from: 0, to: 11 });
-  currentVisGraph.edges.push({ from: 1, to: 2 });
-  currentVisGraph.edges.push({ from: 2, to: 3 });
-  currentVisGraph.edges.push({ from: 2, to: 4 });
-  currentVisGraph.edges.push({ from: 3, to: 5 });
-  currentVisGraph.edges.push({ from: 1, to: 10 });
-  currentVisGraph.edges.push({ from: 1, to: 7 });
-  currentVisGraph.edges.push({ from: 2, to: 8 });
-  currentVisGraph.edges.push({ from: 2, to: 9 });
-  currentVisGraph.edges.push({ from: 3, to: 14 });
-  currentVisGraph.edges.push({ from: 1, to: 12 });
-  currentVisGraph.nodes[0]["level"] = 0;
-  currentVisGraph.nodes[1]["level"] = 1;
-  currentVisGraph.nodes[2]["level"] = 3;
-  currentVisGraph.nodes[3]["level"] = 4;
-  currentVisGraph.nodes[4]["level"] = 4;
-  currentVisGraph.nodes[5]["level"] = 5;
-  currentVisGraph.nodes[6]["level"] = 1;
-  currentVisGraph.nodes[7]["level"] = 2;
-  currentVisGraph.nodes[8]["level"] = 4;
-  currentVisGraph.nodes[9]["level"] = 4;
-  currentVisGraph.nodes[10]["level"] = 2;
-  currentVisGraph.nodes[11]["level"] = 1;
-  currentVisGraph.nodes[12]["level"] = 2;
-  currentVisGraph.nodes[13]["level"] = 1;
-  currentVisGraph.nodes[14]["level"] = 5;
+    //add all visited, completed and currently selected nodes to an array of nodes to be drawn
+    for(node of canvasGraph[currentCanvasId].nodes)
+    {
+        //node = canvasGraph[currentCanvasId].nodes.slice(node.id,1);
+        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        {
+            node.level = 0;
+            node.label = node.text;
+            getLevel(node);
+            currentVisGraph.nodes.push(node);
+            console.log(currentVisGraph.nodes);
+        }
+    }
 
-  // create a network
-  var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
-  var data = {
-    nodes: currentVisGraph.nodes,
-    edges: currentVisGraph.edges,
-  };
 
-  var options = {
-    edges: {
-      smooth: {
-        type: "cubicBezier",
-        forceDirection: "vertical",
-        roundness: 0.4,
-      },
-    },
-    layout: {
-      hierarchical: {
-        direction: "UD",
-      },
-    },
-    physics: false,
-  };
-  network = new vis.Network(container, data, options);
+    //add all edges to the array of edges to be drawn
+    for(edge of canvasGraph[currentCanvasId].edges)
+    {
+      if(canvasGraph[currentCanvasId].visitedEdges.includes(edge))
+      {
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color, width: 3 });
+      }
+      else
+      {
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: "black", width: 0.8 });
+      }
+    }
+  
+    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
+    // create a network
+    var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    var data = {
+        nodes: currentVisGraph.nodes,
+        edges: currentVisGraph.edges,
+    };
 
-  /*network.on("select", function (params) {
-    document.getElementById("selection").innerText =
-      "Selection: " + params.nodes;
-  });*/
+    var options = {
+        edges: {
+        smooth: {
+            type: "cubicBezier",
+            forceDirection: "vertical",
+            roundness: 0.2,
+            /*type: "curvedCW",
+            forceDirection: "vertical",
+            roundness: -2.1,*/
+        },
+        arrows: {
+          to: {
+            enabled: arrowsEnabled,
+            type: "arrow"
+          },
+        }
+        },
+        layout: {
+        hierarchical: {
+            direction: "UD"
+        },
+        },
+        physics: { //physics:false
+          "hierarchicalRepulsion": {
+            "avoidOverlap": 1
+          },
+        }
+    };
+    currentVisNetwork = new vis.Network(container, data, options);
 }
 
 /*var directionInput = document.getElementById("direction");

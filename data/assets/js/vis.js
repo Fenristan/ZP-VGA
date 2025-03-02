@@ -14,9 +14,9 @@ for(let i = 0; i < canvases.length; i++)
 //var network = null;
 //var directionInput = document.getElementById("direction");
 
-function destroy() {
+function destroyCurrentVisNetwork() {
   if (currentVisNetwork !== null) {
-    currentVisNetwork.destroy();
+    currentVisNetwork.destroyCurrentVisNetwork();
     currentVisNetwork = null;
   }
 }
@@ -83,7 +83,7 @@ function drawTreeDFS()
 {
     currentVisGraph = visGraphs[currentCanvasId];
     currentVisNetwork = visNetworks[currentCanvasId];
-    destroy();
+    destroyCurrentVisNetwork();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
 
@@ -129,7 +129,8 @@ function drawTreeDFS()
         smooth: {
             type: "cubicBezier",
             forceDirection: "vertical",
-            roundness: 0.4,
+            //roundness: 0.4,
+            roundness: 0.0,
             /*type: "curvedCW",
             forceDirection: "vertical",
             roundness: -2.1,*/
@@ -158,7 +159,7 @@ function drawTreeDFS()
 function drawTreeBFS()
 {
     currentVisGraph = visGraphs[currentCanvasId];
-    destroy();
+    destroyCurrentVisNetwork();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
 
@@ -168,9 +169,9 @@ function drawTreeBFS()
         //node = canvasGraph[currentCanvasId].nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
-            node.level = 0;
+            node.level = node.distance;
             node.label = node.text;
-            getLevel(node);
+            //getLevel(node);
             currentVisGraph.nodes.push(node);
             console.log(currentVisGraph.nodes);
         }
@@ -204,7 +205,8 @@ function drawTreeBFS()
         smooth: {
             type: "cubicBezier",
             forceDirection: "vertical",
-            roundness: 0.2,
+            roundness: 0.0,
+
             /*type: "curvedCW",
             forceDirection: "vertical",
             roundness: -2.1,*/

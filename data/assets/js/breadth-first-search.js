@@ -38,7 +38,9 @@ async function startBFS(waitUntilForwardClicked){
         drawEdges(canvasGraph[currentCanvasId].edges);
         drawTreeBFS();
 
+        u.color = "RED";
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
+        
         update=true;
         drawTreeBFS();
 
@@ -52,22 +54,20 @@ async function startBFS(waitUntilForwardClicked){
             var v =  getNodeUsingId(vId);
 
             if (v.color == "BLUE") {
-                u.color = "RED";
+                //u.color = "RED";
                 v.color = "PURPLE";
+                containers[currentCanvasId].getChildByName("bmpNode_"+v.id).image=visitedNodeImage;
                 v.distance = u.distance + 1;
                 console.log("distance "+v.id+" je: " + v.distance)
                 updateNodeInformationQuadrantIForNodeInCanvas(v);
                 v.parent = u;
                 queue.push(v);
-
-                containers[currentCanvasId].getChildByName("bmpNode_"+v.id).image=visitedNodeImage;
-                update = true;
-                drawTreeBFS();
+                
+                //update = true;
+                //drawTreeBFS();
 
                 canvasGraph[currentCanvasId].selectedNodes.push(u);
                 canvasGraph[currentCanvasId].selectedNodes.push(v);
-                
-                //g.clear;
                 drawEdges(canvasGraph[currentCanvasId].edges);
                 drawTreeBFS();
                 //u.color = "PURPLE";
@@ -105,12 +105,14 @@ async function startBFS(waitUntilForwardClicked){
         }
         disableNodeInformationQuadrantIVisibility();
 
-        destroy();
+
+        drawEdges(canvasGraph[currentCanvasId].edges);
+        destroyCurrentVisNetwork();
 
         stopFlag = false;
     }        
 
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    
 
     //console.log(path);
 

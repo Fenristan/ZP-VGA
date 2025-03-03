@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title></title>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
     
     <script src="./assets/js/animation.js" defer></script>
@@ -14,9 +15,11 @@
     <script src="./assets/js/canvas.js" defer></script>
     <script src="./assets/js/save-load-instance.js" defer></script>
     <script src="./assets/js/vis.js" defer></script>
+    <script src="./assets/js/grid.js" defer></script>
     
     <script src="./lib/vis-network.min.js"></script>
     <script src="./lib/easeljs-NEXT.js"></script>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
 </head>
 
@@ -94,7 +97,7 @@
                                         <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
                                     </div>
                                     <div class="cell2">
-                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                        <input type="checkbox" id="checkboxWeighted" autocomplete="off">
                                     </div>
                                     <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
                                     <div class="cell3">Directed</div>
@@ -107,7 +110,7 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas0" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas0" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -135,7 +138,7 @@
                                         <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
                                     </div>
                                     <div class="cell2">
-                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                        <input type="checkbox" id="checkboxWeighted" autocomplete="off">
                                     </div>
                                     <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
                                     <div class="cell3">Directed</div>
@@ -148,7 +151,10 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas1" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas1" class="sidebar">
+                        <div id = "sidebarVisitedGridCanvas1" style = "width: 50%;"></div>
+                        <div id = "sidebarParentGridCanvas1" style = "width: 50%;"></div>
+                    </div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -188,7 +194,7 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas2" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -228,7 +234,7 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas3" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -268,7 +274,7 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas4" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas4" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -308,7 +314,7 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="960" height="400"></canvas>
                     </div>
-                    <div class="sidebar"></div>
+                    <div id="sidebarCanvas5" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>

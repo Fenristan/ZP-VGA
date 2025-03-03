@@ -378,7 +378,7 @@ function drawEdges(edges,oldEdges=edges) {
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = mp_x;
                 edgeWeightDom.y = mp_y;
-                containers[currentCanvasId].addChild(edgeWeightDom);
+                
 
             }
             //if multigraph, do bezier
@@ -430,7 +430,7 @@ function drawEdges(edges,oldEdges=edges) {
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = cp_x;
                 edgeWeightDom.y = cp_y;
-                containers[currentCanvasId].addChild(edgeWeightDom);
+                
 
             }
             else //draw a regular edge
@@ -453,14 +453,15 @@ function drawEdges(edges,oldEdges=edges) {
                 console.log("moving: "+"edgeWeight_"+edges[i].id)
                 console.log(edgeWeightDom)
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                //if(edgeWeightDom!=null)
-                //{
-                    edgeWeightDom.x = mp_x;
-                    edgeWeightDom.y = mp_y;
-                    containers[currentCanvasId].addChild(edgeWeightDom);
-                //}
+                edgeWeightDom.x = mp_x;
+                edgeWeightDom.y = mp_y;
+                    
                 
             }
+
+            //set visibility of weighted edges
+            edgeWeightDom.visible = canvases[currentCanvasId].weighted;
+            containers[currentCanvasId].addChild(edgeWeightDom);
             
             //if directed, draw arrows
             if(currentCanvas.directed == true)
@@ -935,10 +936,8 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
 
 function toggleWeightedEdgesVisibility()
 {
-    canvasGraph[currentCanvasId].edges.forEach(edge => {
-        containers[currentCanvasId].getChildByName("edgeWeight_"+edge.id).visible ^= true;
-    });
-    //update=true;
+    canvases[currentCanvasId].visible ^= true;
+    drawEdges(canvasGraph[currentCanvasId].edges);
 }
 
 function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {

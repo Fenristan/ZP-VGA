@@ -1,5 +1,4 @@
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
-
 async function startBFS(waitUntilForwardClicked){
     var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
     var adjacencyList = [];

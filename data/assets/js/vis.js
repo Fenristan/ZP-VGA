@@ -16,7 +16,7 @@ for(let i = 0; i < canvases.length; i++)
 
 function destroyCurrentVisNetwork() {
   if (currentVisNetwork !== null) {
-    currentVisNetwork.destroyCurrentVisNetwork();
+    currentVisNetwork.destroy();
     currentVisNetwork = null;
   }
 }
@@ -230,6 +230,7 @@ function drawTreeBFS()
         }
     };
     currentVisNetwork = new vis.Network(container, data, options);
+    renderBFSGrid();
 }
 
 /*var directionInput = document.getElementById("direction");

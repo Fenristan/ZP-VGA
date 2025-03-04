@@ -108,6 +108,7 @@ async function startBFS(waitUntilForwardClicked){
 
         drawEdges(canvasGraph[currentCanvasId].edges);
         destroyCurrentVisNetwork();
+        clearBFSGrid();
 
         stopFlag = false;
     }        

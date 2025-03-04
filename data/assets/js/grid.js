@@ -147,3 +147,29 @@ function renderDFSGrid()
     }
     
 }
+
+function clearBFSGrid()
+{
+    grids[currentCanvasId][0].updateConfig({
+        data:[]
+    });
+    grids[currentCanvasId][1].updateConfig({
+        data:[]
+    });
+
+    grids[currentCanvasId][0].forceRender();
+    grids[currentCanvasId][1].forceRender();
+}
+
+function clearDFSGrid()
+{
+    grids[currentCanvasId][0].updateConfig({
+        data:[]
+    });
+    grids[currentCanvasId][1].updateConfig({
+        data:[]
+    });
+
+    grids[currentCanvasId][0].forceRender();
+    grids[currentCanvasId][1].forceRender();
+}

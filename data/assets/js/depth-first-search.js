@@ -274,6 +274,7 @@ async function startDFS(waitUntilForwardClicked){
         drawEdges(canvasGraph[currentCanvasId].edges);
         //drawTreeDFS();
         destroyCurrentVisNetwork();
+        clearDFSGrid();
         stopFlag = false;
     }
 

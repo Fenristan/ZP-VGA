@@ -8,6 +8,71 @@ for(canvas in canvases)
 function renderBFSGrid()
 {
     var gridVisitedData = [];
+    var gridQueueData = [];
+
+    for(var u of canvasGraph[currentCanvasId].nodes)
+    {
+        if(u.color == "BLUE")
+        {
+            gridVisitedData.push([u.text,"F"]);
+        }
+        else
+        {
+            gridVisitedData.push([u.text,"T"]);
+        }
+    }
+
+    for(var u of queue)
+    {
+        gridQueueData.push([u.text]);
+    }
+
+    if(grids[currentCanvasId] == null)
+    {
+        grids[currentCanvasId] = [];
+
+        var newVisitedGrid = new gridjs.Grid({
+            columns: [
+                { 
+                  name: 'Visited',
+                  columns: [{
+                    name: 'Name'
+                  }, {
+                    name: 'Visited'
+                  }]
+                },
+            ],
+            data: gridVisitedData
+        }).render(document.getElementById("sidebarVisitedGridCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(newVisitedGrid);
+
+        var newQueueGrid = new gridjs.Grid({
+            columns: ['Queue'],
+            data: gridQueueData
+        }).render(document.getElementById("sidebarQueueGridCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(newQueueGrid);
+    }
+    else
+    {
+        // BFS has two grids
+        grids[currentCanvasId][0].updateConfig({
+            data:gridVisitedData
+        });
+        grids[currentCanvasId][1].updateConfig({
+            data:gridQueueData
+        });
+
+        grids[currentCanvasId][0].forceRender();
+        grids[currentCanvasId][1].forceRender();
+    }
+    
+}
+
+function renderDFSGrid()
+{
+    var gridVisitedData = [];
     var gridParentData = [];
 
     for(var u of canvasGraph[currentCanvasId].nodes)

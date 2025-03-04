@@ -323,11 +323,12 @@ body.embedded {
 
 .sidebar {
 	width: 100%;
-	background: white;
+	/*background: white;*/
   height:100%;
 	margin-left: 20px;
   display:flex;
   /*min-height: 490px;*/
+  max-height: 490px;
 }
 
 

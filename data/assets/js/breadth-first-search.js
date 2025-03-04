@@ -1,3 +1,5 @@
+var queue = [];
+
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
 async function startBFS(waitUntilForwardClicked){
     var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
@@ -24,7 +26,6 @@ async function startBFS(waitUntilForwardClicked){
     updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
     //canvasGraph[currentCanvasId].startingNode.parent = null;
 
-    var queue = [];
     queue.push(canvasGraph[currentCanvasId].startingNode);
 
     drawTreeBFS();
@@ -32,7 +33,7 @@ async function startBFS(waitUntilForwardClicked){
     while (queue.length > 0) {
         
         var u = queue.shift();
-
+        
         //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
         drawEdges(canvasGraph[currentCanvasId].edges);
         drawTreeBFS();

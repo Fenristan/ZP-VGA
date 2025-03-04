@@ -154,6 +154,7 @@ function drawTreeDFS()
         }
     };
     currentVisNetwork = new vis.Network(container, data, options);
+    renderDFSGrid();
 }
 
 function drawTreeBFS()

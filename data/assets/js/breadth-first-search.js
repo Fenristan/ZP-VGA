@@ -4,40 +4,27 @@ async function startBFS(waitUntilForwardClicked,startFromStep=-1)
 {
     var result = await BFS(waitUntilForwardClicked,startFromStep)
     console.log("result je: "+result);
+
+    canvasGraph[currentCanvasId].visitedEdges = [];
+    canvasGraph[currentCanvasId].selectedNodes = [];
+    queue = [];
+    for(var node of canvasGraph[currentCanvasId].nodes)
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+    }
+
+    drawEdges(canvasGraph[currentCanvasId].edges);
+    destroyCurrentVisNetwork();
+    clearBFSGrid();
  
     if(result == 0)
     {
         console.log("BFS has been stopped or restarted");
-
-        canvasGraph[currentCanvasId].visitedEdges = [];
-        canvasGraph[currentCanvasId].selectedNodes = [];
-        queue = [];
-        for(var node of canvasGraph[currentCanvasId].nodes)
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        }
         disableNodeInformationQuadrantIVisibility();
-
-
-        drawEdges(canvasGraph[currentCanvasId].edges);
-        destroyCurrentVisNetwork();
-        clearBFSGrid();
     }
     else
     {
         console.log("Returning one step back, to step number: "+result);
-
-        canvasGraph[currentCanvasId].visitedEdges = [];
-        canvasGraph[currentCanvasId].selectedNodes = [];
-        queue = [];
-        for(var node of canvasGraph[currentCanvasId].nodes)
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        }
-        drawEdges(canvasGraph[currentCanvasId].edges);
-        destroyCurrentVisNetwork();
-        clearBFSGrid();
-
         await startBFS(waitUntilForwardClicked,result-3);
     }
     

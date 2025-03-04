@@ -1,5 +1,6 @@
 var nodes = [];
 var time;
+var stepCounter = 0;
 
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 {
@@ -31,7 +32,7 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
-async function DFS_visit(u,waitUntilForwardClicked)
+async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
 {
     //console.log("printing u.id: "+u.id);
 
@@ -44,10 +45,28 @@ async function DFS_visit(u,waitUntilForwardClicked)
     update=true;
     drawTreeDFS();
 
-    if(stopFlag != true)
+    if(stepCounter > startFromStep)
     {
-        await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+        if(stopFlag != true)
+        {
+            await waitUntilForwardClicked;
+            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+            stepCounter++;
+        }
+        else
+        {
+            if(stepBackwardsFlag == true)
+            {
+                stopFlag = false;
+                stepBackwardsFlag = false;
+                return stepCounter-1;
+            }
+            return 0;
+        }
+    }
+    else
+    {
+        stepCounter++;
     }
     
     
@@ -89,11 +108,29 @@ async function DFS_visit(u,waitUntilForwardClicked)
 
             //wait for the next step
             
-            if(stopFlag != true)
+            if(stepCounter > startFromStep)
+            {
+                if(stopFlag != true)
                 {
                     await waitUntilForwardClicked;
                     waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    stepCounter++;
                 }
+                else
+                {
+                    if(stepBackwardsFlag == true)
+                    {
+                        stopFlag = false;
+                        stepBackwardsFlag = false;
+                        return stepCounter-1;
+                    }
+                    return 0;
+                }
+            }
+            else
+            {
+                stepCounter++;
+            }
             
 
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
@@ -116,20 +153,46 @@ async function DFS_visit(u,waitUntilForwardClicked)
             
             
             
-            await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked);
-
-            
-            if(stopFlag != true)
+            var result = await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked,startFromStep);
+            if(result == 0)
             {
-                await waitUntilForwardClicked;
-                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                console.log("DFS has been stopped or restarted");
+                return result;
+            }
+            else if(result > 0)
+            {
+                console.log("going back to previous step");
+                return result;
+            }
+            
+            if(stepCounter > startFromStep)
+            {
+                if(stopFlag != true)
+                {
+                    await waitUntilForwardClicked;
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    stepCounter++;
+                }
+                else
+                {
+                    if(stepBackwardsFlag == true)
+                    {
+                        stopFlag = false;
+                        stepBackwardsFlag = false;
+                        return stepCounter-1;
+                    }
+                    return 0;
+                }
+            }
+            else
+            {
+                stepCounter++;
             }
             
             
         }
-        else //tady pak pridam paratenthesis
+        else 
         {
-            console.log("ted udelam paranthesisis");
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[u.id]);
             canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[getNodeUsingId(v).id]);
 
@@ -141,16 +204,33 @@ async function DFS_visit(u,waitUntilForwardClicked)
             
 
             
-            if(stopFlag != true)
+            if(stepCounter > startFromStep)
             {
-                await waitUntilForwardClicked;
-                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                if(stopFlag != true)
+                {
+                    await waitUntilForwardClicked;
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    stepCounter++;
+                }
+                else
+                {
+                    if(stepBackwardsFlag == true)
+                    {
+                        stopFlag = false;
+                        stepBackwardsFlag = false;
+                        return stepCounter-1;
+                    }
+                    return 0;
+                }
+            }
+            else
+            {
+                stepCounter++;
             }
             
 
-            
             drawEdges(canvasGraph[currentCanvasId].edges);
-            drawTreeDFS(); //I guess?
+            drawTreeDFS();
         }
         /*
         await waitUntilForwardClicked;
@@ -169,16 +249,36 @@ async function DFS_visit(u,waitUntilForwardClicked)
     updateNodeInformationQuadrantIForNodeInCanvas(u);
 
     
-    if(stopFlag != true)
+    if(stepCounter > startFromStep)
     {
-        await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+        if(stopFlag != true)
+        {
+            await waitUntilForwardClicked;
+            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+            stepCounter++;
+        }
+        else
+        {
+            if(stepBackwardsFlag == true)
+            {
+                stopFlag = false;
+                stepBackwardsFlag = false;
+                return stepCounter-1;
+            }
+            return 0;
+        }
+    }
+    else
+    {
+        stepCounter++;
     }
     
     
 }
 
-async function startDFS(waitUntilForwardClicked){
+async function startDFS(waitUntilForwardClicked,startFromStep=-1){
+    //stepCounter = 0;
+
     nodes = canvasGraph[currentCanvasId].nodes.slice();
     //var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
     //spliced.reverse().forEach((node) => nodes.unshift(node));
@@ -223,19 +323,74 @@ async function startDFS(waitUntilForwardClicked){
     time = 0;
 
     drawTreeDFS();
-    
+
     for (var u of nodes) {
         if(u.color == "BLUE")
         {
             
-            if(stopFlag != true)
+            if(stepCounter > startFromStep)
             {
-                await waitUntilForwardClicked;
-                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                if(stopFlag != true)
+                {
+                    await waitUntilForwardClicked;
+                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    stepCounter++;
+                }
+                else
+                {
+                    if(stepBackwardsFlag == true)
+                    {
+                        stopFlag = false;
+                        stepBackwardsFlag = false;
+                        return stepCounter-1;
+                    }
+                    return 0;
+                }
+            }
+            else
+            {
+                stepCounter++;
             }
             
+            var result = await DFS_visit(u,waitUntilForwardClicked,startFromStep);
 
-            await DFS_visit(u,waitUntilForwardClicked);
+            if(result == 0)
+            {
+                console.log("DFS has been stopped or restarted");
+
+                console.log("result je: "+result);
+                canvasGraph[currentCanvasId].visitedEdges = [];
+                canvasGraph[currentCanvasId].selectedNodes = [];
+                for(var node of canvasGraph[currentCanvasId].nodes)
+                {
+                    containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+                }
+
+                drawEdges(canvasGraph[currentCanvasId].edges);
+                destroyCurrentVisNetwork();
+                clearBFSGrid();
+
+                disableNodeInformationQuadrantIVisibility();
+            }
+            else if (result > 0)
+            {
+                console.log("Returning one step back, to step number: "+result-3);
+                canvasGraph[currentCanvasId].visitedEdges = [];
+                canvasGraph[currentCanvasId].selectedNodes = [];
+
+                for(var node of canvasGraph[currentCanvasId].nodes)
+                {
+                    containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+                }
+
+                drawEdges(canvasGraph[currentCanvasId].edges);
+                destroyCurrentVisNetwork();
+                clearBFSGrid();
+
+                stepCounter = 0;
+                await startDFS(waitUntilForwardClicked,result-4);
+            }
+
         }
     }
 
@@ -243,39 +398,22 @@ async function startDFS(waitUntilForwardClicked){
     drawEdges(canvasGraph[currentCanvasId].edges);
     drawTreeDFS();
 
-    console.log("waiting for Restart button");
-    //this DFS has finished, await till it is restarted
     if(stopFlag != true)
     {
         await createClickListenerPromise(CurrentRestartButton);
         console.log("Restart button pressed");
-    }
-    
-    if(stopFlag == true)
-    {
-        console.log("ending this DFS and cleaning up");
-        canvasGraph[currentCanvasId].visitedEdges = [];
-        for(var u of canvasGraph[currentCanvasId].nodes)
-        {
-            u.color = "BLUE";
-            u.timeDiscovered = null;
-            u.timeCompleted = null;
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
-        }
-
-        for(var e of canvasGraph[currentCanvasId].edges)
-        {
-            e.label = "";
-        }
-        
-        clearNodeInformationQuadrantIText();
-        disableNodeInformationQuadrantIVisibility();
-
-        drawEdges(canvasGraph[currentCanvasId].edges);
-        //drawTreeDFS();
-        destroyCurrentVisNetwork();
-        clearDFSGrid();
         stopFlag = false;
+        return 0;
+    }
+    else
+    {
+        if(stepBackwardsFlag == true)
+        {
+            stopFlag = false;
+            stepBackwardsFlag = false;
+            return stepCounter-1;
+        }
+        return 0;
     }
 
     

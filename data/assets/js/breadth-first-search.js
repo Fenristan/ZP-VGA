@@ -1,7 +1,53 @@
 var queue = [];
 
+async function startBFS(waitUntilForwardClicked,startFromStep=-1)
+{
+    var result = await BFS(waitUntilForwardClicked,startFromStep)
+    console.log("result je: "+result);
+ 
+    if(result == 0)
+    {
+        console.log("BFS has been stopped or restarted");
+
+        canvasGraph[currentCanvasId].visitedEdges = [];
+        canvasGraph[currentCanvasId].selectedNodes = [];
+        queue = [];
+        for(var node of canvasGraph[currentCanvasId].nodes)
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        }
+        disableNodeInformationQuadrantIVisibility();
+
+
+        drawEdges(canvasGraph[currentCanvasId].edges);
+        destroyCurrentVisNetwork();
+        clearBFSGrid();
+    }
+    else
+    {
+        console.log("Returning one step back, to step number: "+result);
+
+        canvasGraph[currentCanvasId].visitedEdges = [];
+        canvasGraph[currentCanvasId].selectedNodes = [];
+        queue = [];
+        for(var node of canvasGraph[currentCanvasId].nodes)
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        }
+        drawEdges(canvasGraph[currentCanvasId].edges);
+        destroyCurrentVisNetwork();
+        clearBFSGrid();
+
+        await startBFS(waitUntilForwardClicked,result-3);
+    }
+    
+
+}
+
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
-async function startBFS(waitUntilForwardClicked){
+async function BFS(waitUntilForwardClicked, startFromStep=-1){
+    console.log("startFromStep je: "+ startFromStep);
+    var stepCounter = 0;
     var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
     var adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
@@ -18,7 +64,7 @@ async function startBFS(waitUntilForwardClicked){
         u.color = "BLUE";
         u.distance = "∞";
         u.parent = null;
-        //updateNodeInformationQuadrantIForNodeInCanvas(u);
+        updateNodeInformationQuadrantIForNodeInCanvas(u);
     }
 
     canvasGraph[currentCanvasId].startingNode.color = "PURPLE";
@@ -44,10 +90,28 @@ async function startBFS(waitUntilForwardClicked){
         update=true;
         drawTreeBFS();
 
-        if(stopFlag != true)
+        if(stepCounter > startFromStep)
         {
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+            if(stopFlag != true)
+            {
+                await waitUntilForwardClicked;
+                waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                stepCounter++;
+            }
+            else
+            {
+                if(stepBackwardsFlag == true)
+                {
+                    stopFlag = false;
+                    stepBackwardsFlag = false;
+                    return stepCounter-1;
+                }
+                return 0;
+            }
+        }
+        else
+        {
+            stepCounter++;
         }
 
         for (var vId of adjacencyList[u.id]) {
@@ -73,10 +137,28 @@ async function startBFS(waitUntilForwardClicked){
                 //u.color = "PURPLE";
                 //drawTreeBFS();
 
-                if(stopFlag != true)
+                if(stepCounter > startFromStep)
                 {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    if(stopFlag != true)
+                    {
+                        await waitUntilForwardClicked;
+                        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                        stepCounter++;
+                    }
+                    else
+                    {
+                        if(stepBackwardsFlag == true)
+                        {
+                            stopFlag = false;
+                            stepBackwardsFlag = false;
+                            return stepCounter-1;
+                        }
+                        return 0;
+                    }
+                }
+                else
+                {
+                    stepCounter++;
                 }
                 drawTreeBFS();
                 
@@ -94,24 +176,25 @@ async function startBFS(waitUntilForwardClicked){
     {
         await createClickListenerPromise(CurrentRestartButton);
         console.log("Restart button pressed");
+        stopFlag = false;
+        return 0;
+    }
+    else
+    {
+        if(stepBackwardsFlag == true)
+        {
+            stopFlag = false;
+            stepBackwardsFlag = false;
+            return stepCounter-1;
+        }
+        return 0;
     }
         
     if(stopFlag == true)
     {
-        canvasGraph[currentCanvasId].visitedEdges = [];
-        for(var node of canvasGraph[currentCanvasId].nodes)
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        }
-        disableNodeInformationQuadrantIVisibility();
-
-
-        drawEdges(canvasGraph[currentCanvasId].edges);
-        destroyCurrentVisNetwork();
-        clearBFSGrid();
-
         stopFlag = false;
-    }        
+        return 0;
+    }      
 
     
 

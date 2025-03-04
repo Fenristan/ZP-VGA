@@ -88,10 +88,12 @@ const file = document.getElementById("file");
 const RestartButtons = document.getElementsByClassName("restart");
 const StartButtons = document.getElementsByClassName("start");
 const StepForwardButtons = document.getElementsByClassName("stepforward");
+const StepBackwardsButtons = document.getElementsByClassName("stepback");
 
 var CurrentRestartButton = null;
 var CurrentStartButton = null;
 var CurrentStepForwardButton = null;
+var CurrentStepBackwardsButton = null;
 
 
 
@@ -126,6 +128,7 @@ for(var StartButton of StartButtons)
     StartButton.addEventListener("click", function(){
 
         CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
+        CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
 
         // after the start simulation button has been clicked, each node is assigned it's given name (text)
         canvasGraph[currentCanvasId].nodes.forEach(node => {
@@ -161,14 +164,24 @@ for(var RestartButton of RestartButtons)
         CurrentStepForwardButton.click();
     
         //if there wasn't a running simulation (it could have already finished), then we need to return the graph to it's original form
-        canvasGraph[currentCanvasId].visitedEdges = [];
+        /*canvasGraph[currentCanvasId].visitedEdges = [];
         for(var node of canvasGraph[currentCanvasId].nodes)
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         }
         disableNodeInformationQuadrantIVisibility();
-        drawEdges(canvasGraph[currentCanvasId].edges);
+        drawEdges(canvasGraph[currentCanvasId].edges);*/
     
+    });
+}
+
+for(var StepBackwardsButton of StepBackwardsButtons)
+{
+    StepBackwardsButton.addEventListener("click", function(){
+        //if there is a running simulation, stop it and set stepBackwardsFlag to true.
+        stopFlag = true;
+        stepBackwardsFlag = true;
+        CurrentStepForwardButton.click(); 
     });
 }
 

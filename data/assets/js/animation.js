@@ -114,6 +114,7 @@ var containers = [];
 var selectedEdge;
 var stepForwardFlag = false;
 var stopFlag = false;
+var stepBackwardsFlag = false;
 
 var nodeRadius;
 

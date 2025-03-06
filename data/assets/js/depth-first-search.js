@@ -2,6 +2,8 @@ var nodes = [];
 var time;
 var stepCounter = 0;
 
+var thisWaitUntilForwardClicked = null;
+
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 {
     var edge = getEdgeFromNodeToNode(nodeA,nodeB);
@@ -32,7 +34,7 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
-async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
+async function DFS_visit(u,startAfterStep=-1)
 {
     //console.log("printing u.id: "+u.id);
 
@@ -40,46 +42,41 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
     u.timeDiscovered = time;
     updateNodeInformationQuadrantIForNodeInCanvas(u);
             
-    u.color = "RED";
-    containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
-    update=true;
-    drawTreeDFS();
-
-    if(stepCounter > startFromStep)
-    {
-        if(stopFlag != true)
-        {
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-            stepCounter++;
-        }
-        else
-        {
-            if(stepBackwardsFlag == true)
-            {
-                stopFlag = false;
-                stepBackwardsFlag = false;
-                return stepCounter-1;
-            }
-            return 0;
-        }
-    }
-    else
-    {
-        stepCounter++;
-    }
-    
-    
     for (var v of adjacencyList[u.id]) {
-
         //every time we go from this node to another, highlight it as the currently selected Node
         u.color = "RED";
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
         update=true;
         drawTreeDFS();
+
+        if(stepCounter > startAfterStep)
+        { console.log("stepCounter je: "+stepCounter);
+            if(stopFlag != true)
+            {
+                console.log("waiting");
+                await thisWaitUntilForwardClicked;
+                thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                stepCounter++;
+            }
+            else
+            {
+                if(stepBackwardsFlag == true)
+                {
+                    stopFlag = false;
+                    stepBackwardsFlag = false;
+                    return stepCounter;
+                }
+                return 0;
+            }
+        }
+        else
+        {
+            console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+            stepCounter++;
+        }
         
-        console.log("jdu z: "+u.id+" do: "+v);
-        console.log(nodes);
+        /*console.log("jdu z: "+u.id+" do: "+v);
+        console.log(nodes);*/
         if(getNodeUsingId(v).color=="BLUE")
         {
 
@@ -108,12 +105,13 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
 
             //wait for the next step
             
-            if(stepCounter > startFromStep)
-            {
+            if(stepCounter > startAfterStep)
+            { console.log("stepCounter je: "+stepCounter);
                 if(stopFlag != true)
                 {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    console.log("waiting");
+                    await thisWaitUntilForwardClicked;
+                    thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                     stepCounter++;
                 }
                 else
@@ -122,13 +120,14 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
                     {
                         stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter-1;
+                        return stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
+                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
                 stepCounter++;
             }
             
@@ -153,7 +152,7 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
             
             
             
-            var result = await DFS_visit(getNodeUsingId(v),waitUntilForwardClicked,startFromStep);
+            var result = await DFS_visit(getNodeUsingId(v),startAfterStep);
             if(result == 0)
             {
                 console.log("DFS has been stopped or restarted");
@@ -165,12 +164,12 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
                 return result;
             }
             
-            if(stepCounter > startFromStep)
-            {
+            /*if(stepCounter > startAfterStep)
+            { console.log("stepCounter je: "+stepCounter);
                 if(stopFlag != true)
                 {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    await thisWaitUntilForwardClicked;
+                    thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                     stepCounter++;
                 }
                 else
@@ -179,15 +178,16 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
                     {
                         stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter-1;
+                        return stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
+                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
                 stepCounter++;
-            }
+            }*/
             
             
         }
@@ -204,12 +204,12 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
             
 
             
-            if(stepCounter > startFromStep)
-            {
+            if(stepCounter > startAfterStep)
+            { console.log("stepCounter je: "+stepCounter);
                 if(stopFlag != true)
                 {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    await thisWaitUntilForwardClicked;
+                    thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                     stepCounter++;
                 }
                 else
@@ -218,13 +218,14 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
                     {
                         stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter-1;
+                        return stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
+                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
                 stepCounter++;
             }
             
@@ -233,12 +234,12 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
             drawTreeDFS();
         }
         /*
-        await waitUntilForwardClicked;
-        waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+        await thisWaitUntilForwardClicked;
+        thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
         */
     }
 
-
+    
     u.color = "GREEN";
     containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
@@ -248,13 +249,12 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
     u.timeCompleted = time;
     updateNodeInformationQuadrantIForNodeInCanvas(u);
 
-    
-    if(stepCounter > startFromStep)
-    {
+    if(stepCounter > startAfterStep)
+    { console.log("stepCounter je: "+stepCounter);
         if(stopFlag != true)
         {
-            await waitUntilForwardClicked;
-            waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+            await thisWaitUntilForwardClicked;
+            thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
             stepCounter++;
         }
         else
@@ -263,35 +263,39 @@ async function DFS_visit(u,waitUntilForwardClicked,startFromStep=-1)
             {
                 stopFlag = false;
                 stepBackwardsFlag = false;
-                return stepCounter-1;
+                return stepCounter;
             }
             return 0;
         }
     }
     else
     {
+        console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
         stepCounter++;
     }
+
     
     
 }
 
-async function startDFS(waitUntilForwardClicked,startFromStep=-1){
+async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     //stepCounter = 0;
+
+    thisWaitUntilForwardClicked = waitUntilForwardClicked;
 
     nodes = canvasGraph[currentCanvasId].nodes.slice();
     //var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
     //spliced.reverse().forEach((node) => nodes.unshift(node));
 
     var splicedNode = nodes.splice(canvasGraph[currentCanvasId].startingNode.id,1);
-    console.log("splcied node je: ");
-    console.log(splicedNode);
+    //console.log("splcied node je: ");
+    //console.log(splicedNode);
 
 
     nodes.unshift(splicedNode[0]);
 
-    console.log("novy order nodes je: ")
-    console.log(nodes)
+    //console.log("novy order nodes je: ")
+    //console.log(nodes)
 
     var numberOfNodes = nodes.length;
     adjacencyList = [];
@@ -310,7 +314,6 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
         u.color = "BLUE";
         u.parent = null;
         //u.distance = null;
-        //updateNodeInformationQuadrantIForNodeInCanvas(u)
     }
 
     for (var e of canvasGraph[currentCanvasId].edges) {
@@ -328,12 +331,13 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
         if(u.color == "BLUE")
         {
             
-            if(stepCounter > startFromStep)
-            {
+            /*if(stepCounter > startAfterStep)
+            { console.log("stepCounter je: "+stepCounter);
+                console.log(u);
                 if(stopFlag != true)
                 {
-                    await waitUntilForwardClicked;
-                    waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
+                    await thisWaitUntilForwardClicked;
+                    thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
                     stepCounter++;
                 }
                 else
@@ -342,17 +346,18 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
                     {
                         stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter-1;
+                        return stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
+                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
                 stepCounter++;
-            }
+            }*/
             
-            var result = await DFS_visit(u,waitUntilForwardClicked,startFromStep);
+            var result = await DFS_visit(u,startAfterStep);
 
             if(result == 0)
             {
@@ -369,12 +374,17 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
                 drawEdges(canvasGraph[currentCanvasId].edges);
                 destroyCurrentVisNetwork();
                 clearBFSGrid();
-
+                clearNodesInformationQuadrantIForNodeInCanvas();
                 disableNodeInformationQuadrantIVisibility();
+
+                stepCounter = 0;
+
+                return 0;
             }
             else if (result > 0)
             {
-                console.log("Returning one step back, to step number: "+result-3);
+                //result -1 because I start at step 0, -1 because stepCounter > startAfterStep, -2 because I don't want to start at the same step that I am currently at, but the step before
+                console.log("Current step is: "+stepCounter + "Returning one step back, to step number: "+(result-4));
                 canvasGraph[currentCanvasId].visitedEdges = [];
                 canvasGraph[currentCanvasId].selectedNodes = [];
 
@@ -387,9 +397,15 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
                 destroyCurrentVisNetwork();
                 clearBFSGrid();
 
+                clearNodesInformationQuadrantIForNodeInCanvas();
+
                 stepCounter = 0;
                 await startDFS(waitUntilForwardClicked,result-4);
+
+                return 0;
             }
+
+            //stepCounter--;
 
         }
     }
@@ -405,16 +421,16 @@ async function startDFS(waitUntilForwardClicked,startFromStep=-1){
         stopFlag = false;
         return 0;
     }
-    else
+    /*else
     {
         if(stepBackwardsFlag == true)
         {
             stopFlag = false;
             stepBackwardsFlag = false;
-            return stepCounter-1;
+            return stepCounter;
         }
         return 0;
-    }
+    }*/
 
     
 

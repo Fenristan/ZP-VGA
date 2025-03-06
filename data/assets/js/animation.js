@@ -201,7 +201,6 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
     {
         if((edges[i].nodes[0].id==nodeA.id) &&(edges[i].nodes[1].id==nodeB.id))
         {
-            console.log("yes there is");
             return true
         }
     }
@@ -243,7 +242,7 @@ function drawEdges(edges,oldEdges=edges) {
     for(let i = 0; i<edges.length; i++)
             {
                     let index = edges[i].id
-                    console.log("existing edgeWeight_ is: "+(containers[currentCanvasId].getChildByName("edgeWeight_"+index)));
+                    //console.log("existing edgeWeight_ is: "+(containers[currentCanvasId].getChildByName("edgeWeight_"+index)));
             }
 
 
@@ -251,7 +250,7 @@ function drawEdges(edges,oldEdges=edges) {
         {
             if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
             {
-                console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
+                //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
                 containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
                 containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
             }
@@ -277,15 +276,15 @@ function drawEdges(edges,oldEdges=edges) {
             var end_x = edges[i].nodes[1].x + r_end*a/dist;
             var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
-            console.log("selectedNodes: ");
-            console.log(canvasGraph[currentCanvasId].selectedNodes);
+            //console.log("selectedNodes: ");
+            //console.log(canvasGraph[currentCanvasId].selectedNodes);
 
-            console.log("visitedEdges: ");
-            console.log(canvasGraph[currentCanvasId].visitedEdges);
+            //console.log("visitedEdges: ");
+            //console.log(canvasGraph[currentCanvasId].visitedEdges);
             
             if(canvasGraph[currentCanvasId].visitedEdges.includes(edges[i]))
             {
-                console.log("yep already there");
+                //console.log("yep already there");
                 g.beginStroke("purple");
                 edges[i].color = "purple";
             }
@@ -342,8 +341,7 @@ function drawEdges(edges,oldEdges=edges) {
             
             if(edges[i].nodes[0].id == edges[i].nodes[1].id)
             {
-                console.log("This edge leads to the same node where it started, doing bezier");
-                console.log("node radius je: "+nodeRadius);
+                //console.log("This edge leads to the same node where it started, doing bezier");
 
                 g.setStrokeStyle(3);
 
@@ -394,7 +392,7 @@ function drawEdges(edges,oldEdges=edges) {
                 var end_x = edges[i].nodes[1].x
                 var end_y = edges[i].nodes[1].y
 
-                console.log("there is already an edge between these nodes, doing bezier")
+                //console.log("there is already an edge between these nodes, doing bezier")
                 g.moveTo(start_x,start_y);
 
                 /*
@@ -451,8 +449,8 @@ function drawEdges(edges,oldEdges=edges) {
                 var mp_x = (start_x + end_x)/2
                 var mp_y = (start_y + end_y)/2
 
-                console.log("moving: "+"edgeWeight_"+edges[i].id)
-                console.log(edgeWeightDom)
+                //console.log("moving: "+"edgeWeight_"+edges[i].id)
+                //console.log(edgeWeightDom)
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = mp_x;
                 edgeWeightDom.y = mp_y;
@@ -932,6 +930,15 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
     }
     
+    update=true;
+}
+
+function clearNodesInformationQuadrantIForNodeInCanvas()
+{
+    for(node of canvasGraph[currentCanvasId].nodes)
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
+    }    
     update=true;
 }
 

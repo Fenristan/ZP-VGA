@@ -3,7 +3,7 @@
 visGraphs = [];
 visNetworks = [];
 
-var currentVisNetwork = null;
+//var currentVisNetwork = null;
 
 for(let i = 0; i < canvases.length; i++)
 {
@@ -15,9 +15,9 @@ for(let i = 0; i < canvases.length; i++)
 //var directionInput = document.getElementById("direction");
 
 function destroyCurrentVisNetwork() {
-  if (currentVisNetwork !== null) {
-    currentVisNetwork.destroy();
-    currentVisNetwork = null;
+  if (visNetworks[currentCanvasId] !== null) {
+    visNetworks[currentCanvasId].destroy();
+    visNetworks[currentCanvasId] = null;
   }
 }
 
@@ -81,8 +81,8 @@ function isInTheSameTree(startingNode, lookingForNode)
 
 function drawTreeDFS()
 {
-    currentVisGraph = visGraphs[currentCanvasId];
-    currentVisNetwork = visNetworks[currentCanvasId];
+    var currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisNetwork = visNetworks[currentCanvasId];
     destroyCurrentVisNetwork();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];

@@ -4,6 +4,24 @@ var stepCounter = 0;
 
 var thisWaitUntilForwardClicked = null;
 
+function resetDFS()
+{
+    canvasGraph[currentCanvasId].visitedEdges = [];
+    canvasGraph[currentCanvasId].selectedNodes = [];
+    for(var node of canvasGraph[currentCanvasId].nodes)
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+    }
+
+    drawEdges(canvasGraph[currentCanvasId].edges);
+    destroyCurrentVisNetwork();
+    clearBFSGrid();
+    clearNodesInformationQuadrantIForNodeInCanvas();
+    disableNodeInformationQuadrantIVisibility();
+
+    stepCounter = 0;
+}
+
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 {
     var edge = getEdgeFromNodeToNode(nodeA,nodeB);
@@ -283,6 +301,8 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
 
     thisWaitUntilForwardClicked = waitUntilForwardClicked;
 
+
+
     nodes = canvasGraph[currentCanvasId].nodes.slice();
     //var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
     //spliced.reverse().forEach((node) => nodes.unshift(node));
@@ -314,6 +334,8 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
         u.color = "BLUE";
         u.parent = null;
         //u.distance = null;
+        u.timeDiscovered=null;
+        u.timeCompleted=null;
     }
 
     for (var e of canvasGraph[currentCanvasId].edges) {
@@ -363,21 +385,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
             {
                 console.log("DFS has been stopped or restarted");
 
-                console.log("result je: "+result);
-                canvasGraph[currentCanvasId].visitedEdges = [];
-                canvasGraph[currentCanvasId].selectedNodes = [];
-                for(var node of canvasGraph[currentCanvasId].nodes)
-                {
-                    containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-                }
-
-                drawEdges(canvasGraph[currentCanvasId].edges);
-                destroyCurrentVisNetwork();
-                clearBFSGrid();
-                clearNodesInformationQuadrantIForNodeInCanvas();
-                disableNodeInformationQuadrantIVisibility();
-
-                stepCounter = 0;
+                resetDFS();
 
                 return 0;
             }
@@ -385,21 +393,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
             {
                 //result -1 because I start at step 0, -1 because stepCounter > startAfterStep, -2 because I don't want to start at the same step that I am currently at, but the step before
                 console.log("Current step is: "+stepCounter + "Returning one step back, to step number: "+(result-4));
-                canvasGraph[currentCanvasId].visitedEdges = [];
-                canvasGraph[currentCanvasId].selectedNodes = [];
-
-                for(var node of canvasGraph[currentCanvasId].nodes)
-                {
-                    containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-                }
-
-                drawEdges(canvasGraph[currentCanvasId].edges);
-                destroyCurrentVisNetwork();
-                clearBFSGrid();
-
-                clearNodesInformationQuadrantIForNodeInCanvas();
-
-                stepCounter = 0;
+                resetDFS();
                 await startDFS(waitUntilForwardClicked,result-4);
 
                 return 0;
@@ -418,6 +412,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     {
         await createClickListenerPromise(CurrentRestartButton);
         console.log("Restart button pressed");
+        resetDFS();
         stopFlag = false;
         return 0;
     }

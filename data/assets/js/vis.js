@@ -154,12 +154,14 @@ function drawTreeDFS()
         }
     };
     currentVisNetwork = new vis.Network(container, data, options);
+    visNetworks[currentCanvasId] = currentVisNetwork;
     renderDFSGrid();
 }
 
 function drawTreeBFS()
 {
-    currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisNetwork = visNetworks[currentCanvasId];
     destroyCurrentVisNetwork();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
@@ -231,6 +233,7 @@ function drawTreeBFS()
         }
     };
     currentVisNetwork = new vis.Network(container, data, options);
+    visNetworks[currentCanvasId] = currentVisNetwork;
     renderBFSGrid();
 }
 

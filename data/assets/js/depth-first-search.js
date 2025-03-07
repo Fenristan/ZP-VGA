@@ -15,9 +15,9 @@ function resetDFS()
 
     drawEdges(canvasGraph[currentCanvasId].edges);
     destroyCurrentVisNetwork();
-    clearBFSGrid();
+    clearDFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
-    disableNodeInformationQuadrantIVisibility();
+    //disableNodeInformationQuadrantIVisibility();
 
     stepCounter = 0;
 }
@@ -386,6 +386,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
                 console.log("DFS has been stopped or restarted");
 
                 resetDFS();
+                disableNodeInformationQuadrantIVisibility();
 
                 return 0;
             }

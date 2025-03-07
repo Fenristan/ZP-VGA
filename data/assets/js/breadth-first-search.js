@@ -1,10 +1,7 @@
 var queue = [];
 
-async function startBFS(waitUntilForwardClicked,startFromStep=-1)
+function resetBFS()
 {
-    var result = await BFS(waitUntilForwardClicked,startFromStep)
-    console.log("result je: "+result);
-
     canvasGraph[currentCanvasId].visitedEdges = [];
     canvasGraph[currentCanvasId].selectedNodes = [];
     queue = [];
@@ -15,7 +12,19 @@ async function startBFS(waitUntilForwardClicked,startFromStep=-1)
 
     drawEdges(canvasGraph[currentCanvasId].edges);
     destroyCurrentVisNetwork();
-    clearBFSGrid();
+    clearDFSGrid();
+    clearNodesInformationQuadrantIForNodeInCanvas();
+    //disableNodeInformationQuadrantIVisibility();
+
+    stepCounter = 0;
+}
+
+async function startBFS(waitUntilForwardClicked,startFromStep=-1)
+{
+    var result = await BFS(waitUntilForwardClicked,startFromStep)
+    console.log("result je: "+result);
+
+    resetBFS();
  
     if(result == 0)
     {
@@ -163,6 +172,7 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
     {
         await createClickListenerPromise(CurrentRestartButton);
         console.log("Restart button pressed");
+        resetBFS();
         stopFlag = false;
         return 0;
     }

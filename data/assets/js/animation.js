@@ -93,7 +93,7 @@ return {
     edges: [],
 }*/
 
-var canvasGraph = [];
+var canvasGraphs = [];
 
 var g;
 
@@ -113,8 +113,9 @@ var add_edge_image = "./assets/images/addedge.png";
 var containers = [];
 var selectedEdge;
 var stepForwardFlag = false;
-var stopFlag = false;
+//var stopFlag = false;
 var stepBackwardsFlag = false;
+//var restartFlag = false;
 
 var nodeRadius;
 
@@ -122,6 +123,9 @@ var nodeImage = new Image();
 var completedNodeImage = new Image();
 var selectedNodeImage = new Image();
 var visitedNodeImage = new Image();
+
+var playImage = new Image();
+var stopImage = new Image();
 
 function init() {
     examples.showDistractor();
@@ -147,6 +151,9 @@ function init() {
     completedNodeImage.src = "./assets/images/nodeCompleted.png";
     selectedNodeImage.src = "./assets/images/nodeSelected2.png";
     visitedNodeImage.src = "./assets/images/nodeVisited.png";
+
+    playImage.src = "./assets/images/play_icon.png";
+    stopImage.src = "./assets/images/stop_icon.png";
     
 }
 
@@ -156,7 +163,7 @@ function stop() {
 
 function edgeBetweenNodes(nodeA, nodeB, edges)
 {
-    //edges = canvasGraph[currentCanvasId].edges
+    //edges = canvasGraphs[currentCanvasId].edges
     for(let i = 0; i<edges.length;i++)
     {
         if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
@@ -172,7 +179,7 @@ function edgeBetweenNodes(nodeA, nodeB, edges)
 }
 function edgeBetweenNodesBothWays(nodeA, nodeB, edges)
 {
-    //edges = canvasGraph[currentCanvasId].edges
+    //edges = canvasGraphs[currentCanvasId].edges
     var counter = 0
     for(let i = 0; i<edges.length;i++)
     {
@@ -209,7 +216,7 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
 
 function getEdgeFromNodeToNode(nodeA, nodeB)
 {
-    for(edge of canvasGraph[currentCanvasId].edges)
+    for(edge of canvasGraphs[currentCanvasId].edges)
     {
         if(currentCanvas.directed == true)
         {
@@ -277,33 +284,33 @@ function drawEdges(edges,oldEdges=edges) {
             var end_y = edges[i].nodes[1].y + r_end*b/dist;
 
             //console.log("selectedNodes: ");
-            //console.log(canvasGraph[currentCanvasId].selectedNodes);
+            //console.log(canvasGraphs[currentCanvasId].selectedNodes);
 
             //console.log("visitedEdges: ");
-            //console.log(canvasGraph[currentCanvasId].visitedEdges);
+            //console.log(canvasGraphs[currentCanvasId].visitedEdges);
             
-            if(canvasGraph[currentCanvasId].visitedEdges.includes(edges[i]))
+            if(canvasGraphs[currentCanvasId].visitedEdges.includes(edges[i]))
             {
                 //console.log("yep already there");
                 g.beginStroke("purple");
                 edges[i].color = "purple";
             }
             //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
-            else if(canvasGraph[currentCanvasId].selectedNodes[0] != null && canvasGraph[currentCanvasId].selectedNodes[1] != null)
+            else if(canvasGraphs[currentCanvasId].selectedNodes[0] != null && canvasGraphs[currentCanvasId].selectedNodes[1] != null)
             {
                 // 
                 if(currentCanvas.directed == true)
                 {
-                    if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
+                    if((canvasGraphs[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraphs[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id))
                     {
                         g.beginStroke("red");
                         edges[i].color = "red";
-                        if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
+                        if(!(edges[i] in canvasGraphs[currentCanvasId].visitedEdges))
                         {
-                            canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);
+                            canvasGraphs[currentCanvasId].visitedEdges.push(edges[i]);
                         }
-                        canvasGraph[currentCanvasId].selectedNodes.shift();
-                        canvasGraph[currentCanvasId].selectedNodes.shift();
+                        canvasGraphs[currentCanvasId].selectedNodes.shift();
+                        canvasGraphs[currentCanvasId].selectedNodes.shift();
                     }
                     else 
                     {
@@ -315,16 +322,16 @@ function drawEdges(edges,oldEdges=edges) {
                 else
                 {
                     //if undirected, then the edge can go from nodes A to B or B to A
-                    if((canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasGraph[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasGraph[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
+                    if((canvasGraphs[currentCanvasId].selectedNodes[0].id == edges[i].nodes[0].id)&&(canvasGraphs[currentCanvasId].selectedNodes[1].id == edges[i].nodes[1].id)||(canvasGraphs[currentCanvasId].selectedNodes[0].id == edges[i].nodes[1].id)&&(canvasGraphs[currentCanvasId].selectedNodes[1].id == edges[i].nodes[0].id))
                     {
                         g.beginStroke("red");
                         edges[i].color = "red";
-                        if(!(edges[i] in canvasGraph[currentCanvasId].visitedEdges))
+                        if(!(edges[i] in canvasGraphs[currentCanvasId].visitedEdges))
                         {
-                            canvasGraph[currentCanvasId].visitedEdges.push(edges[i]);
+                            canvasGraphs[currentCanvasId].visitedEdges.push(edges[i]);
                         }
-                        canvasGraph[currentCanvasId].selectedNodes.shift();
-                        canvasGraph[currentCanvasId].selectedNodes.shift();
+                        canvasGraphs[currentCanvasId].selectedNodes.shift();
+                        canvasGraphs[currentCanvasId].selectedNodes.shift();
                     }
                     else 
                     {
@@ -881,11 +888,11 @@ function removeNode(bitmap, nodes, edges)
 
 function getNodeUsingId(id)
 {
-    for(var i = 0; i < canvasGraph[currentCanvasId].nodes.length; i++)
+    for(var i = 0; i < canvasGraphs[currentCanvasId].nodes.length; i++)
     {
-        if(canvasGraph[currentCanvasId].nodes[i].id == id)
+        if(canvasGraphs[currentCanvasId].nodes[i].id == id)
         {
-            return canvasGraph[currentCanvasId].nodes[i];
+            return canvasGraphs[currentCanvasId].nodes[i];
         }
     }
     return null;
@@ -894,21 +901,21 @@ function getNodeUsingId(id)
 
 function toggleNodeInformationQuadrantIVisibility()
 {
-    canvasGraph[currentCanvasId].nodes.forEach(node => {
+    canvasGraphs[currentCanvasId].nodes.forEach(node => {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).visible ^= true;
     });
 }
 
 function disableNodeInformationQuadrantIVisibility()
 {
-    canvasGraph[currentCanvasId].nodes.forEach(node => {
+    canvasGraphs[currentCanvasId].nodes.forEach(node => {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).visible = false;
     });
 }
 
 function clearNodeInformationQuadrantIText()
 {
-    canvasGraph[currentCanvasId].nodes.forEach(node => {
+    canvasGraphs[currentCanvasId].nodes.forEach(node => {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
     });
 }
@@ -935,7 +942,7 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
 
 function clearNodesInformationQuadrantIForNodeInCanvas()
 {
-    for(node of canvasGraph[currentCanvasId].nodes)
+    for(node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
     }    
@@ -945,7 +952,7 @@ function clearNodesInformationQuadrantIForNodeInCanvas()
 function toggleWeightedEdgesVisibility()
 {
     canvases[currentCanvasId].visible ^= true;
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawEdges(canvasGraphs[currentCanvasId].edges);
 }
 
 function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
@@ -1054,12 +1061,12 @@ function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
     });
     bitmap.on("dblclick", function (evt) {
         
-        for(var i = 0; i<canvasGraph[currentCanvasId].nodes.length; i++)
+        for(var i = 0; i<canvasGraphs[currentCanvasId].nodes.length; i++)
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
         }
         this.image = selectedNodeImage;
-        canvasGraph[currentCanvasId].startingNode=node;
+        canvasGraphs[currentCanvasId].startingNode=node;
         update = true;
     });
 }
@@ -1086,39 +1093,39 @@ function handleImageLoad(event) {
 
     for(var i = 0; i < 5; i++)
     {
-        canvasGraph[currentCanvasId].nodes.push(new Node(i,i,(currentCanvas.width * Math.random() | 0),(currentCanvas.height * Math.random() | 0)));
+        canvasGraphs[currentCanvasId].nodes.push(new Node(i,i,(currentCanvas.width * Math.random() | 0),(currentCanvas.height * Math.random() | 0)));
     }
 
-    //canvasGraph[currentCanvasId].edges.push(new Edge(0,[canvasGraph[currentCanvasId].nodes[0],canvasGraph[currentCanvasId].nodes[1]],1));
-    //canvasGraph[currentCanvasId].edges.push(new Edge(1,[canvasGraph[currentCanvasId].nodes[1],canvasGraph[currentCanvasId].nodes[2]],1));
+    //canvasGraphs[currentCanvasId].edges.push(new Edge(0,[canvasGraphs[currentCanvasId].nodes[0],canvasGraphs[currentCanvasId].nodes[1]],1));
+    //canvasGraphs[currentCanvasId].edges.push(new Edge(1,[canvasGraphs[currentCanvasId].nodes[1],canvasGraphs[currentCanvasId].nodes[2]],1));
 
-    canvasGraph[currentCanvasId].edges = [];
+    canvasGraphs[currentCanvasId].edges = [];
 
-    addEdgeBetweenNodes([canvasGraph[currentCanvasId].nodes[0],canvasGraph[currentCanvasId].nodes[1]],canvasGraph[currentCanvasId].edges);
-    addEdgeBetweenNodes([canvasGraph[currentCanvasId].nodes[1],canvasGraph[currentCanvasId].nodes[2]],canvasGraph[currentCanvasId].edges);
+    addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[0],canvasGraphs[currentCanvasId].nodes[1]],canvasGraphs[currentCanvasId].edges);
+    addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[1],canvasGraphs[currentCanvasId].nodes[2]],canvasGraphs[currentCanvasId].edges);
 
     // create and populate the screen with random daisies:
-    for (var i = 0; i < canvasGraph[currentCanvasId].nodes.length; i++) {
+    for (var i = 0; i < canvasGraphs[currentCanvasId].nodes.length; i++) {
 
         bitmap = new createjs.Bitmap(node_image);
-        addNodeToBitmap(canvasGraph[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
+        addNodeToBitmap(canvasGraphs[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
 
         // using "on" binds the listener to the scope of the currentTarget by default
         // in this case that means it executes in the scope of the button.
-        bindFunctionalityToBitmap(canvasGraph[currentCanvasId].nodes[i],bitmap,canvasGraph[currentCanvasId].edges, canvasGraph[currentCanvasId].nodes);
+        bindFunctionalityToBitmap(canvasGraphs[currentCanvasId].nodes[i],bitmap,canvasGraphs[currentCanvasId].edges, canvasGraphs[currentCanvasId].nodes);
     }
     for(let i = 0; i < stage.length; i++)
     {
         stage[i].on("stagemousedown", function(evt) {
             if(addNodeFlag==true)
             {
-                var newNode = new Node(canvasGraph[currentCanvasId].nodes.length,canvasGraph[currentCanvasId].nodes.length,(evt.stageX),(evt.stageY))
-                canvasGraph[currentCanvasId].nodes.push(newNode);
+                var newNode = new Node(canvasGraphs[currentCanvasId].nodes.length,canvasGraphs[currentCanvasId].nodes.length,(evt.stageX),(evt.stageY))
+                canvasGraphs[currentCanvasId].nodes.push(newNode);
                 console.log(newNode);
-                console.log(canvasGraph[currentCanvasId].nodes);
+                console.log(canvasGraphs[currentCanvasId].nodes);
                 var bitmap = new createjs.Bitmap(node_image);
                 addNodeToBitmap(newNode,containers[currentCanvasId],bitmap);
-                bindFunctionalityToBitmap(newNode,bitmap,canvasGraph[currentCanvasId].edges,canvasGraph[currentCanvasId].nodes);
+                bindFunctionalityToBitmap(newNode,bitmap,canvasGraphs[currentCanvasId].edges,canvasGraphs[currentCanvasId].nodes);
                 addNodeFlag=false;
                 update = true;
             }
@@ -1141,7 +1148,7 @@ function handleImageLoad(event) {
     }
 
 
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawEdges(canvasGraphs[currentCanvasId].edges);
 
     examples.hideDistractor();
     createjs.Ticker.addEventListener("tick", tick);

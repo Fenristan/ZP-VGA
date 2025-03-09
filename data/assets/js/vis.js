@@ -88,9 +88,9 @@ function drawTreeDFS()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraph[currentCanvasId].nodes)
+    for(node of canvasGraphs[currentCanvasId].nodes)
     {
-        //node = canvasGraph[currentCanvasId].nodes.slice(node.id,1);
+        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = 0;
@@ -103,9 +103,9 @@ function drawTreeDFS()
 
 
     //add all edges to the array of edges to be draw
-    for(edge of canvasGraph[currentCanvasId].edges)
+    for(edge of canvasGraphs[currentCanvasId].edges)
     {
-      if(canvasGraph[currentCanvasId].visitedEdges.includes(edge))
+      if(canvasGraphs[currentCanvasId].visitedEdges.includes(edge))
       {
         currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
       }
@@ -167,9 +167,9 @@ function drawTreeBFS()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraph[currentCanvasId].nodes)
+    for(node of canvasGraphs[currentCanvasId].nodes)
     {
-        //node = canvasGraph[currentCanvasId].nodes.slice(node.id,1);
+        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = node.distance;
@@ -182,9 +182,9 @@ function drawTreeBFS()
 
 
     //add all edges to the array of edges to be drawn
-    for(edge of canvasGraph[currentCanvasId].edges)
+    for(edge of canvasGraphs[currentCanvasId].edges)
     {
-      if(canvasGraph[currentCanvasId].visitedEdges.includes(edge))
+      if(canvasGraphs[currentCanvasId].visitedEdges.includes(edge))
       {
         currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color, width: 3 });
       }

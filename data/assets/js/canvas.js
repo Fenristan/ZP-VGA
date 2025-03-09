@@ -64,15 +64,13 @@ menuOptions.push(menuOption6);
 
 var stage = []
 
+var canvasFlags = [];
+
 for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
-    canvasGraph.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null });
-}
-
-for(let i = 0; i < stage.length; i++)
-{
-
+    canvasGraphs.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null, stepCounter: 0 });
+    canvasFlags.push({ stopFlag: false, restartFlag: false, running: false});
 }
 
 
@@ -81,34 +79,36 @@ const BackToMenuButton = document.getElementById('back');
 const SaveButton = document.getElementById('save');
 const LoadButton = document.getElementById("load");
 const file = document.getElementById("file");
-//const RestartButton = document.getElementById('restart');
-//const StartButton = document.getElementById('start');
+//const StopButton = document.getElementById('restart');
+//const StartStopButton = document.getElementById('start');
 //const StepForwardButton = document.getElementById('stepforward');
 
 const RestartButtons = document.getElementsByClassName("restart");
-const StartButtons = document.getElementsByClassName("start");
+const StartStopButtons = document.getElementsByClassName("start");
 const StepForwardButtons = document.getElementsByClassName("stepforward");
 const StepBackwardsButtons = document.getElementsByClassName("stepback");
 
 var CurrentRestartButton = null;
-var CurrentStartButton = null;
+var CurrentStartStopButton = null;
 var CurrentStepForwardButton = null;
 var CurrentStepBackwardsButton = null;
-
-
-
 
 var currentCanvasId = 0;
 var canvas;
 var context;
+
+var startStopButtonsStates = [];
+
+
+
 
 BackToMenuButton.addEventListener("click", function(){
     menuCardsContainer.classList.remove('canvas-container-hidden');
     BackToMenuButton.classList.add('back');
     SaveButton.classList.add('save');
     LoadButton.classList.add('load');
-    //RestartButton.classList.add('restart');
-    //StartButton.classList.add('start');
+    //StopButton.classList.add('restart');
+    //StartStopButton.classList.add('start');
     //StepForwardButton.classList.add('stepforward');
 
     canvasContainers.forEach(function (canvasContainer){
@@ -123,63 +123,98 @@ function createClickListenerPromise (target) {
     return new Promise((resolve) => target.addEventListener('click', resolve))
 }
 
-for(var StartButton of StartButtons)
+function toggleCurrentStartStopButton()
 {
-    StartButton.addEventListener("click", function(){
+    startStopButtonsStates[currentCanvasId] ^= true;
+
+    if(startStopButtonsStates[currentCanvasId] == true)
+    {
+        StartStopButtons[currentCanvasId].src = stopImage.src;
+    }
+    else
+    {
+        StartStopButtons[currentCanvasId].src = playImage.src;
+    }
+}
+
+for (i = 0; i < StartStopButtons.length; i++)
+{
+    
+    var StartStopButton = StartStopButtons[i];
+
+    startStopButtonsStates[i] = false;
+
+    StartStopButton.addEventListener("click", function(){
 
         CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
         CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
 
         // after the start simulation button has been clicked, each node is assigned it's given name (text)
-        canvasGraph[currentCanvasId].nodes.forEach(node => {
+        canvasGraphs[currentCanvasId].nodes.forEach(node => {
             console.log("assigning name to node: "+node.id);
-            canvasGraph[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+            canvasGraphs[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
             node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-            console.log("node is now called: " + canvasGraph[currentCanvasId].nodes[node.id].text);
+            console.log("node is now called: " + canvasGraphs[currentCanvasId].nodes[node.id].text);
         });
     
         console.log("starting simulation");
-        stopFlag = false;
-        if(currentCanvasId == 0)
+        
+        canvasFlags[currentCanvasId].stopFlag = false;
+
+        
+
+        if(startStopButtonsStates[currentCanvasId] == false)
         {
-            toggleNodeInformationQuadrantIVisibility();
-            showCurrentVisNetwork();
-            startDFS(createClickListenerPromise(CurrentStepForwardButton));
+            if(currentCanvasId == 0)
+            {
+                startDFS(createClickListenerPromise(CurrentStepForwardButton));
+            }
+            else if(currentCanvasId == 1)
+            {
+                toggleNodeInformationQuadrantIVisibility();
+                showCurrentVisNetwork();
+                startBFS(createClickListenerPromise(CurrentStepForwardButton));
+            }
         }
-        else if(currentCanvasId == 1)
+        else
         {
-            toggleNodeInformationQuadrantIVisibility();
-            showCurrentVisNetwork();
-            startBFS(createClickListenerPromise(CurrentStepForwardButton));
+            //StopButton.click();
+            canvasFlags[currentCanvasId].stopFlag = true;
+            CurrentStepForwardButton.click();
         }
+        
+        toggleCurrentStartStopButton();
         
     });
 }
 
-for(var RestartButton of RestartButtons)
+/*for(var StopButton of StopButtons)
 {
-    RestartButton.addEventListener("click", function(){
+    StopButton.addEventListener("click", function(){
         //if there is a running simulation, stop it
         stopFlag = true;
         CurrentStepForwardButton.click();
     
-        //if there wasn't a running simulation (it could have already finished), then we need to return the graph to it's original form
-        /*canvasGraph[currentCanvasId].visitedEdges = [];
-        for(var node of canvasGraph[currentCanvasId].nodes)
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        }
-        disableNodeInformationQuadrantIVisibility();
-        drawEdges(canvasGraph[currentCanvasId].edges);*/
     
     });
-}
+}*/
+
+for(var RestartButton of RestartButtons)
+    {
+        RestartButton.addEventListener("click", function(){
+            //if there is a running simulation, stop it
+            canvasFlags[currentCanvasId].stopFlag = true;
+            canvasFlags[currentCanvasId].restartFlag = true;
+            CurrentStepForwardButton.click();
+        
+        });
+    }
 
 for(var StepBackwardsButton of StepBackwardsButtons)
 {
     StepBackwardsButton.addEventListener("click", function(){
         //if there is a running simulation, stop it and set stepBackwardsFlag to true.
-        stopFlag = true;
+        canvasFlags[currentCanvasId].stopFlag = true;
         stepBackwardsFlag = true;
         CurrentStepForwardButton.click(); 
     });
@@ -209,14 +244,15 @@ function displayCanvas(evt)
     BackToMenuButton.classList.remove('back');
     SaveButton.classList.remove('save');
     LoadButton.classList.remove('load');
-    //RestartButton.classList.remove('restart');
-    //StartButton.classList.remove('start');
+    //StopButton.classList.remove('restart');
+    //StartStopButton.classList.remove('start');
     //StepForwardButton.classList.remove('stepforward');
     currentCanvasId = evt.currentTarget.index;
 
     CurrentRestartButton = RestartButtons[currentCanvasId];
-    CurrentStartButton = StartButtons[currentCanvasId];
+    CurrentStartStopButton = StartStopButtons[currentCanvasId];
     CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
+    CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
     console.log("canvas: "+evt.currentTarget.index);
@@ -249,9 +285,9 @@ function displayCanvas(evt)
 
 function checkBoxDirectedClicked(evt)
 {
-    for(node of canvasGraph[currentCanvasId].nodes)
+    for(node of canvasGraphs[currentCanvasId].nodes)
     {
-        removeAllEdgesFromNode(node,canvasGraph[currentCanvasId].nodes,canvasGraph[currentCanvasId].edges);
+        removeAllEdgesFromNode(node,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges);
     }
     
     canvases[currentCanvasId].directed ^= true;

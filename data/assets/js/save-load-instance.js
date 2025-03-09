@@ -3,8 +3,17 @@ SaveButton.addEventListener("click", function(){
 });
 
 LoadButton.addEventListener("click", function(){
-    //if there is a running simulation, finish it first
-    RestartButton.click();
+    //if there is a running simulation, stop it first
+    //RestartButton.click();
+    if(canvasFlags[currentCanvasId].running == true)
+    {
+        console.log("simulation runnovala");
+        canvasFlags[currentCanvasId].stopFlag = true;
+        CurrentStepForwardButton.click();
+        toggleCurrentStartStopButton();
+    }
+    
+
     //there might be a vis graph already drawn, so destroy it.
     destroyCurrentVisNetwork();
     file.click();
@@ -27,19 +36,19 @@ file.addEventListener("change", function(){
         //const loadedCanvas = fromJSON(fileText); 
         console.log(loadedCanvas);
         console.log("old canvas:");
-        console.log(canvasGraph[currentCanvasId]);
-        //canvasGraph[currentCanvasId]= loadedCanvas; // tady kdyžtak nezapomeň
+        console.log(canvasGraphs[currentCanvasId]);
+        //canvasGraphs[currentCanvasId]= loadedCanvas; // tady kdyžtak nezapomeň
         
         update = true;
         console.log("new canvas:");
-        console.log(canvasGraph[currentCanvasId]);
+        console.log(canvasGraphs[currentCanvasId]);
         console.log("test edges:");
 
-        //drawEdges(canvasGraph[currentCanvasId].edges); //ok so basically potřebuju nějak postupně přidat nodes, pak edges mezi nima, jinak to nepůjde.
+        //drawEdges(canvasGraphs[currentCanvasId].edges); //ok so basically potřebuju nějak postupně přidat nodes, pak edges mezi nima, jinak to nepůjde.
 
-        //console.log(canvasGraph[currentCanvasId]);
+        //console.log(canvasGraphs[currentCanvasId]);
 
-        /*canvasGraph[currentCanvasId].nodes.forEach(node => {
+        /*canvasGraphs[currentCanvasId].nodes.forEach(node => {
             console.log("mazu stare nodes");
             console.log(node);
             
@@ -47,13 +56,13 @@ file.addEventListener("change", function(){
             //console.log(stage[currentCanvasId]);
             var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
             console.log(bitmap);
-            removeNode(bitmap,canvasGraph[currentCanvasId].nodes,canvasGraph[currentCanvasId].edges)
+            removeNode(bitmap,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges)
 
         });*/
 
-        for(var i = canvasGraph[currentCanvasId].nodes.length-1; i>=0; i--)
+        for(var i = canvasGraphs[currentCanvasId].nodes.length-1; i>=0; i--)
         {
-            var node = canvasGraph[currentCanvasId].nodes[i]
+            var node = canvasGraphs[currentCanvasId].nodes[i]
             console.log("mazu stare nodes");
             console.log(node);
             
@@ -61,7 +70,7 @@ file.addEventListener("change", function(){
             //console.log(stage[currentCanvasId]);
             var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
             console.log(bitmap);
-            removeNode(bitmap,canvasGraph[currentCanvasId].nodes,canvasGraph[currentCanvasId].edges)
+            removeNode(bitmap,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges)
         }
         
         loadedCanvas.nodes.forEach(node => {
@@ -70,9 +79,9 @@ file.addEventListener("change", function(){
             
             //console.log(stage[currentCanvasId]);
             var bitmap = new createjs.Bitmap(node_image);
-            canvasGraph[currentCanvasId].nodes.push(node);
+            canvasGraphs[currentCanvasId].nodes.push(node);
             addNodeToBitmap(node,containers[currentCanvasId],bitmap);
-            bindFunctionalityToBitmap(node,bitmap,canvasGraph[currentCanvasId].edges,canvasGraph[currentCanvasId].nodes);
+            bindFunctionalityToBitmap(node,bitmap,canvasGraphs[currentCanvasId].edges,canvasGraphs[currentCanvasId].nodes);
 
             //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
             for(var i = 0; i < loadedCanvas.edges.length; i++)
@@ -94,23 +103,23 @@ file.addEventListener("change", function(){
             console.log("pridavam edge");
             console.log(edge);
             
-            addEdgeBetweenNodes(edge.nodes,canvasGraph[currentCanvasId].edges);
+            addEdgeBetweenNodes(edge.nodes,canvasGraphs[currentCanvasId].edges);
             //update = true;
             //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
 
         
         
-        /*for (var i = 0; i < canvasGraph[currentCanvasId].nodes.length; i++) {
+        /*for (var i = 0; i < canvasGraphs[currentCanvasId].nodes.length; i++) {
             bitmap = new createjs.Bitmap(node_image);
-            addNodeToBitmap(canvasGraph[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
+            addNodeToBitmap(canvasGraphs[currentCanvasId].nodes[i],containers[currentCanvasId],bitmap);
         }*/
 
     });
     reader.readAsText(file.files[0]);
 
     console.log("=======================================================loaded edges:");
-    console.log(canvasGraph[currentCanvasId].edges);
+    console.log(canvasGraphs[currentCanvasId].edges);
 
 
     
@@ -120,8 +129,8 @@ file.addEventListener("change", function(){
 
 function saveInstanceToFile()
 {
-    /*let currentNodes = canvasGraph[currentCanvasId].nodes;
-    let currentEdges = canvasGraph[currentCanvasId].edges;
+    /*let currentNodes = canvasGraphs[currentCanvasId].nodes;
+    let currentEdges = canvasGraphs[currentCanvasId].edges;
     for(var i=0; i < currentNodes.length; i++)
     {
         console.log(JSON.stringify(currentNodes[i]));
@@ -132,7 +141,7 @@ function saveInstanceToFile()
     }*/
 
     
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(canvasGraph[currentCanvasId]));
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(canvasGraphs[currentCanvasId]));
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');

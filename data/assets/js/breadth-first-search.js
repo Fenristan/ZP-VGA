@@ -2,25 +2,33 @@ var queue = [];
 
 function resetBFS()
 {
-    canvasGraph[currentCanvasId].visitedEdges = [];
-    canvasGraph[currentCanvasId].selectedNodes = [];
+    canvasGraphs[currentCanvasId].visitedEdges = [];
+    canvasGraphs[currentCanvasId].selectedNodes = [];
     queue = [];
-    for(var node of canvasGraph[currentCanvasId].nodes)
+    for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
 
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawEdges(canvasGraphs[currentCanvasId].edges);
     destroyCurrentVisNetwork();
     clearDFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
+    toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
 
-    stepCounter = 0;
+    canvasGraphs[currentCanvasId].stepCounter = 0;
+
+    canvasFlags[currentCanvasId].running = false;
 }
 
 async function startBFS(waitUntilForwardClicked,startFromStep=-1)
 {
+
+    canvasFlags[currentCanvasId].running = true;
+
+    toggleNodeInformationQuadrantIVisibility();
+
     var result = await BFS(waitUntilForwardClicked,startFromStep)
     console.log("result je: "+result);
 
@@ -29,12 +37,25 @@ async function startBFS(waitUntilForwardClicked,startFromStep=-1)
     if(result == 0)
     {
         console.log("BFS has been stopped or restarted");
+        
+        if(canvasFlags[currentCanvasId].restartFlag == true)
+        {
+            console.log("canvasFlags[currentCanvasId].restartFlag byl pressed");
+            canvasFlags[currentCanvasId].restartFlag = false;
+            canvasFlags[currentCanvasId].stopFlag = false;
+            await startBFS(waitUntilForwardClicked);
+        }
+
         disableNodeInformationQuadrantIVisibility();
+
+        return 0;
     }
-    else
+    else if (result > 0)
     {
         console.log("Returning one step back, to step number: "+result);
-        await startBFS(waitUntilForwardClicked,result-3);
+        await startBFS(waitUntilForwardClicked,(result-4));
+
+        return 0;
     }
     
 
@@ -43,8 +64,8 @@ async function startBFS(waitUntilForwardClicked,startFromStep=-1)
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
 async function BFS(waitUntilForwardClicked, startFromStep=-1){
     console.log("startFromStep je: "+ startFromStep);
-    var stepCounter = 0;
-    var numberOfNodes = canvasGraph[currentCanvasId].nodes.length;
+    //var canvasGraphs[currentCanvasId].stepCounter = 0;
+    var numberOfNodes = canvasGraphs[currentCanvasId].nodes.length;
     var adjacencyList = [];
     if(canvases[currentCanvasId].directed == false)
     {
@@ -55,7 +76,7 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
         adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
     }
     
-    for(var u of canvasGraph[currentCanvasId].nodes)
+    for(var u of canvasGraphs[currentCanvasId].nodes)
     {
         u.color = "BLUE";
         u.distance = "∞";
@@ -63,12 +84,12 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
         updateNodeInformationQuadrantIForNodeInCanvas(u);
     }
 
-    canvasGraph[currentCanvasId].startingNode.color = "PURPLE";
-    canvasGraph[currentCanvasId].startingNode.distance = 0;
-    updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
-    //canvasGraph[currentCanvasId].startingNode.parent = null;
+    canvasGraphs[currentCanvasId].startingNode.color = "PURPLE";
+    canvasGraphs[currentCanvasId].startingNode.distance = 0;
+    updateNodeInformationQuadrantIForNodeInCanvas(canvasGraphs[currentCanvasId].startingNode);
+    //canvasGraphs[currentCanvasId].startingNode.parent = null;
 
-    queue.push(canvasGraph[currentCanvasId].startingNode);
+    queue.push(canvasGraphs[currentCanvasId].startingNode);
 
     drawTreeBFS();
 
@@ -77,7 +98,7 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
         var u = queue.shift();
         
         //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
-        drawEdges(canvasGraph[currentCanvasId].edges);
+        drawEdges(canvasGraphs[currentCanvasId].edges);
         drawTreeBFS();
 
         u.color = "RED";
@@ -86,28 +107,28 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
         update=true;
         drawTreeBFS();
 
-        if(stepCounter > startFromStep)
+        if(canvasGraphs[currentCanvasId].stepCounter > startFromStep)
         {
-            if(stopFlag != true)
+            if(canvasFlags[currentCanvasId].stopFlag != true)
             {
                 await waitUntilForwardClicked;
                 waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                stepCounter++;
+                canvasGraphs[currentCanvasId].stepCounter++;
             }
             else
             {
                 if(stepBackwardsFlag == true)
                 {
-                    stopFlag = false;
+                    canvasFlags[currentCanvasId].stopFlag = false;
                     stepBackwardsFlag = false;
-                    return stepCounter-1;
+                    return canvasGraphs[currentCanvasId].stepCounter;
                 }
                 return 0;
             }
         }
         else
         {
-            stepCounter++;
+            canvasGraphs[currentCanvasId].stepCounter++;
         }
 
         for (var vId of adjacencyList[u.id]) {
@@ -126,35 +147,35 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
                 //update = true;
                 //drawTreeBFS();
 
-                canvasGraph[currentCanvasId].selectedNodes.push(u);
-                canvasGraph[currentCanvasId].selectedNodes.push(v);
-                drawEdges(canvasGraph[currentCanvasId].edges);
+                canvasGraphs[currentCanvasId].selectedNodes.push(u);
+                canvasGraphs[currentCanvasId].selectedNodes.push(v);
+                drawEdges(canvasGraphs[currentCanvasId].edges);
                 drawTreeBFS();
                 //u.color = "PURPLE";
                 //drawTreeBFS();
 
-                if(stepCounter > startFromStep)
+                if(canvasGraphs[currentCanvasId].stepCounter > startFromStep)
                 {
-                    if(stopFlag != true)
+                    if(canvasFlags[currentCanvasId].stopFlag != true)
                     {
                         await waitUntilForwardClicked;
                         waitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                        stepCounter++;
+                        canvasGraphs[currentCanvasId].stepCounter++;
                     }
                     else
                     {
                         if(stepBackwardsFlag == true)
                         {
-                            stopFlag = false;
+                            canvasFlags[currentCanvasId].stopFlag = false;
                             stepBackwardsFlag = false;
-                            return stepCounter-1;
+                            return canvasGraphs[currentCanvasId].stepCounter;
                         }
                         return 0;
                     }
                 }
                 else
                 {
-                    stepCounter++;
+                    canvasGraphs[currentCanvasId].stepCounter++;
                 }
                 drawTreeBFS();
                 
@@ -164,34 +185,41 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
         //containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
         u.color = "GREEN";
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
-        update = true; //snad
+        update = true; 
         drawTreeBFS();
     }
     
-    if(stopFlag != true)
+    if(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        await createClickListenerPromise(CurrentRestartButton);
-        console.log("Restart button pressed");
-        resetBFS();
-        stopFlag = false;
-        return 0;
-    }
-    else
-    {
+        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(CurrentStartStopButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton)]);
+        console.log("Restart or stop button or backwards button pressed");
+
+        var lastStep = canvasGraphs[currentCanvasId].stepCounter;
+
+        resetDFS();
+
         if(stepBackwardsFlag == true)
         {
-            stopFlag = false;
+            console.log("starting new simulation from next to last step");
+            canvasFlags[currentCanvasId].stopFlag = false;
             stepBackwardsFlag = false;
-            return stepCounter-1;
+            await startBFS(waitUntilForwardClicked,lastStep-4);
         }
+        else if(canvasFlags[currentCanvasId].restartFlag == true)
+        {
+            canvasFlags[currentCanvasId].stopFlag = false;
+            canvasFlags[currentCanvasId].restartFlag = false;
+
+            await startBFS(waitUntilForwardClicked);
+        }
+        else if(canvasFlags[currentCanvasId].stopFlag == true)
+        {
+            return 0;
+        }
+
         return 0;
     }
         
-    if(stopFlag == true)
-    {
-        stopFlag = false;
-        return 0;
-    }      
 
     
 

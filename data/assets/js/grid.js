@@ -10,7 +10,7 @@ function renderBFSGrid()
     var gridVisitedData = [];
     var gridQueueData = [];
 
-    for(var u of canvasGraph[currentCanvasId].nodes)
+    for(var u of canvasGraphs[currentCanvasId].nodes)
     {
         if(u.color == "BLUE")
         {
@@ -75,7 +75,7 @@ function renderDFSGrid()
     var gridVisitedData = [];
     var gridParentData = [];
 
-    for(var u of canvasGraph[currentCanvasId].nodes)
+    for(var u of canvasGraphs[currentCanvasId].nodes)
     {
         if(u.color == "BLUE")
         {

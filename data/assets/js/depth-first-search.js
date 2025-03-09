@@ -1,25 +1,28 @@
 var nodes = [];
 var time;
-var stepCounter = 0;
+//var canvasGraphs[currentCanvasId].stepCounter = 0;
 
 var thisWaitUntilForwardClicked = null;
 
 function resetDFS()
 {
-    canvasGraph[currentCanvasId].visitedEdges = [];
-    canvasGraph[currentCanvasId].selectedNodes = [];
-    for(var node of canvasGraph[currentCanvasId].nodes)
+    canvasGraphs[currentCanvasId].visitedEdges = [];
+    canvasGraphs[currentCanvasId].selectedNodes = [];
+    for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
 
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawEdges(canvasGraphs[currentCanvasId].edges);
     destroyCurrentVisNetwork();
     clearDFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
+    toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
 
-    stepCounter = 0;
+    canvasGraphs[currentCanvasId].stepCounter = 0;
+
+    canvasFlags[currentCanvasId].running = false;
 }
 
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
@@ -67,30 +70,30 @@ async function DFS_visit(u,startAfterStep=-1)
         update=true;
         drawTreeDFS();
 
-        if(stepCounter > startAfterStep)
-        { console.log("stepCounter je: "+stepCounter);
-            if(stopFlag != true)
+        if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+        { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
+            if(canvasFlags[currentCanvasId].stopFlag != true)
             {
                 console.log("waiting");
                 await thisWaitUntilForwardClicked;
                 thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                stepCounter++;
+                canvasGraphs[currentCanvasId].stepCounter++;
             }
             else
             {
                 if(stepBackwardsFlag == true)
                 {
-                    stopFlag = false;
+                    canvasFlags[currentCanvasId].stopFlag = false;
                     stepBackwardsFlag = false;
-                    return stepCounter;
+                    return canvasGraphs[currentCanvasId].stepCounter;
                 }
                 return 0;
             }
         }
         else
         {
-            console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-            stepCounter++;
+            console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+            canvasGraphs[currentCanvasId].stepCounter++;
         }
         
         /*console.log("jdu z: "+u.id+" do: "+v);
@@ -102,11 +105,11 @@ async function DFS_visit(u,startAfterStep=-1)
             console.log("jeho color je: "+getNodeUsingId(v).color);
 
             //highlight edge between these nodes red
-            canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[u.id]);
-            canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
+            canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
             u.color = "RED";
             getNodeUsingId(v).color = "PURPLE";
-            drawEdges(canvasGraph[currentCanvasId].edges);
+            drawEdges(canvasGraphs[currentCanvasId].edges);
 
             getNodeUsingId(v).parent = u;
 
@@ -123,30 +126,30 @@ async function DFS_visit(u,startAfterStep=-1)
 
             //wait for the next step
             
-            if(stepCounter > startAfterStep)
-            { console.log("stepCounter je: "+stepCounter);
-                if(stopFlag != true)
+            if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+            { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
+                if(canvasFlags[currentCanvasId].stopFlag != true)
                 {
                     console.log("waiting");
                     await thisWaitUntilForwardClicked;
                     thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                    stepCounter++;
+                    canvasGraphs[currentCanvasId].stepCounter++;
                 }
                 else
                 {
                     if(stepBackwardsFlag == true)
                     {
-                        stopFlag = false;
+                        canvasFlags[currentCanvasId].stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter;
+                        return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
-                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-                stepCounter++;
+                console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+                canvasGraphs[currentCanvasId].stepCounter++;
             }
             
 
@@ -154,10 +157,10 @@ async function DFS_visit(u,startAfterStep=-1)
             u.color = "PURPLE";
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
             update=true;
-            drawEdges(canvasGraph[currentCanvasId].edges);
+            drawEdges(canvasGraphs[currentCanvasId].edges);
             drawTreeDFS();
 
-            /*if(u.id != canvasGraph[currentCanvasId].startingNode.id && u.distance == null)
+            /*if(u.id != canvasGraphs[currentCanvasId].startingNode.id && u.distance == null)
             {
                 getNodeUsingId(v).distance = null;
             }
@@ -182,73 +185,73 @@ async function DFS_visit(u,startAfterStep=-1)
                 return result;
             }
             
-            /*if(stepCounter > startAfterStep)
-            { console.log("stepCounter je: "+stepCounter);
-                if(stopFlag != true)
+            /*if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+            { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
+                if(canvasFlags[currentCanvasId].stopFlag != true)
                 {
                     await thisWaitUntilForwardClicked;
                     thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                    stepCounter++;
+                    canvasGraphs[currentCanvasId].stepCounter++;
                 }
                 else
                 {
                     if(stepBackwardsFlag == true)
                     {
-                        stopFlag = false;
+                        canvasFlags[currentCanvasId].stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter;
+                        return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
-                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-                stepCounter++;
+                console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+                canvasGraphs[currentCanvasId].stepCounter++;
             }*/
             
             
         }
         else 
         {
-            canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[u.id]);
-            canvasGraph[currentCanvasId].selectedNodes.push(canvasGraph[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
+            canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
 
-            doParenthesisForEdgeBetweenNodes(canvasGraph[currentCanvasId].selectedNodes[0],canvasGraph[currentCanvasId].selectedNodes[1]);
+            doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].selectedNodes[0],canvasGraphs[currentCanvasId].selectedNodes[1]);
 
-            drawEdges(canvasGraph[currentCanvasId].edges);
+            drawEdges(canvasGraphs[currentCanvasId].edges);
             drawTreeDFS();
-            canvasGraph[currentCanvasId].visitedEdges.pop();
+            canvasGraphs[currentCanvasId].visitedEdges.pop();
             
 
             
-            if(stepCounter > startAfterStep)
-            { console.log("stepCounter je: "+stepCounter);
-                if(stopFlag != true)
+            if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+            { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
+                if(canvasFlags[currentCanvasId].stopFlag != true)
                 {
                     await thisWaitUntilForwardClicked;
                     thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                    stepCounter++;
+                    canvasGraphs[currentCanvasId].stepCounter++;
                 }
                 else
                 {
                     if(stepBackwardsFlag == true)
                     {
-                        stopFlag = false;
+                        canvasFlags[currentCanvasId].stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter;
+                        return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
-                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-                stepCounter++;
+                console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+                canvasGraphs[currentCanvasId].stepCounter++;
             }
             
 
-            drawEdges(canvasGraph[currentCanvasId].edges);
+            drawEdges(canvasGraphs[currentCanvasId].edges);
             drawTreeDFS();
         }
         /*
@@ -267,29 +270,29 @@ async function DFS_visit(u,startAfterStep=-1)
     u.timeCompleted = time;
     updateNodeInformationQuadrantIForNodeInCanvas(u);
 
-    if(stepCounter > startAfterStep)
-    { console.log("stepCounter je: "+stepCounter);
-        if(stopFlag != true)
+    if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+    { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
+        if(canvasFlags[currentCanvasId].stopFlag != true)
         {
             await thisWaitUntilForwardClicked;
             thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-            stepCounter++;
+            canvasGraphs[currentCanvasId].stepCounter++;
         }
         else
         {
             if(stepBackwardsFlag == true)
             {
-                stopFlag = false;
+                canvasFlags[currentCanvasId].stopFlag = false;
                 stepBackwardsFlag = false;
-                return stepCounter;
+                return canvasGraphs[currentCanvasId].stepCounter;
             }
             return 0;
         }
     }
     else
     {
-        console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-        stepCounter++;
+        console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+        canvasGraphs[currentCanvasId].stepCounter++;
     }
 
     
@@ -297,17 +300,22 @@ async function DFS_visit(u,startAfterStep=-1)
 }
 
 async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
-    //stepCounter = 0;
+    //canvasGraphs[currentCanvasId].stepCounter = 0;
+
+    canvasFlags[currentCanvasId].running = true;
+
+    toggleNodeInformationQuadrantIVisibility();
+    showCurrentVisNetwork();
 
     thisWaitUntilForwardClicked = waitUntilForwardClicked;
 
 
 
-    nodes = canvasGraph[currentCanvasId].nodes.slice();
-    //var spliced = nodes.splice(canvasGraph[currentCanvasId].startingNode.id)
+    nodes = canvasGraphs[currentCanvasId].nodes.slice();
+    //var spliced = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id)
     //spliced.reverse().forEach((node) => nodes.unshift(node));
 
-    var splicedNode = nodes.splice(canvasGraph[currentCanvasId].startingNode.id,1);
+    var splicedNode = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id,1);
     //console.log("splcied node je: ");
     //console.log(splicedNode);
 
@@ -338,12 +346,12 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
         u.timeCompleted=null;
     }
 
-    for (var e of canvasGraph[currentCanvasId].edges) {
+    for (var e of canvasGraphs[currentCanvasId].edges) {
         e.color = "black"
     }
 
-    //canvasGraph[currentCanvasId].startingNode.distance = 0;
-    //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraph[currentCanvasId].startingNode);
+    //canvasGraphs[currentCanvasId].startingNode.distance = 0;
+    //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraphs[currentCanvasId].startingNode);
 
     time = 0;
 
@@ -353,30 +361,30 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
         if(u.color == "BLUE")
         {
             
-            /*if(stepCounter > startAfterStep)
-            { console.log("stepCounter je: "+stepCounter);
+            /*if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
+            { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
                 console.log(u);
-                if(stopFlag != true)
+                if(canvasFlags[currentCanvasId].stopFlag != true)
                 {
                     await thisWaitUntilForwardClicked;
                     thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                    stepCounter++;
+                    canvasGraphs[currentCanvasId].stepCounter++;
                 }
                 else
                 {
                     if(stepBackwardsFlag == true)
                     {
-                        stopFlag = false;
+                        canvasFlags[currentCanvasId].stopFlag = false;
                         stepBackwardsFlag = false;
-                        return stepCounter;
+                        return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
                 }
             }
             else
             {
-                console.log("stepCounter je: "+ stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-                stepCounter++;
+                console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
+                canvasGraphs[currentCanvasId].stepCounter++;
             }*/
             
             var result = await DFS_visit(u,startAfterStep);
@@ -386,44 +394,74 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
                 console.log("DFS has been stopped or restarted");
 
                 resetDFS();
-                disableNodeInformationQuadrantIVisibility();
+                
+                if(canvasFlags[currentCanvasId].restartFlag == true)
+                {
+                    console.log("canvasFlags[currentCanvasId].restartFlag byl pressed");
+                    canvasFlags[currentCanvasId].restartFlag = false;
+                    canvasFlags[currentCanvasId].stopFlag = false;
+                    await startDFS(waitUntilForwardClicked);
+                }
 
+                disableNodeInformationQuadrantIVisibility();
                 return 0;
             }
             else if (result > 0)
             {
-                //result -1 because I start at step 0, -1 because stepCounter > startAfterStep, -2 because I don't want to start at the same step that I am currently at, but the step before
-                console.log("Current step is: "+stepCounter + "Returning one step back, to step number: "+(result-4));
+                //result -1 because I start at step 0, -1 because canvasGraphs[currentCanvasId].stepCounter > startAfterStep, -2 because I don't want to start at the same step that I am currently at, but the step before
+                console.log("Current step is: "+canvasGraphs[currentCanvasId].stepCounter + "Returning one step back, to step number: "+(result-4));
                 resetDFS();
                 await startDFS(waitUntilForwardClicked,result-4);
 
                 return 0;
             }
 
-            //stepCounter--;
+            //canvasGraphs[currentCanvasId].stepCounter--;
 
         }
     }
 
     //draw edges at the end so that the last selected edge isn't left colored as currently selected
-    drawEdges(canvasGraph[currentCanvasId].edges);
+    drawEdges(canvasGraphs[currentCanvasId].edges);
     drawTreeDFS();
 
-    if(stopFlag != true)
+    if(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        await createClickListenerPromise(CurrentRestartButton);
-        console.log("Restart button pressed");
+        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(CurrentStartStopButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton)]);
+        console.log("Restart or stop button or backwards button pressed");
+
+        var lastStep = canvasGraphs[currentCanvasId].stepCounter;
+
         resetDFS();
-        stopFlag = false;
+
+        if(stepBackwardsFlag == true)
+        {
+            console.log("starting new simulation from next to last step");
+            canvasFlags[currentCanvasId].stopFlag = false;
+            stepBackwardsFlag = false;
+            await startDFS(waitUntilForwardClicked,lastStep-4);
+        }
+        else if(canvasFlags[currentCanvasId].restartFlag == true)
+        {
+            canvasFlags[currentCanvasId].stopFlag = false;
+            canvasFlags[currentCanvasId].restartFlag = false;
+
+            await startDFS(waitUntilForwardClicked);
+        }
+        else if(canvasFlags[currentCanvasId].stopFlag == true)
+        {
+            return 0;
+        }
+        
         return 0;
     }
     /*else
     {
         if(stepBackwardsFlag == true)
         {
-            stopFlag = false;
+            canvasFlags[currentCanvasId].stopFlag = false;
             stepBackwardsFlag = false;
-            return stepCounter;
+            return canvasGraphs[currentCanvasId].stepCounter;
         }
         return 0;
     }*/

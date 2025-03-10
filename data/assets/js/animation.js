@@ -5,6 +5,7 @@ class Node {
         this._text=text;
         this._x=x;
         this._y=y;
+        this._color="BLUE";
     }
     get text() {
         return this._text;
@@ -21,6 +22,10 @@ class Node {
     get y() {
         return this._y;
     }
+    get color() {
+        return this._color;
+    }
+
     set y(y) {
         this._y=y;
     }
@@ -39,6 +44,9 @@ class Node {
     set text(text){
         this._text=text;
     }
+    set color(color) {
+        this._color=color;
+    }
 
 }
 Node.prototype.toJSON = function () {
@@ -47,7 +55,8 @@ return {
     text: this.text,
     x: this.x,
     y: this.y,
-    size: this.size
+    size: this.size,
+    color: this.color
 };
 };
 
@@ -56,6 +65,7 @@ class Edge{
         this._id = id;
         this._nodes=nodes;
         this._weight=weight;
+        this._color="black";
     }
     get id() {
         return this._id;
@@ -65,6 +75,9 @@ class Edge{
     }
     get weight() {
         return this._weight;
+    }
+    get color() {
+        return this._color;
     }
 
     set nodes(value) {
@@ -79,12 +92,16 @@ class Edge{
     {
         this._weight=weight;
     }
+    set color(color) {
+        this._color=color;
+    }
 }
 Edge.prototype.toJSON = function () {
 return {
     id: this.id,
     nodes: this.nodes,
-    weight: this.weight
+    weight: this.weight,
+    color: this.color
 };
 };
 
@@ -216,6 +233,8 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
 
 function getEdgeFromNodeToNode(nodeA, nodeB)
 {
+    console.log(nodeA);
+    console.log(nodeB);
     for(edge of canvasGraphs[currentCanvasId].edges)
     {
         if(currentCanvas.directed == true)
@@ -289,12 +308,15 @@ function drawEdges(edges,oldEdges=edges) {
             //console.log("visitedEdges: ");
             //console.log(canvasGraphs[currentCanvasId].visitedEdges);
             
-            if(canvasGraphs[currentCanvasId].visitedEdges.includes(edges[i]))
+            /*if(canvasGraphs[currentCanvasId].visitedEdges.includes(edges[i]))
             {
                 //console.log("yep already there");
                 g.beginStroke("purple");
                 edges[i].color = "purple";
             }
+
+
+
             //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
             else if(canvasGraphs[currentCanvasId].selectedNodes[0] != null && canvasGraphs[currentCanvasId].selectedNodes[1] != null)
             {
@@ -343,8 +365,14 @@ function drawEdges(edges,oldEdges=edges) {
             else
             {
                 g.beginStroke("black");
-                edges[i].color = "black";
-            }
+                //edges[i].color = "black";
+            }*/
+
+
+
+            
+            g.beginStroke( edges[i].color );
+            
             
             if(edges[i].nodes[0].id == edges[i].nodes[1].id)
             {
@@ -935,6 +963,26 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
     else if(node.distance!=null)
     {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
+    }
+    
+    update=true;
+}
+
+function updateNodeInformationQuadrantIForDFS(node)
+{
+    if(node.timeDiscovered!=null)
+    {
+        var timeDiscoveredCompletedText = "" + node.timeDiscovered + "/";
+        if(node.timeCompleted!=null)
+        {
+            timeDiscoveredCompletedText += "" + node.timeCompleted;
+        }
+        console.log("time discovered completed text: "+timeDiscoveredCompletedText);
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
     }
     
     update=true;

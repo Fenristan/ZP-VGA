@@ -316,10 +316,6 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     //spliced.reverse().forEach((node) => nodes.unshift(node));
 
     var splicedNode = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id,1);
-    //console.log("splcied node je: ");
-    //console.log(splicedNode);
-
-
     nodes.unshift(splicedNode[0]);
 
     //console.log("novy order nodes je: ")
@@ -336,7 +332,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
         adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
     }
     
-    var path = [];
+    //var path = [];
 
     for (var u of nodes) {
         u.color = "BLUE";
@@ -360,33 +356,6 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     for (var u of nodes) {
         if(u.color == "BLUE")
         {
-            
-            /*if(canvasGraphs[currentCanvasId].stepCounter > startAfterStep)
-            { console.log("canvasGraphs[currentCanvasId].stepCounter je: "+canvasGraphs[currentCanvasId].stepCounter);
-                console.log(u);
-                if(canvasFlags[currentCanvasId].stopFlag != true)
-                {
-                    await thisWaitUntilForwardClicked;
-                    thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-                    canvasGraphs[currentCanvasId].stepCounter++;
-                }
-                else
-                {
-                    if(stepBackwardsFlag == true)
-                    {
-                        canvasFlags[currentCanvasId].stopFlag = false;
-                        stepBackwardsFlag = false;
-                        return canvasGraphs[currentCanvasId].stepCounter;
-                    }
-                    return 0;
-                }
-            }
-            else
-            {
-                console.log("canvasGraphs[currentCanvasId].stepCounter je: "+ canvasGraphs[currentCanvasId].stepCounter + " a startAfterStep je: "+ startAfterStep + " takze skipuji krok");
-                canvasGraphs[currentCanvasId].stepCounter++;
-            }*/
-            
             var result = await DFS_visit(u,startAfterStep);
 
             if(result == 0)
@@ -471,7 +440,7 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     
 
 
-    console.log(path);
+    //console.log(path);
 
     console.log(nodes);
 

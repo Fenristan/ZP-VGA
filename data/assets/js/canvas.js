@@ -203,9 +203,9 @@ for(var RestartButton of RestartButtons)
     {
         RestartButton.addEventListener("click", function(){
             //if there is a running simulation, stop it
-            canvasFlags[currentCanvasId].stopFlag = true;
+            //canvasFlags[currentCanvasId].stopFlag = true;
             canvasFlags[currentCanvasId].restartFlag = true;
-            CurrentStepForwardButton.click();
+            //CurrentStepForwardButton.click();
         
         });
     }
@@ -214,9 +214,9 @@ for(var StepBackwardsButton of StepBackwardsButtons)
 {
     StepBackwardsButton.addEventListener("click", function(){
         //if there is a running simulation, stop it and set stepBackwardsFlag to true.
-        canvasFlags[currentCanvasId].stopFlag = true;
+        //canvasFlags[currentCanvasId].stopFlag = true;
         stepBackwardsFlag = true;
-        CurrentStepForwardButton.click(); 
+        //CurrentStepForwardButton.click(); 
     });
 }
 

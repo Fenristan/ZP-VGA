@@ -81,10 +81,10 @@ async function DFS_visit(u,startAfterStep=-1)
             }
             else
             {
-                if(stepBackwardsFlag == true)
+                if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                 {
                     canvasFlags[currentCanvasId].stopFlag = false;
-                    stepBackwardsFlag = false;
+                    canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                     return canvasGraphs[currentCanvasId].stepCounter;
                 }
                 return 0;
@@ -137,10 +137,10 @@ async function DFS_visit(u,startAfterStep=-1)
                 }
                 else
                 {
-                    if(stepBackwardsFlag == true)
+                    if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                     {
                         canvasFlags[currentCanvasId].stopFlag = false;
-                        stepBackwardsFlag = false;
+                        canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                         return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
@@ -195,10 +195,10 @@ async function DFS_visit(u,startAfterStep=-1)
                 }
                 else
                 {
-                    if(stepBackwardsFlag == true)
+                    if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                     {
                         canvasFlags[currentCanvasId].stopFlag = false;
-                        stepBackwardsFlag = false;
+                        canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                         return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
@@ -235,10 +235,10 @@ async function DFS_visit(u,startAfterStep=-1)
                 }
                 else
                 {
-                    if(stepBackwardsFlag == true)
+                    if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                     {
                         canvasFlags[currentCanvasId].stopFlag = false;
-                        stepBackwardsFlag = false;
+                        canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                         return canvasGraphs[currentCanvasId].stepCounter;
                     }
                     return 0;
@@ -280,10 +280,10 @@ async function DFS_visit(u,startAfterStep=-1)
         }
         else
         {
-            if(stepBackwardsFlag == true)
+            if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
             {
                 canvasFlags[currentCanvasId].stopFlag = false;
-                stepBackwardsFlag = false;
+                canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                 return canvasGraphs[currentCanvasId].stepCounter;
             }
             return 0;
@@ -403,11 +403,11 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
 
         resetDFS();
 
-        if(stepBackwardsFlag == true)
+        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
             console.log("starting new simulation from next to last step");
             canvasFlags[currentCanvasId].stopFlag = false;
-            stepBackwardsFlag = false;
+            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
             await startDFS(waitUntilForwardClicked,lastStep-4);
         }
         else if(canvasFlags[currentCanvasId].restartFlag == true)
@@ -426,10 +426,10 @@ async function startDFS(waitUntilForwardClicked,startAfterStep=-1){
     }
     /*else
     {
-        if(stepBackwardsFlag == true)
+        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
             canvasFlags[currentCanvasId].stopFlag = false;
-            stepBackwardsFlag = false;
+            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
             return canvasGraphs[currentCanvasId].stepCounter;
         }
         return 0;

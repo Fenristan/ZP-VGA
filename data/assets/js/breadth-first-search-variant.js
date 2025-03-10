@@ -79,6 +79,8 @@ function resetBFS()
     canvasFlags[currentCanvasId].running = false;
 
     BFSGraphHistory = [];
+
+    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
 
 async function startBFS(waitUntilForwardClicked)
@@ -96,7 +98,7 @@ async function startBFS(waitUntilForwardClicked)
 
     
     var step = 0;
-    var lastStep = canvasGraphs[currentCanvasId].stepCounter;
+    var lastStep = BFSGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
@@ -110,13 +112,13 @@ async function startBFS(waitUntilForwardClicked)
 
         await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
 
-        if(stepBackwardsFlag == true)
+        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
             if(step != 0)
             {
                 step--;
             }
-            stepBackwardsFlag = false;
+            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
         }
         else if(canvasFlags[currentCanvasId].restartFlag == true)
         {

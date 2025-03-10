@@ -117,10 +117,10 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
             }
             else
             {
-                if(stepBackwardsFlag == true)
+                if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                 {
                     canvasFlags[currentCanvasId].stopFlag = false;
-                    stepBackwardsFlag = false;
+                    canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                     return canvasGraphs[currentCanvasId].stepCounter;
                 }
                 return 0;
@@ -164,10 +164,10 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
                     }
                     else
                     {
-                        if(stepBackwardsFlag == true)
+                        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
                         {
                             canvasFlags[currentCanvasId].stopFlag = false;
-                            stepBackwardsFlag = false;
+                            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
                             return canvasGraphs[currentCanvasId].stepCounter;
                         }
                         return 0;
@@ -198,11 +198,11 @@ async function BFS(waitUntilForwardClicked, startFromStep=-1){
 
         resetDFS();
 
-        if(stepBackwardsFlag == true)
+        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
             console.log("starting new simulation from next to last step");
             canvasFlags[currentCanvasId].stopFlag = false;
-            stepBackwardsFlag = false;
+            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
             await startBFS(waitUntilForwardClicked,lastStep-4);
         }
         else if(canvasFlags[currentCanvasId].restartFlag == true)

@@ -263,7 +263,7 @@ async function startDFS(waitUntilForwardClicked){
     canvasFlags[currentCanvasId].running = true;
     
     var step = 0;
-    var lastStep = canvasGraphs[currentCanvasId].stepCounter;
+    var lastStep = DFSGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
@@ -276,13 +276,13 @@ async function startDFS(waitUntilForwardClicked){
 
         await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
 
-        if(stepBackwardsFlag == true)
+        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
             if(step != 0)
             {
                 step--;
             }
-            stepBackwardsFlag = false;
+            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
         }
         else if(canvasFlags[currentCanvasId].restartFlag == true)
         {
@@ -297,9 +297,10 @@ async function startDFS(waitUntilForwardClicked){
         }*/
         else
         {
-            if(step <= lastStep)
+            if(step < lastStep-1)
             {
                 step++;
+                console.log("jdu delat step: "+step);
             }
         }
     }

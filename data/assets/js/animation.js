@@ -66,6 +66,7 @@ class Edge{
         this._nodes=nodes;
         this._weight=weight;
         this._color="black";
+        this._label="";
     }
     get id() {
         return this._id;
@@ -78,6 +79,9 @@ class Edge{
     }
     get color() {
         return this._color;
+    }
+    get label() {
+        return this._label;
     }
 
     set nodes(value) {
@@ -95,13 +99,17 @@ class Edge{
     set color(color) {
         this._color=color;
     }
+    set label(label) {
+        this._label=label;
+    }
 }
 Edge.prototype.toJSON = function () {
 return {
     id: this.id,
     nodes: this.nodes,
     weight: this.weight,
-    color: this.color
+    color: this.color,
+    label: this.label
 };
 };
 
@@ -131,7 +139,7 @@ var containers = [];
 var selectedEdge;
 var stepForwardFlag = false;
 //var stopFlag = false;
-var stepBackwardsFlag = false;
+//var canvasFlags[currentCanvasId].stepBackwardsFlag = false;
 //var restartFlag = false;
 
 var nodeRadius;
@@ -143,6 +151,9 @@ var visitedNodeImage = new Image();
 
 var playImage = new Image();
 var stopImage = new Image();
+
+var playAutoImage = new Image();
+var pauseAutoImage = new Image();
 
 function init() {
     examples.showDistractor();
@@ -169,8 +180,11 @@ function init() {
     selectedNodeImage.src = "./assets/images/nodeSelected2.png";
     visitedNodeImage.src = "./assets/images/nodeVisited.png";
 
-    playImage.src = "./assets/images/play_icon.png";
+    playImage.src = "./assets/images/start_icon.png";
     stopImage.src = "./assets/images/stop_icon.png";
+
+    playAutoImage.src = "./assets/images/play_auto_icon.png";
+    pauseAutoImage.src = "./assets/images/pause_auto_icon.png";
     
 }
 

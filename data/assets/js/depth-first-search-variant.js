@@ -31,7 +31,7 @@ function drawDFS()
     drawTreeDFS();
 }
 
-function saveDFSStepToHistory(step)
+function saveDFSStepToHistory()
 {
 
     var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));

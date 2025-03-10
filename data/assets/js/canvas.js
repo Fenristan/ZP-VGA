@@ -171,8 +171,6 @@ for (i = 0; i < StartStopButtons.length; i++)
             }
             else if(currentCanvasId == 1)
             {
-                toggleNodeInformationQuadrantIVisibility();
-                showCurrentVisNetwork();
                 startBFS(createClickListenerPromise(CurrentStepForwardButton));
             }
         }

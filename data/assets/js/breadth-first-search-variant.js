@@ -83,7 +83,7 @@ function resetBFS()
     containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
 
-async function startBFS(waitUntilForwardClicked)
+async function startBFS()
 {
 
     toggleNodeInformationQuadrantIVisibility();
@@ -110,7 +110,7 @@ async function startBFS(waitUntilForwardClicked)
 
         drawBFS();
 
-        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
+        await Promise.race([createClickListenerPromise(CurrentRestartButton), /*createClickListenerPromise(LoadButton),*/ createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
 
         if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
@@ -146,7 +146,7 @@ async function startBFS(waitUntilForwardClicked)
 }
 
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
-function BFS(waitUntilForwardClicked){
+function BFS(){
 
     nodes = canvasGraphs[currentCanvasId].nodes.slice();
     

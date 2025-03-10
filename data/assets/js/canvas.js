@@ -102,6 +102,9 @@ var context;
 var startStopButtonsStates = [];
 var playPauseAutoButtonsStates = [];
 
+var timeIntervalSliderInputs = document.getElementsByClassName("time-interval-slider-input");
+
+
 
 
 
@@ -172,6 +175,11 @@ async function startAutomaticAdvance()
     setTimeout(myFunction, timeInterval);
 }
 
+function setTimeInterval()
+{
+    canvases[currentCanvasId].automaticAdvanceTimeInterval = (6-Number(timeIntervalSliderInputs[currentCanvasId].value))*1000;
+}
+
 for (i = 0; i < StartStopButtons.length; i++)
 {
     
@@ -205,11 +213,11 @@ for (i = 0; i < StartStopButtons.length; i++)
         {
             if(currentCanvasId == 0)
             {
-                startDFS(createClickListenerPromise(CurrentStepForwardButton));
+                startDFS();
             }
             else if(currentCanvasId == 1)
             {
-                startBFS(createClickListenerPromise(CurrentStepForwardButton));
+                startBFS();
             }
         }
         else
@@ -313,7 +321,14 @@ function displayCanvas(evt)
     CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
     CurrentPlayPauseAutoButton = PlayPauseAutoButtons[currentCanvasId];
 
-    canvasFlags[currentCanvasId].automaticAdvanceFlag = false;
+    //
+    if(canvasFlags[currentCanvasId].automaticAdvanceFlag == true)
+    {
+        toggleCurrentPlayPauseAutoButton();
+        canvasFlags[currentCanvasId].automaticAdvanceFlag = false;
+    }
+
+    
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
     console.log("canvas: "+evt.currentTarget.index);

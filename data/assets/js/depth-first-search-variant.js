@@ -198,7 +198,7 @@ function DFS_visit(u)
     
 }
 
-function DFS(waitUntilForwardClicked){
+function DFS(){
     //canvasGraphs[currentCanvasId].stepCounter = 0;
 
     //canvasFlags[currentCanvasId].running = true;
@@ -253,7 +253,7 @@ function DFS(waitUntilForwardClicked){
 
 };
 
-async function startDFS(waitUntilForwardClicked){
+async function startDFS(){
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
@@ -274,7 +274,7 @@ async function startDFS(waitUntilForwardClicked){
 
         drawDFS();
 
-        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(LoadButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
+        await Promise.race([createClickListenerPromise(CurrentRestartButton), /*createClickListenerPromise(LoadButton),*/ createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
 
         if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {

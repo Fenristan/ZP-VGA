@@ -649,14 +649,14 @@ function addNodeToBitmap(node,container,bitmap) {
 
     container.addChild(bitmap,textName);
 
-    var textDistanceFromSource = new createjs.Text("∞","16px Arial","red");
-    textDistanceFromSource.x = node.x+(bitmap.image.width/3)
-    textDistanceFromSource.y = node.y-(bitmap.image.height/3)
-    textDistanceFromSource.id = node.id;
-    textDistanceFromSource.name = "nodeInformationQuadrantIText_" + node.id;
-    textDistanceFromSource.visible = false;
+    var textInformationQuadrantI = new createjs.Text("∞","16px Arial","red");
+    textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
+    textInformationQuadrantI.y = node.y-(bitmap.image.height/3)
+    textInformationQuadrantI.id = node.id;
+    textInformationQuadrantI.name = "nodeInformationQuadrantIText_" + node.id;
+    textInformationQuadrantI.visible = false;
 
-    container.addChild(bitmap,textDistanceFromSource);
+    container.addChild(bitmap,textInformationQuadrantI);
 
 }
 
@@ -894,10 +894,10 @@ function removeNode(bitmap, nodes, edges)
                 textName.y=selectedBitmap.y-textoffset-3;
                 parent.addChild(textName);
 
-                var textDistanceFromSource =  parent.getChildByName("nodeInformationQuadrantIText_"+selectedBitmap.id);
-                textDistanceFromSource.x = nodes[bitmap.id].x+(bitmap.image.width/3)
-                textDistanceFromSource.y = nodes[bitmap.id].y-(bitmap.image.height/3)
-                parent.addChild(textDistanceFromSource);
+                var textInformationQuadrantI =  parent.getChildByName("nodeInformationQuadrantIText_"+selectedBitmap.id);
+                textInformationQuadrantI.x = selectedBitmap.x+(bitmap.image.width/3)
+                textInformationQuadrantI.y = selectedBitmap.y-(bitmap.image.height/3)
+                parent.addChild(textInformationQuadrantI);
 
             }
             nodes.pop();
@@ -1111,10 +1111,10 @@ function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
         textName.y=node.y-textoffset-3;//textoffset;
         this.parent.addChild(textName);
 
-        var textDistanceFromSource = this.parent.getChildByName("nodeInformationQuadrantIText_"+this.id);
-        textDistanceFromSource.x = node.x+(bitmap.image.width/3)
-        textDistanceFromSource.y = node.y-(bitmap.image.height/3)
-        this.parent.addChild(textDistanceFromSource);
+        var textInformationQuadrantI = this.parent.getChildByName("nodeInformationQuadrantIText_"+this.id);
+        textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
+        textInformationQuadrantI.y = node.y-(bitmap.image.height/3)
+        this.parent.addChild(textInformationQuadrantI);
 
         // indicate that the stage should be updated on the next tick:
         update = true;
@@ -1180,7 +1180,6 @@ function handleImageLoad(event) {
     addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[0],canvasGraphs[currentCanvasId].nodes[1]],canvasGraphs[currentCanvasId].edges);
     addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[1],canvasGraphs[currentCanvasId].nodes[2]],canvasGraphs[currentCanvasId].edges);
 
-    // create and populate the screen with random daisies:
     for (var i = 0; i < canvasGraphs[currentCanvasId].nodes.length; i++) {
 
         bitmap = new createjs.Bitmap(node_image);

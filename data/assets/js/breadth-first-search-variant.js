@@ -1,5 +1,7 @@
 var BFSGraphHistory = [];
 
+var originalBFSGraph = null;
+
 function drawBFS()
 {
     for(var u of canvasGraphs[currentCanvasId].nodes)
@@ -54,6 +56,8 @@ function saveBFSStepToHistory()
 
 function resetBFS()
 {
+    canvasGraphs[currentCanvasId] = originalBFSGraph;
+
     canvasGraphs[currentCanvasId].visitedEdges = [];
     canvasGraphs[currentCanvasId].selectedNodes = [];
     canvasGraphs[currentCanvasId].queue = [];
@@ -85,6 +89,7 @@ function resetBFS()
 
 async function startBFS()
 {
+    originalBFSGraph = canvasGraphs[currentCanvasId];
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();

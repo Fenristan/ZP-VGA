@@ -3,6 +3,7 @@ var time;
 
 
 var DFSGraphHistory = [];
+var originalDFSGraph = null;
 
 function drawDFS()
 {
@@ -47,6 +48,8 @@ function saveDFSStepToHistory()
 
 function resetDFS()
 {
+    canvasGraphs[currentCanvasId] = originalDFSGraph;
+
     canvasGraphs[currentCanvasId].visitedEdges = [];
     canvasGraphs[currentCanvasId].selectedNodes = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)
@@ -71,6 +74,8 @@ function resetDFS()
     canvasFlags[currentCanvasId].running = false;
 
     DFSGraphHistory = [];
+
+    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
 
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
@@ -124,33 +129,23 @@ function DFS_visit(u)
             console.log("jeho color je: "+getNodeUsingId(v).color);
 
             //highlight edge between these nodes red
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
-
             var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id], canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
             edge.color = "red";
 
 
             u.color = "RED";
-            getNodeUsingId(v).color = "PURPLE";
-
-            getNodeUsingId(v).parent = u;
-
             //highlight the newly visited node as visited
-            //u.color = "PURPLE";
+            getNodeUsingId(v).color = "PURPLE";
+            getNodeUsingId(v).parent = u;
 
             getNodeUsingId(v).timeDiscovered = time+1;
 
             saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
             
-
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
-
             edge.color = "purple";
-            //canvasGraphs[currentCanvasId].edges[edge.id].color = "black";
-            
             DFS_visit(getNodeUsingId(v));
 
         }
@@ -254,6 +249,9 @@ function DFS(){
 };
 
 async function startDFS(){
+
+    //originalDFSGraph = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]))
+    originalDFSGraph = canvasGraphs[currentCanvasId];
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();

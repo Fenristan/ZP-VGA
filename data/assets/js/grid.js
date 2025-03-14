@@ -22,7 +22,7 @@ function renderBFSGrid()
         }
     }
 
-    for(var u of queue)
+    for(var u of canvasGraphs[currentCanvasId].queue)
     {
         gridQueueData.push([u.text]);
     }

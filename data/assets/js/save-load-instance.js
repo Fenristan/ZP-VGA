@@ -34,13 +34,14 @@ file.addEventListener("change", function(){
         console.log(fileText);
         const loadedCanvas = JSON.parse(fileText);
         //const loadedCanvas = fromJSON(fileText); 
+        console.log("new canvas:");
         console.log(loadedCanvas);
         console.log("old canvas:");
         console.log(canvasGraphs[currentCanvasId]);
         //canvasGraphs[currentCanvasId]= loadedCanvas; // tady kdyžtak nezapomeň
         
         update = true;
-        console.log("new canvas:");
+        
         console.log(canvasGraphs[currentCanvasId]);
         console.log("test edges:");
 

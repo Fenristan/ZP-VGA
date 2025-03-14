@@ -70,7 +70,7 @@ for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
     canvasGraphs.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null, stepCounter: 0 });
-    canvasFlags.push({ stopFlag: false, restartFlag: false, running: false});
+    canvasFlags.push({ stopFlag: false, restartFlag: false, running: false, automaticAdvanceFlag: false});
 }
 
 
@@ -87,17 +87,23 @@ const RestartButtons = document.getElementsByClassName("restart");
 const StartStopButtons = document.getElementsByClassName("start");
 const StepForwardButtons = document.getElementsByClassName("stepforward");
 const StepBackwardsButtons = document.getElementsByClassName("stepback");
+const PlayPauseAutoButtons = document.getElementsByClassName("play_auto");
 
 var CurrentRestartButton = null;
 var CurrentStartStopButton = null;
 var CurrentStepForwardButton = null;
 var CurrentStepBackwardsButton = null;
+var CurrentPlayPauseAutoButton = null;
 
 var currentCanvasId = 0;
 var canvas;
 var context;
 
 var startStopButtonsStates = [];
+var playPauseAutoButtonsStates = [];
+
+var timeIntervalSliderInputs = document.getElementsByClassName("time-interval-slider-input");
+
 
 
 
@@ -123,6 +129,20 @@ function createClickListenerPromise (target) {
     return new Promise((resolve) => target.addEventListener('click', resolve))
 }
 
+function toggleCurrentPlayPauseAutoButton()
+{
+    playPauseAutoButtonsStates[currentCanvasId] ^= true;
+
+    if(playPauseAutoButtonsStates[currentCanvasId] == true)
+    {
+        PlayPauseAutoButtons[currentCanvasId].src = pauseAutoImage.src;
+    }
+    else
+    {
+        PlayPauseAutoButtons[currentCanvasId].src = playAutoImage.src;
+    }
+}
+
 function toggleCurrentStartStopButton()
 {
     startStopButtonsStates[currentCanvasId] ^= true;
@@ -137,12 +157,38 @@ function toggleCurrentStartStopButton()
     }
 }
 
+async function startAutomaticAdvance()
+{
+    
+    var timeInterval = canvases[currentCanvasId].automaticAdvanceTimeInterval;
+    var myFunction = function() {
+        if(canvasFlags[currentCanvasId].automaticAdvanceFlag == false)
+        {
+            return;
+        }
+
+        CurrentStepForwardButton.click();
+
+        timeInterval = canvases[currentCanvasId].automaticAdvanceTimeInterval;
+        setTimeout(myFunction, timeInterval);
+    }
+    setTimeout(myFunction, timeInterval);
+}
+
+function setTimeInterval()
+{
+    canvases[currentCanvasId].automaticAdvanceTimeInterval = (6-Number(timeIntervalSliderInputs[currentCanvasId].value))*1000;
+}
+
 for (i = 0; i < StartStopButtons.length; i++)
 {
     
     var StartStopButton = StartStopButtons[i];
 
     startStopButtonsStates[i] = false;
+    playPauseAutoButtonsStates[i] = false;
+
+    canvasFlags[currentCanvasId].automaticAdvanceFlag = false;
 
     StartStopButton.addEventListener("click", function(){
 
@@ -160,26 +206,29 @@ for (i = 0; i < StartStopButtons.length; i++)
         console.log("starting simulation");
         
         canvasFlags[currentCanvasId].stopFlag = false;
-
+        //canvasFlags[currentCanvasId].automaticAdvanceFlag = false;
         
 
         if(startStopButtonsStates[currentCanvasId] == false)
         {
             if(currentCanvasId == 0)
             {
-                startDFS(createClickListenerPromise(CurrentStepForwardButton));
+                startDFS();
             }
             else if(currentCanvasId == 1)
             {
-                toggleNodeInformationQuadrantIVisibility();
-                showCurrentVisNetwork();
-                startBFS(createClickListenerPromise(CurrentStepForwardButton));
+                startBFS();
             }
         }
         else
         {
             //StopButton.click();
             canvasFlags[currentCanvasId].stopFlag = true;
+            //when the search is supposed to end, check if automatic Advance wasn't running, if so, click the button, making it pause
+            if(canvasFlags[currentCanvasId].automaticAdvanceFlag == true)
+            {
+                CurrentPlayPauseAutoButton.click();
+            }
             CurrentStepForwardButton.click();
         }
         
@@ -200,24 +249,41 @@ for (i = 0; i < StartStopButtons.length; i++)
 }*/
 
 for(var RestartButton of RestartButtons)
-    {
-        RestartButton.addEventListener("click", function(){
-            //if there is a running simulation, stop it
-            canvasFlags[currentCanvasId].stopFlag = true;
-            canvasFlags[currentCanvasId].restartFlag = true;
-            CurrentStepForwardButton.click();
-        
-        });
-    }
+{
+    RestartButton.addEventListener("click", function(){
+        //if there is a running simulation, stop it
+        //canvasFlags[currentCanvasId].stopFlag = true;
+        canvasFlags[currentCanvasId].restartFlag = true;
+        //CurrentStepForwardButton.click();
+    
+    });
+}
 
 for(var StepBackwardsButton of StepBackwardsButtons)
 {
     StepBackwardsButton.addEventListener("click", function(){
-        //if there is a running simulation, stop it and set stepBackwardsFlag to true.
-        canvasFlags[currentCanvasId].stopFlag = true;
-        stepBackwardsFlag = true;
-        CurrentStepForwardButton.click(); 
+        //if there is a running simulation, set canvasFlags[currentCanvasId].stepBackwardsFlag to true.
+        //canvasFlags[currentCanvasId].stopFlag = true;
+        canvasFlags[currentCanvasId].stepBackwardsFlag = true;
+        //CurrentStepForwardButton.click(); 
     });
+}
+
+for(var StartPauseAutoButton of PlayPauseAutoButtons)
+{
+    StartPauseAutoButton.addEventListener("click", function(){
+
+        canvases[currentCanvasId].automaticAdvanceTimeInterval = 2000;
+
+        canvasFlags[currentCanvasId].automaticAdvanceFlag ^= true;
+        if(canvasFlags[currentCanvasId].automaticAdvanceFlag == true)
+        {
+            startAutomaticAdvance();
+        }
+        toggleCurrentPlayPauseAutoButton();
+    });
+
+    
 }
 
   
@@ -253,6 +319,16 @@ function displayCanvas(evt)
     CurrentStartStopButton = StartStopButtons[currentCanvasId];
     CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
     CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
+    CurrentPlayPauseAutoButton = PlayPauseAutoButtons[currentCanvasId];
+
+    //
+    if(canvasFlags[currentCanvasId].automaticAdvanceFlag == true)
+    {
+        toggleCurrentPlayPauseAutoButton();
+        canvasFlags[currentCanvasId].automaticAdvanceFlag = false;
+    }
+
+    
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
     console.log("canvas: "+evt.currentTarget.index);

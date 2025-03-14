@@ -5,6 +5,7 @@ class Node {
         this._text=text;
         this._x=x;
         this._y=y;
+        this._color="BLUE";
     }
     get text() {
         return this._text;
@@ -21,6 +22,10 @@ class Node {
     get y() {
         return this._y;
     }
+    get color() {
+        return this._color;
+    }
+
     set y(y) {
         this._y=y;
     }
@@ -39,6 +44,9 @@ class Node {
     set text(text){
         this._text=text;
     }
+    set color(color) {
+        this._color=color;
+    }
 
 }
 Node.prototype.toJSON = function () {
@@ -47,7 +55,8 @@ return {
     text: this.text,
     x: this.x,
     y: this.y,
-    size: this.size
+    size: this.size,
+    color: this.color
 };
 };
 
@@ -56,6 +65,8 @@ class Edge{
         this._id = id;
         this._nodes=nodes;
         this._weight=weight;
+        this._color="black";
+        this._label="";
     }
     get id() {
         return this._id;
@@ -65,6 +76,12 @@ class Edge{
     }
     get weight() {
         return this._weight;
+    }
+    get color() {
+        return this._color;
+    }
+    get label() {
+        return this._label;
     }
 
     set nodes(value) {
@@ -79,12 +96,20 @@ class Edge{
     {
         this._weight=weight;
     }
+    set color(color) {
+        this._color=color;
+    }
+    set label(label) {
+        this._label=label;
+    }
 }
 Edge.prototype.toJSON = function () {
 return {
     id: this.id,
     nodes: this.nodes,
-    weight: this.weight
+    weight: this.weight,
+    color: this.color,
+    label: this.label
 };
 };
 
@@ -114,7 +139,7 @@ var containers = [];
 var selectedEdge;
 var stepForwardFlag = false;
 //var stopFlag = false;
-var stepBackwardsFlag = false;
+//var canvasFlags[currentCanvasId].stepBackwardsFlag = false;
 //var restartFlag = false;
 
 var nodeRadius;
@@ -126,6 +151,9 @@ var visitedNodeImage = new Image();
 
 var playImage = new Image();
 var stopImage = new Image();
+
+var playAutoImage = new Image();
+var pauseAutoImage = new Image();
 
 function init() {
     examples.showDistractor();
@@ -152,8 +180,11 @@ function init() {
     selectedNodeImage.src = "./assets/images/nodeSelected2.png";
     visitedNodeImage.src = "./assets/images/nodeVisited.png";
 
-    playImage.src = "./assets/images/play_icon.png";
+    playImage.src = "./assets/images/start_icon.png";
     stopImage.src = "./assets/images/stop_icon.png";
+
+    playAutoImage.src = "./assets/images/play_auto_icon.png";
+    pauseAutoImage.src = "./assets/images/pause_auto_icon.png";
     
 }
 
@@ -216,6 +247,8 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
 
 function getEdgeFromNodeToNode(nodeA, nodeB)
 {
+    console.log(nodeA);
+    console.log(nodeB);
     for(edge of canvasGraphs[currentCanvasId].edges)
     {
         if(currentCanvas.directed == true)
@@ -289,12 +322,15 @@ function drawEdges(edges,oldEdges=edges) {
             //console.log("visitedEdges: ");
             //console.log(canvasGraphs[currentCanvasId].visitedEdges);
             
-            if(canvasGraphs[currentCanvasId].visitedEdges.includes(edges[i]))
+            /*if(canvasGraphs[currentCanvasId].visitedEdges.includes(edges[i]))
             {
                 //console.log("yep already there");
                 g.beginStroke("purple");
                 edges[i].color = "purple";
             }
+
+
+
             //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
             else if(canvasGraphs[currentCanvasId].selectedNodes[0] != null && canvasGraphs[currentCanvasId].selectedNodes[1] != null)
             {
@@ -343,8 +379,14 @@ function drawEdges(edges,oldEdges=edges) {
             else
             {
                 g.beginStroke("black");
-                edges[i].color = "black";
-            }
+                //edges[i].color = "black";
+            }*/
+
+
+
+            
+            g.beginStroke( edges[i].color );
+            
             
             if(edges[i].nodes[0].id == edges[i].nodes[1].id)
             {
@@ -607,14 +649,14 @@ function addNodeToBitmap(node,container,bitmap) {
 
     container.addChild(bitmap,textName);
 
-    var textDistanceFromSource = new createjs.Text("∞","16px Arial","red");
-    textDistanceFromSource.x = node.x+(bitmap.image.width/3)
-    textDistanceFromSource.y = node.y-(bitmap.image.height/3)
-    textDistanceFromSource.id = node.id;
-    textDistanceFromSource.name = "nodeInformationQuadrantIText_" + node.id;
-    textDistanceFromSource.visible = false;
+    var textInformationQuadrantI = new createjs.Text("∞","16px Arial","red");
+    textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
+    textInformationQuadrantI.y = node.y-(bitmap.image.height/3)
+    textInformationQuadrantI.id = node.id;
+    textInformationQuadrantI.name = "nodeInformationQuadrantIText_" + node.id;
+    textInformationQuadrantI.visible = false;
 
-    container.addChild(bitmap,textDistanceFromSource);
+    container.addChild(bitmap,textInformationQuadrantI);
 
 }
 
@@ -852,10 +894,10 @@ function removeNode(bitmap, nodes, edges)
                 textName.y=selectedBitmap.y-textoffset-3;
                 parent.addChild(textName);
 
-                var textDistanceFromSource =  parent.getChildByName("nodeInformationQuadrantIText_"+selectedBitmap.id);
-                textDistanceFromSource.x = nodes[bitmap.id].x+(bitmap.image.width/3)
-                textDistanceFromSource.y = nodes[bitmap.id].y-(bitmap.image.height/3)
-                parent.addChild(textDistanceFromSource);
+                var textInformationQuadrantI =  parent.getChildByName("nodeInformationQuadrantIText_"+selectedBitmap.id);
+                textInformationQuadrantI.x = selectedBitmap.x+(bitmap.image.width/3)
+                textInformationQuadrantI.y = selectedBitmap.y-(bitmap.image.height/3)
+                parent.addChild(textInformationQuadrantI);
 
             }
             nodes.pop();
@@ -935,6 +977,40 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
     else if(node.distance!=null)
     {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
+    }
+    
+    update=true;
+}
+
+function updateNodeInformationQuadrantIForDFS(node)
+{
+    if(node.timeDiscovered!=null)
+    {
+        var timeDiscoveredCompletedText = "" + node.timeDiscovered + "/";
+        if(node.timeCompleted!=null)
+        {
+            timeDiscoveredCompletedText += "" + node.timeCompleted;
+        }
+        console.log("time discovered completed text: "+timeDiscoveredCompletedText);
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
+    }
+    
+    update=true;
+}
+
+function updateNodeInformationQuadrantIForBFS(node)
+{
+    if(node.distance!=null)
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
     }
     
     update=true;
@@ -1035,10 +1111,10 @@ function bindFunctionalityToBitmap(node,bitmap,edges,nodes) {
         textName.y=node.y-textoffset-3;//textoffset;
         this.parent.addChild(textName);
 
-        var textDistanceFromSource = this.parent.getChildByName("nodeInformationQuadrantIText_"+this.id);
-        textDistanceFromSource.x = node.x+(bitmap.image.width/3)
-        textDistanceFromSource.y = node.y-(bitmap.image.height/3)
-        this.parent.addChild(textDistanceFromSource);
+        var textInformationQuadrantI = this.parent.getChildByName("nodeInformationQuadrantIText_"+this.id);
+        textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
+        textInformationQuadrantI.y = node.y-(bitmap.image.height/3)
+        this.parent.addChild(textInformationQuadrantI);
 
         // indicate that the stage should be updated on the next tick:
         update = true;
@@ -1104,7 +1180,6 @@ function handleImageLoad(event) {
     addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[0],canvasGraphs[currentCanvasId].nodes[1]],canvasGraphs[currentCanvasId].edges);
     addEdgeBetweenNodes([canvasGraphs[currentCanvasId].nodes[1],canvasGraphs[currentCanvasId].nodes[2]],canvasGraphs[currentCanvasId].edges);
 
-    // create and populate the screen with random daisies:
     for (var i = 0; i < canvasGraphs[currentCanvasId].nodes.length; i++) {
 
         bitmap = new createjs.Bitmap(node_image);

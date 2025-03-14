@@ -202,6 +202,13 @@ for (i = 0; i < StartStopButtons.length; i++)
             node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
             console.log("node is now called: " + canvasGraphs[currentCanvasId].nodes[node.id].text);
         });
+        //the same is true for weighted edges
+        for(edge of canvasGraphs[currentCanvasId].edges)
+        {
+            canvasGraphs[currentCanvasId].edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
+            console.log("assigning weight to edge: "+edge.id);
+            console.log("edge weight is now : " + canvasGraphs[currentCanvasId].edges[edge.id].weight);
+        }
     
         console.log("starting simulation");
         
@@ -218,6 +225,10 @@ for (i = 0; i < StartStopButtons.length; i++)
             else if(currentCanvasId == 1)
             {
                 startBFS();
+            }
+            else if(currentCanvasId == 2)
+            {
+                startDijkstra();
             }
         }
         else

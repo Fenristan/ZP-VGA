@@ -1016,6 +1016,20 @@ function updateNodeInformationQuadrantIForBFS(node)
     update=true;
 }
 
+function updateNodeInformationQuadrantIForDijkstra(node)
+{
+    if(node.distance!=null)
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
+    }
+    
+    update=true;
+}
+
 function clearNodesInformationQuadrantIForNodeInCanvas()
 {
     for(node of canvasGraphs[currentCanvasId].nodes)

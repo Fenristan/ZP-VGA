@@ -177,7 +177,7 @@ async function startAutomaticAdvance()
 
 function setTimeInterval()
 {
-    canvases[currentCanvasId].automaticAdvanceTimeInterval = (6-Number(timeIntervalSliderInputs[currentCanvasId].value))*1000;
+    canvases[currentCanvasId].automaticAdvanceTimeInterval = (6-Number(timeIntervalSliderInputs[currentCanvasId].value))*300;
 }
 
 for (i = 0; i < StartStopButtons.length; i++)

@@ -184,14 +184,15 @@ function drawTreeBFS()
     //add all edges to the array of edges to be drawn
     for(edge of canvasGraphs[currentCanvasId].edges)
     {
-      if(canvasGraphs[currentCanvasId].visitedEdges.includes(edge))
+      /*if(canvasGraphs[currentCanvasId].visitedEdges.includes(edge))
       {
-        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color, width: 3 });
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
       }
       else
       {
-        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: "black", width: 0.8 });
-      }
+        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+      }*/
+      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
     }
   
     var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);

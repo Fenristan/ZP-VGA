@@ -60,6 +60,7 @@ function resetDFS()
     for(var edge of canvasGraphs[currentCanvasId].edges)
     {
         edge.color = "black";
+        edge.label = "";
     }
 
     drawEdges(canvasGraphs[currentCanvasId].edges);

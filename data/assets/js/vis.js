@@ -242,21 +242,35 @@ function drawTreeDijkstra()
     for(node of canvasGraphs[currentCanvasId].nodes)
     {
         //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" )
         {
             node.level = node.distance;
             node.label = node.text;
             //getLevel(node);
             currentVisGraph.nodes.push(node);
-            console.log(currentVisGraph.nodes);
+            //console.log(currentVisGraph.nodes);
         }
     }
-
 
     //add all edges to the array of edges to be drawn
     for(edge of canvasGraphs[currentCanvasId].edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
+      if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
+      {
+        console.log("currentVisGraph.nodes");
+        console.log(currentVisGraph.nodes);
+        console.log("edge");
+        console.log(edge.nodes[1]);
+        if(edge.nodes[1].distance != "∞")
+        {
+          edge.nodes[1].level = edge.nodes[1].distance;
+          edge.nodes[1].label = edge.nodes[1].text;
+          currentVisGraph.nodes.push(edge.nodes[1]);
+        }
+        
+      }
+      
     }
   
     var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
@@ -299,7 +313,7 @@ function drawTreeDijkstra()
     };
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
-    renderBFSGrid();
+    renderDijkstraGrid();
 }
 
 /*var directionInput = document.getElementById("direction");

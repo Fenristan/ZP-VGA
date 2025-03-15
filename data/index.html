@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title></title>
     <link rel="stylesheet" href="./assets/css/style.css">
-    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/css/mermaid.min.css">
 
     
     <script src="./assets/js/animation.js" defer></script>
@@ -20,7 +20,7 @@
     
     <script src="./lib/vis-network.min.js"></script>
     <script src="./lib/easeljs-NEXT.js"></script>
-    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script src="./lib/gridjs.umd.js"></script>
 
 </head>
 
@@ -202,7 +202,10 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas2" width="960" height="400"></canvas>
                     </div>
-                    <div id="sidebarCanvas2" class="sidebar"></div>
+                    <div id="sidebarCanvas2" class="sidebar">
+                        <div id = "sidebarDistanceGridCanvas2" style = "width: 50%;"></div>
+                        <div id = "sidebarParentGridCanvas2" style = "width: 50%;"></div>
+                    </div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>

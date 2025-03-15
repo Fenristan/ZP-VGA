@@ -148,6 +148,79 @@ function renderDFSGrid()
     
 }
 
+function renderDijkstraGrid()
+{
+    var gridDistanceData = [];
+    var gridParentData = [];
+
+    for(var u of canvasGraphs[currentCanvasId].nodes)
+    {
+
+        gridDistanceData.push([u.text,u.distance]);
+
+
+        if(u.parent != null)
+        {
+            gridParentData.push([u.text,u.parent.text]);
+        }
+        else
+        {
+            gridParentData.push([u.text,"-"]);
+        }
+    }
+
+    if(grids[currentCanvasId] == null)
+    {
+        grids[currentCanvasId] = [];
+
+        var newDistanceGrid = new gridjs.Grid({
+            columns: [
+                { 
+                  name: 'Distance',
+                  columns: [{
+                    name: 'Name'
+                  }, {
+                    name: 'Distance'
+                  }]
+                },
+            ],
+            data: gridDistanceData
+        }).render(document.getElementById("sidebarDistanceGridCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(newDistanceGrid);
+
+        var newParentGrid = new gridjs.Grid({
+            columns: [
+                { 
+                  name: 'Parents',
+                  columns: [{
+                    name: 'Name'
+                  }, {
+                    name: 'Parent'
+                  }]
+                },
+            ],
+            data: gridParentData
+        }).render(document.getElementById("sidebarParentGridCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(newParentGrid);
+    }
+    else
+    {
+        // BFS has two grids
+        grids[currentCanvasId][0].updateConfig({
+            data:gridDistanceData
+        });
+        grids[currentCanvasId][1].updateConfig({
+            data:gridParentData
+        });
+
+        grids[currentCanvasId][0].forceRender();
+        grids[currentCanvasId][1].forceRender();
+    }
+    
+}
+
 function clearBFSGrid()
 {
     grids[currentCanvasId][0].updateConfig({
@@ -162,6 +235,19 @@ function clearBFSGrid()
 }
 
 function clearDFSGrid()
+{
+    grids[currentCanvasId][0].updateConfig({
+        data:[]
+    });
+    grids[currentCanvasId][1].updateConfig({
+        data:[]
+    });
+
+    grids[currentCanvasId][0].forceRender();
+    grids[currentCanvasId][1].forceRender();
+}
+
+function clearDijkstraGrid()
 {
     grids[currentCanvasId][0].updateConfig({
         data:[]

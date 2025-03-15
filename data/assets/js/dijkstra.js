@@ -27,7 +27,7 @@ function drawDijkstra()
     }
 
     drawEdges(canvasGraphs[currentCanvasId].edges);
-    //drawTreeDijkstra();
+    drawTreeDijkstra();
 }
 
 function saveDjikstraStepToHistory()
@@ -62,7 +62,7 @@ function resetDijkstra()
 
     drawEdges(canvasGraphs[currentCanvasId].edges);
     destroyCurrentVisNetwork();
-    //clearBFSGrid();
+    clearDijkstraGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
 

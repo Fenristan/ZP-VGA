@@ -30,7 +30,7 @@ function drawDijkstra()
     drawTreeDijkstra();
 }
 
-function saveDjikstraStepToHistory()
+function saveDijkstraStepToHistory()
 {
 
     var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
@@ -210,14 +210,14 @@ function dijkstra()
         canvasGraphs[currentCanvasId].set.push(u);
 
         u.color = "RED";
-        saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+        saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
         canvasGraphs[currentCanvasId].stepCounter++;
 
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
             var edge = getEdgeFromNodeToNode(u,v)
             edge.color = "red";
-            //saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            //saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             //canvasGraphs[currentCanvasId].stepCounter++;
             //edge.color = "black";
 
@@ -232,24 +232,23 @@ function dijkstra()
                 //v.color = "PURPLE";
                 //edge.color = "purple"
 
-                //saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+                //saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
                 //canvasGraphs[currentCanvasId].stepCounter++;
             }
-            saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
             edge.color = "black";
 
             //edge.color = "purple";
         }
-        saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
-
+        
         u.color = "GREEN";
         
-        saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
-        
     }
+
+    saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+    canvasGraphs[currentCanvasId].stepCounter++;
+
     console.log("set je: ")
     console.log(canvasGraphs[currentCanvasId].set);
 

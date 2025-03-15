@@ -244,9 +244,9 @@ function drawTreeDijkstra()
         //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" )
         {
-            node.level = node.distance;
+            //node.level = node.distance;
             node.label = node.text;
-            //getLevel(node);
+            getLevel(node);
             currentVisGraph.nodes.push(node);
             //console.log(currentVisGraph.nodes);
         }
@@ -264,7 +264,8 @@ function drawTreeDijkstra()
         console.log(edge.nodes[1]);
         if(edge.nodes[1].distance != "∞")
         {
-          edge.nodes[1].level = edge.nodes[1].distance;
+          //edge.nodes[1].level = edge.nodes[1].distance;
+          getLevel(edge.nodes[1]);
           edge.nodes[1].label = edge.nodes[1].text;
           currentVisGraph.nodes.push(edge.nodes[1]);
         }

@@ -140,20 +140,26 @@ async function startDijkstra()
 
 function extractMin()
 {
-    var minNode = canvasGraphs[currentCanvasId].queue[0];
+    var min = Number.MAX_VALUE;
+    var minNode = null;
+
     for(node of canvasGraphs[currentCanvasId].queue)
     {
         if(node.distance != "∞")
-        {
-            if(node.distance < minNode.distance)
+        {    
+            if(node.distance < min)
             {
+                min = node.distance;
                 minNode = node;
             }
         }
     }
-    
-    const findIndex = canvasGraphs[currentCanvasId].queue.findIndex(node => node.id === minNode.id);
-    findIndex !== -1 && canvasGraphs[currentCanvasId].queue.splice(findIndex , 1);
+
+    if(minNode != null)
+    {
+        const findIndex = canvasGraphs[currentCanvasId].queue.findIndex(node => node.id === minNode.id);
+        findIndex !== -1 && canvasGraphs[currentCanvasId].queue.splice(findIndex , 1);
+    }
 
     return minNode;
 }
@@ -190,6 +196,15 @@ function dijkstra()
 
     while (canvasGraphs[currentCanvasId].queue.length > 0) {
         var u = extractMin();
+        if(u == null)
+        {
+            break;
+        }
+        if(u.parent != null)
+        {
+            var edge = getEdgeFromNodeToNode(u.parent,u);
+            edge.color = "purple";
+        }
         console.log("extracted min: ");
         console.log(u);
         canvasGraphs[currentCanvasId].set.push(u);
@@ -202,30 +217,38 @@ function dijkstra()
             var v =  getNodeUsingId(vId);
             var edge = getEdgeFromNodeToNode(u,v)
             edge.color = "red";
-
-            
+            //saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            //canvasGraphs[currentCanvasId].stepCounter++;
+            //edge.color = "black";
 
             var alt = u.distance + edge.weight;
             console.log("alt je: " +alt)
             console.log(canvasGraphs[currentCanvasId].set);
             if(alt < v.distance || v.distance == "∞")
             {
+                console.log("v.distance: "+v.distance)
                 v.distance = alt;
                 v.parent = u;
                 //v.color = "PURPLE";
-                //edge.color = "PURPLE"
+                //edge.color = "purple"
 
                 //saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
                 //canvasGraphs[currentCanvasId].stepCounter++;
             }
             saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
+            edge.color = "black";
 
-            edge.color = "purple";
+            //edge.color = "purple";
         }
-        u.color = "GREEN";
         saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
         canvasGraphs[currentCanvasId].stepCounter++;
+
+        u.color = "GREEN";
+        
+        saveDjikstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+        canvasGraphs[currentCanvasId].stepCounter++;
+        
     }
     console.log("set je: ")
     console.log(canvasGraphs[currentCanvasId].set);

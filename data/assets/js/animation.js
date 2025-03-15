@@ -601,6 +601,15 @@ function drawEdges(edges,oldEdges=edges) {
     update = true;
 }
 
+function updateEdgeWeights()
+{
+    for(edge of canvasGraphs[currentCanvasId].edges)
+    {
+        edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id);
+        edgeWeightText.innerHTML = ""+edge.weight;
+    }
+}
+
 function addNodeToBitmap(node,container,bitmap) {
     bitmap.x = node.x;
     bitmap.y = node.y;

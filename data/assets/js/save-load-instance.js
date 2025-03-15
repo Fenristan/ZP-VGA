@@ -105,9 +105,13 @@ file.addEventListener("change", function(){
             console.log(edge);
             
             addEdgeBetweenNodes(edge.nodes,canvasGraphs[currentCanvasId].edges);
+            canvasGraphs[currentCanvasId].edges[canvasGraphs[currentCanvasId].edges.length-1].weight = edge.weight;
             //update = true;
             //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
+        
+        updateEdgeWeights();
+
 
         
         
@@ -140,6 +144,15 @@ function saveInstanceToFile()
     {
         console.log(JSON.stringify(currentEdges[i]));
     }*/
+
+    for(node of canvasGraphs[currentCanvasId].nodes)
+    {
+        canvasGraphs[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+    }
+    for(edge of canvasGraphs[currentCanvasId].edges)
+    {
+        canvasGraphs[currentCanvasId].edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
+    }
 
     
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(canvasGraphs[currentCanvasId]));

@@ -1,11 +1,10 @@
 var nodes = [];
 var time;
 
+var tarjanGraphHistory = [];
+var originalDFS_TarjanGraph = null;
 
-var DFSGraphHistory = [];
-var originalDFSGraph = null;
-
-function drawDFS()
+function drawDFS_Tarjan()
 {
     for(var u of canvasGraphs[currentCanvasId].nodes)
     {
@@ -29,10 +28,11 @@ function drawDFS()
         updateNodeInformationQuadrantIForDFS(u);
     }
     drawEdges(canvasGraphs[currentCanvasId].edges);
-    drawTreeDFS();
+    renderTarjanGrid();
+    //drawTreeDFS_Tarjan();
 }
 
-function saveDFSStepToHistory()
+function saveDFS_TarjanStepToHistory()
 {
 
     var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
@@ -43,18 +43,22 @@ function saveDFSStepToHistory()
         node.timeCompleted = canvasGraphs[currentCanvasId].nodes[node.id].timeCompleted;
     }
 
-    DFSGraphHistory.push(canvasGraphCopy);
+    tarjanGraphHistory.push(canvasGraphCopy);
 }
 
-function resetDFS()
+function resetDFS_Tarjan()
 {
-    canvasGraphs[currentCanvasId] = originalDFSGraph;
+    canvasGraphs[currentCanvasId] = originalDFS_TarjanGraph;
 
     canvasGraphs[currentCanvasId].visitedEdges = [];
     canvasGraphs[currentCanvasId].selectedNodes = [];
+    canvasGraphs[currentCanvasId].SCC = [];
+    canvasGraphs[currentCanvasId].stack = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        node.lowpt = null;
+        node.inComponent = null;
     }
 
     for(var edge of canvasGraphs[currentCanvasId].edges)
@@ -65,7 +69,7 @@ function resetDFS()
 
     drawEdges(canvasGraphs[currentCanvasId].edges);
     destroyCurrentVisNetwork();
-    clearDFSGrid();
+    clearTarjanGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
@@ -74,7 +78,7 @@ function resetDFS()
 
     canvasFlags[currentCanvasId].running = false;
 
-    DFSGraphHistory = [];
+    tarjanGraphHistory = [];
 
     containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
@@ -109,110 +113,123 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
-function DFS_visit(u)
+function DFS_Tarjan_visit(u)
 {
-    //console.log("printing u.id: "+u.id);
 
     u.color = "RED";
     time += 1;
     u.timeDiscovered = time;
+    u.lowpt = time;
+    u.inComponent = false;
+    canvasGraphs[currentCanvasId].stack.push(u);
 
-    saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+    saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
     canvasGraphs[currentCanvasId].stepCounter++;
             
-    for (var v of adjacencyList[u.id]) {
-        //every time we go from this node to another, highlight it as the currently selected Node
-        u.color = "RED";
+    for (var vId of adjacencyList[u.id]) {
+        var v = canvasGraphs[currentCanvasId].nodes[vId];
 
-        /*saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+        /*saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
         canvasGraphs[currentCanvasId].stepCounter++;*/
         
-        if(getNodeUsingId(v).color=="BLUE")
+        if(v.color=="BLUE")
         {
 
-            console.log("norim do: "+getNodeUsingId(v).id);
-            console.log("jeho color je: "+getNodeUsingId(v).color);
-
             //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id], canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            var edge = getEdgeFromNodeToNode(u, v);
             edge.color = "red";
 
 
             u.color = "RED";
             //highlight the newly visited node as visited
-            getNodeUsingId(v).color = "PURPLE";
-            getNodeUsingId(v).parent = u;
+            v.color = "PURPLE";
+            v.parent = u;
 
-            getNodeUsingId(v).timeDiscovered = time+1;
+            v.timeDiscovered = time+1;
 
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
             
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
             edge.color = "purple";
-            DFS_visit(getNodeUsingId(v));
+            DFS_Tarjan_visit(v);
 
         }
         else 
         {
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
-            console.log(canvasGraphs[currentCanvasId].nodes[u.id]);
-            console.log(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
-            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+
+            var edge = getEdgeFromNodeToNode(u, v);
             edge.color = "red";
 
+            //doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[v.id]);
 
-            doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
-
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
 
-            //canvasGraphs[currentCanvasId].visitedEdges.pop();
             edge.color = "black";
             
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
 
         }
-        /*
-        await thisWaitUntilForwardClicked;
-        thisWaitUntilForwardClicked=createClickListenerPromise(CurrentStepForwardButton);
-        */
+
+        if(v.inComponent == false)
+        {
+            console.log("v.lowpt: "+v.lowpt);
+            u.lowpt = Math.min(u.lowpt,v.lowpt);
+        }
+
+    }
+
+    if(u.lowpt == u.timeDiscovered)
+    {
+        var C = [];
+        do
+        {
+            var v = canvasGraphs[currentCanvasId].stack.pop(); 
+            v.inComponent = true;
+            C.push(v); //possibly union instead
+        }while(v != u);
+
+        canvasGraphs[currentCanvasId].SCC.push(C);
+        console.log("SCC: ");
+        console.log(canvasGraphs[currentCanvasId].SCC);
+
+        /*canvasGraphs[currentCanvasId].SCC = [...canvasGraphs[currentCanvasId].SCC, ...C];
+        
+        
+        //console.log( canvasGraphs[currentCanvasId].SCC);
+        for(var u of canvasGraphs[currentCanvasId].SCC)
+        {
+            console.log(u.text);
+        }
+        canvasGraphs[currentCanvasId].SCC = [];*/
     }
 
     
     u.color = "GREEN";
     /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
     update=true;
-    drawTreeDFS();*/
+    drawTreeDFS_Tarjan();*/
 
     time += 1;
     u.timeCompleted = time;
     //updateNodeInformationQuadrantIForNodeInCanvas(u);
 
-    saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+    saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
     canvasGraphs[currentCanvasId].stepCounter++;
 
     
     
 }
 
-function DFS(){
-    //canvasGraphs[currentCanvasId].stepCounter = 0;
-
-    //canvasFlags[currentCanvasId].running = true;
+function DFS_Tarjan(){
 
     nodes = canvasGraphs[currentCanvasId].nodes.slice();
 
-    //nodes = canvasGraphs[currentCanvasId].nodes;
-
     var splicedNode = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id,1);
     nodes.unshift(splicedNode[0]);
-
-    //console.log("novy order nodes je: ")
-    //console.log(nodes)
 
     var numberOfNodes = nodes.length;
     adjacencyList = [];
@@ -230,55 +247,55 @@ function DFS(){
     for (var u of nodes) {
         u.color = "BLUE";
         u.parent = null;
-        //u.distance = null;
         u.timeDiscovered=null;
         u.timeCompleted=null;
+        u.inComponent=false;
+        u.lowpt=null;
     }
 
     for (var e of canvasGraphs[currentCanvasId].edges) {
         e.color = "black";
     }
 
-    //canvasGraphs[currentCanvasId].startingNode.distance = 0;
-    //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraphs[currentCanvasId].startingNode);
-
     time = 0;
+    canvasGraphs[currentCanvasId].stack = [];
+    canvasGraphs[currentCanvasId].SCC = [];
 
     for (var u of nodes) {
         if(u.color == "BLUE")
         {
-            DFS_visit(u);
+            DFS_Tarjan_visit(u);
         }
     }
 
 
 };
 
-async function startDFS(){
+async function startTarjan(){
 
-    //originalDFSGraph = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]))
-    originalDFSGraph = canvasGraphs[currentCanvasId];
+    //originalDFS_TarjanGraph = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]))
+    originalDFS_TarjanGraph = canvasGraphs[currentCanvasId];
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
-    DFS();
+    DFS_Tarjan();
 
     canvasFlags[currentCanvasId].running = true;
     
     var step = 0;
-    var lastStep = DFSGraphHistory.length;
+    var lastStep = tarjanGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        console.log("DFSGraphHistory je nasledujici: ");
-        console.log(DFSGraphHistory);
+        console.log("tarjanGraphHistory je nasledujici: ");
+        console.log(tarjanGraphHistory);
 
-        canvasGraphs[currentCanvasId] = DFSGraphHistory[step];
+        canvasGraphs[currentCanvasId] = tarjanGraphHistory[step];
 
-        drawDFS();
+        drawDFS_Tarjan();
 
-        await Promise.race([createClickListenerPromise(CurrentRestartButton), /*createClickListenerPromise(LoadButton),*/ createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
+        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
 
         if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
         {
@@ -295,7 +312,7 @@ async function startDFS(){
         }
         /*else if(canvasFlags[currentCanvasId].stopFlag == true)
         {
-            resetDFS();
+            resetDFS_Tarjan();
             canvasFlags[currentCanvasId].stopFlag = false;
             return 0;
         }*/
@@ -308,10 +325,10 @@ async function startDFS(){
             }
         }
     }
-    resetDFS();
+    resetDFS_Tarjan();
     
     //drawEdges(canvasGraphs[currentCanvasId].edges);
-    //drawTreeDFS();
+    //drawTreeDFS_Tarjan();
 
 
 

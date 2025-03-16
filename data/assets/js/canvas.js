@@ -230,6 +230,10 @@ for (i = 0; i < StartStopButtons.length; i++)
             {
                 startDijkstra();
             }
+            else if(currentCanvasId == 3)
+            {
+                startTarjan();
+            }
         }
         else
         {

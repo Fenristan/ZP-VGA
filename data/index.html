@@ -13,6 +13,7 @@
     <script src="./assets/js/breadth-first-search-variant.js" defer></script>
     <script src="./assets/js/depth-first-search-variant.js" defer></script>
     <script src="./assets/js/dijkstra.js" defer></script>
+    <script src="./assets/js/tarjan-algorithm.js" defer></script>
     <script src="./assets/js/canvas.js" defer></script>
     <script src="./assets/js/save-load-instance.js" defer></script>
     <script src="./assets/js/vis.js" defer></script>
@@ -66,7 +67,7 @@
             <ul class="menu-cards">
                 <button class="menuOption" id="menuOption3">
 
-                    <h2>N/A</h2>
+                    <h2>Tarjanův algoritmus</h2>
 
                 </button>
                 <button class="menuOption" id="menuOption4">
@@ -247,7 +248,12 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas3" width="960" height="400"></canvas>
                     </div>
-                    <div id="sidebarCanvas3" class="sidebar"></div>
+                    <div id="sidebarCanvas3" class="sidebar">
+                        <div id = "sidebarVisitedGridCanvas3" style = "width: 50%;"></div>
+                        <div id = "sidebarParentGridCanvas3" style = "width: 50%;"></div>
+                        <div id = "sidebarStackGridCanvas3" style = "width: 50%;"></div>
+                        <div id = "sidebarSCCGridCanvas3" style = "width: 50%;"></div>
+                    </div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>

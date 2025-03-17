@@ -346,6 +346,66 @@ function renderTarjanGrid()
     
 }
 
+function renderBiconnectivityGrid()
+{
+    var gridComponentsData = [];
+
+    console.log("components: ");
+    console.log(canvasGraphs[currentCanvasId].components);
+    for(var c of canvasGraphs[currentCanvasId].components)
+    {
+        var c_text = "{";
+        var len = c.length;
+        var index = 0;
+        var cNodes = [];
+        
+        for(var e of c)
+        {
+            for(u of e.nodes)
+            {
+                if (cNodes.findIndex(node => node.id === u.id) == -1) {
+                    cNodes.push(u);
+                }
+            }
+            
+        }
+
+        for(var u of cNodes)
+        {
+            c_text += u.text
+            if(index != len)
+            {
+                c_text += ", ";
+            }
+            index ++;
+        }
+        c_text += "}";
+        gridComponentsData.push([c_text]);
+    }
+
+    if(grids[currentCanvasId] == null)
+    {
+        grids[currentCanvasId] = [];
+
+        var newComponentsGrid = new gridjs.Grid({
+            columns: ['Components'],
+            data: gridComponentsData
+        }).render(document.getElementById("sidebarComponentsGridCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(newComponentsGrid);
+
+    }
+    else
+    {
+        grids[currentCanvasId][0].updateConfig({
+            data:gridComponentsData
+        });
+
+        grids[currentCanvasId][0].forceRender();
+    }
+    
+}
+
 function clearBFSGrid()
 {
     grids[currentCanvasId][0].updateConfig({
@@ -404,4 +464,15 @@ function clearTarjanGrid()
     grids[currentCanvasId][1].forceRender();
     grids[currentCanvasId][2].forceRender();
     grids[currentCanvasId][3].forceRender();
+}
+
+function clearBiconnectivityGrid()
+{
+    grids[currentCanvasId][0].updateConfig({
+        data:[]
+    });
+
+
+    grids[currentCanvasId][0].forceRender();
+
 }

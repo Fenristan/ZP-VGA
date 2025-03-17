@@ -249,9 +249,9 @@ function getEdgeFromNodeToNode(nodeA, nodeB)
 {
     console.log(nodeA);
     console.log(nodeB);
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(var edge of canvasGraphs[currentCanvasId].edges)
     {
-        if(currentCanvas.directed == true)
+        if(canvases[currentCanvasId].directed == true)
         {
             if((nodeA.id == edge.nodes[0].id)&&(nodeB.id == edge.nodes[1].id))
             {
@@ -268,6 +268,35 @@ function getEdgeFromNodeToNode(nodeA, nodeB)
     }
     
 }
+
+function getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA, nodeB)
+{
+    console.log(nodeA);
+    console.log(nodeB);
+    for(var edge of canvasGraphs[currentCanvasId].edges)
+    {
+
+        if((nodeA.id == edge.nodes[0].id)&&(nodeB.id == edge.nodes[1].id))
+        {
+            return edge;
+        }
+        if((nodeA.id == edge.nodes[1].id)&&(nodeB.id == edge.nodes[0].id))
+        {
+
+            console.log(" poradi nodes bylo: " + edge.nodes[0].text + edge.nodes[1].text);
+            var tmpNode = edge.nodes.slice(0,1)[0];
+            edge.nodes[0] = edge.nodes[1];
+            edge.nodes[1] = tmpNode;
+
+            console.log(" poradi nodes je nyni: " + edge.nodes[0].text + edge.nodes[1].text);
+            
+            return edge;
+        }
+    }
+    
+}
+
+
 
 function drawEdges(edges,oldEdges=edges) {
     g = new createjs.Graphics();
@@ -1030,6 +1059,24 @@ function updateNodeInformationQuadrantIForDijkstra(node)
     if(node.distance!=null)
     {
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
+    }
+    else
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
+    }
+    
+    update=true;
+}
+
+function updateNodeInformationQuadrantIForBiconnectivity(node)
+{
+    if(node.lowpt!=null)
+    {
+        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "[" + node.lowpt +"]";
+        if(node.number!=null)
+        {
+            containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text += "/" +node.number;
+        }
     }
     else
     {

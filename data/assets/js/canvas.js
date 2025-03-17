@@ -234,6 +234,10 @@ for (i = 0; i < StartStopButtons.length; i++)
             {
                 startTarjan();
             }
+            else if(currentCanvasId == 4)
+            {
+                startBiconnectivity();
+            }
         }
         else
         {

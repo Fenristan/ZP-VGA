@@ -27,6 +27,10 @@ function drawBiconnectivity()
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
         }
+        else if(u.color == "ORANGE")
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=articulationNodeImage;
+        }
 
         updateNodeInformationQuadrantIForBiconnectivity(u);
     }
@@ -132,6 +136,8 @@ function Biconnect(v,u){
             v.lowpt = Math.min(v.lowpt,w.lowpt);
             if(w.lowpt >= v.number)
             {
+                //v.articulation = true;
+                v.color = "ORANGE";
                 var C = [];
                 if(canvasGraphs[currentCanvasId].edgeStack.length != 0)
                 {

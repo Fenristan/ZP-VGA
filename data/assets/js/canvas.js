@@ -11,7 +11,7 @@ canvas0.directed = true;
 canvas1.directed = true;
 canvas2.directed = true;
 canvas3.directed = true;
-canvas4.directed = true;
+canvas4.directed = false;
 canvas5.directed = true;
 
 canvas0.weighted = false;

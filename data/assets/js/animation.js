@@ -148,6 +148,7 @@ var nodeImage = new Image();
 var completedNodeImage = new Image();
 var selectedNodeImage = new Image();
 var visitedNodeImage = new Image();
+var articulationNodeImage = new Image();
 
 var playImage = new Image();
 var stopImage = new Image();
@@ -179,6 +180,7 @@ function init() {
     completedNodeImage.src = "./assets/images/nodeCompleted.png";
     selectedNodeImage.src = "./assets/images/nodeSelected2.png";
     visitedNodeImage.src = "./assets/images/nodeVisited.png";
+    articulationNodeImage.src = "./assets/images/nodeArticulation.png";
 
     playImage.src = "./assets/images/start_icon.png";
     stopImage.src = "./assets/images/stop_icon.png";

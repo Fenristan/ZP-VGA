@@ -170,7 +170,28 @@ function DFS_visit(u)
             canvasGraphs[currentCanvasId].stepCounter++;
 
             //canvasGraphs[currentCanvasId].visitedEdges.pop();
-            edge.color = "black";
+
+            //if this is an undirected graph, then should check if the edge leads to the parent node, if it does, make it purple again, if not, then make it black. If it isn't undirected, simply make the edge black.
+            if(canvases[currentCanvasId].directed == false)
+            {
+                if(u.parent != null)
+                {
+                    if(u.parent.id == edge.nodes[1].id || u.parent.id == edge.nodes[0].id)
+                    {
+                        edge.color = "purple";
+                    }
+                    else
+                    {
+                        edge.color = "black";
+                    }
+                }
+            }
+            else
+            {
+                edge.color = "black";
+            }
+            
+            
             
             saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;

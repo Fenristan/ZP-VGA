@@ -24,6 +24,10 @@ function drawDFS_Tarjan()
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
         }
+        else if(u.color == "ORANGE")
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=articulationNodeImage;
+        }
 
         updateNodeInformationQuadrantIForDFS(u);
     }
@@ -184,12 +188,13 @@ function DFS_Tarjan_visit(u)
 
     if(u.lowpt == u.timeDiscovered)
     {
+        //u.color = "ORANGE";
         var C = [];
         do
         {
             var v = canvasGraphs[currentCanvasId].stack.pop(); 
             v.inComponent = true;
-            C.push(v); //possibly union instead
+            C.push(v); 
         }while(v != u);
 
         canvasGraphs[currentCanvasId].SCC.push(C);

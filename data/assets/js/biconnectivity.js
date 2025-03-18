@@ -116,6 +116,8 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 }
 
 function Biconnect(v,u){
+
+    v.color = "RED";
     i += 1;
     v.number = i;
     v.lowpt = v.number;
@@ -123,17 +125,39 @@ function Biconnect(v,u){
     saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
     canvasGraphs[currentCanvasId].stepCounter++;
 
+    
+
     for (var wId of adjacencyList[v.id]) {
         var w = canvasGraphs[currentCanvasId].nodes[wId];
         console.log("jdu z node: "+v.text +" do node w: "+w.text);
-        console.log("a w.number je: "+w.number );
+        //console.log("a w.number je: "+w.number );
+
+        var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+        edge.color = "red";
+
         if(w.number == null)
         {
-            console.log("a w.number je null, right?: "+w.number );
-            var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+            edge.color = "red";
+            if(v.color != "ORANGE")
+            {
+                v.color = "RED";
+            }
+            w.color = "PURPLE";
+
+            saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
+
+            if(v.color != "ORANGE")
+            {
+                v.color = "PURPLE";
+            }
+            
+            edge.color = "purple";
+
             canvasGraphs[currentCanvasId].edgeStack.push(edge);
             Biconnect(w,v);
             v.lowpt = Math.min(v.lowpt,w.lowpt);
+
             if(w.lowpt >= v.number)
             {
                 //v.articulation = true;
@@ -155,12 +179,7 @@ function Biconnect(v,u){
     
                     }
                 }
-                
-                /*while(canvasGraphs[currentCanvasId].edgeStack[0].nodes[0].number >= w.number)
-                {
-                    var topEdge = canvasGraphs[currentCanvasId].edgeStack.shift();
-                    C.push(topEdge);
-                }*/
+
                 C.push(edge);
                 canvasGraphs[currentCanvasId].components.push(C);
                 //find (v,w) in the edge stack and delete it
@@ -175,9 +194,24 @@ function Biconnect(v,u){
                     console.log("vWId: "+vWEdge.id);
                     console.log("edge id: "+edge.id);
                 }
+
+                saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+                canvasGraphs[currentCanvasId].stepCounter++;
                 
 
             }
+            if(w.lowpt > v.number)
+            {
+                edge.color = "red";
+
+                saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+                canvasGraphs[currentCanvasId].stepCounter++;
+
+                edge.color = "orange";
+                saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+                canvasGraphs[currentCanvasId].stepCounter++;
+            }
+            
         }
         //else if((w.number < v.number) && w!=u)
         else if((w.number < v.number) && w.id!=u.id)
@@ -186,10 +220,75 @@ function Biconnect(v,u){
             var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
             canvasGraphs[currentCanvasId].edgeStack.push(edge);
             v.lowpt = Math.min(v.lowpt,w.number);
+
+            edge.color = "red";
+
+            //doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+
+            saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
+
+
+            edge.color = "black";
+            
+            saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
         }
-        saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
+        else
+        {
+            edge.color = "red";
+
+            saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
+
+            if(u.id == edge.nodes[1].id)
+            {
+                edge.color = "purple";
+            }
+            else
+            {
+                edge.color = "black";
+            }
+
+            //edge.color = "purple";
+            
+            saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
+        }
+        /*else
+        {
+            var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+            edge.color = "red";
+
+            //doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+
+            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+
+            canvasGraphs[currentCanvasId].stepCounter++;
+            if(u.id == edge.nodes[1].id)
+            {
+                edge.color = "purple";
+            }
+            else
+            {
+                edge.color = "black";
+            }
+
+            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+            canvasGraphs[currentCanvasId].stepCounter++;
+        }*/
+
+        //saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+        //canvasGraphs[currentCanvasId].stepCounter++;
     }
+
+    if(v.color != "ORANGE")
+    {
+        v.color = "GREEN";
+    }
+    
+    saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+    canvasGraphs[currentCanvasId].stepCounter++;
     
 }
 

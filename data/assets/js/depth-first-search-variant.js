@@ -120,30 +120,31 @@ function DFS_visit(u)
     saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
     canvasGraphs[currentCanvasId].stepCounter++;
             
-    for (var v of adjacencyList[u.id]) {
+    for (var vId of adjacencyList[u.id]) {
+        var v = canvasGraphs[currentCanvasId].nodes[vId];
         //every time we go from this node to another, highlight it as the currently selected Node
         u.color = "RED";
 
         /*saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
         canvasGraphs[currentCanvasId].stepCounter++;*/
         
-        if(getNodeUsingId(v).color=="BLUE")
+        if(v.color=="BLUE")
         {
 
-            console.log("norim do: "+getNodeUsingId(v).id);
-            console.log("jeho color je: "+getNodeUsingId(v).color);
+            console.log("norim do: "+v.id);
+            console.log("jeho color je: "+v.color);
 
             //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id], canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id], canvasGraphs[currentCanvasId].nodes[v.id]);
             edge.color = "red";
 
 
             u.color = "RED";
             //highlight the newly visited node as visited
-            getNodeUsingId(v).color = "PURPLE";
-            getNodeUsingId(v).parent = u;
+            v.color = "PURPLE";
+            v.parent = u;
 
-            getNodeUsingId(v).timeDiscovered = time+1;
+            v.timeDiscovered = time+1;
 
             saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
@@ -151,20 +152,28 @@ function DFS_visit(u)
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
             edge.color = "purple";
-            DFS_visit(getNodeUsingId(v));
+            DFS_visit(v);
 
         }
         else 
         {
             //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[v.id]);
             console.log(canvasGraphs[currentCanvasId].nodes[u.id]);
-            console.log(canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
-            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            console.log(canvasGraphs[currentCanvasId].nodes[v.id]);
+            var edge = getEdgeFromNodeToNode(u,v);
             edge.color = "red";
 
 
-            doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[getNodeUsingId(v).id]);
+            if(u.parent != null)
+            {
+                if(v.id != u.parent.id)
+                {
+                    doParenthesisForEdgeBetweenNodes(u,v);
+                }
+            }
+            
+            
 
             saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;

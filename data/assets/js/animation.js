@@ -1070,22 +1070,37 @@ function updateNodeInformationQuadrantIForDijkstra(node)
     update=true;
 }
 
-function updateNodeInformationQuadrantIForBiconnectivity(node)
+function updateNodeInformationQuadrantIForDFS_Tarjan(node)
 {
-    if(node.lowpt!=null)
+    var text = "";
+    if(node.timeDiscovered != null)
     {
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "[" + node.lowpt +"]";
-        if(node.number!=null)
+        text += node.timeDiscovered;
+        if(node.lowlink!=null)
         {
-            containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text += "/" +node.number;
+            text += " [" + node.lowlink +"]";
         }
     }
-    else
-    {
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "";
-    }
+    containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = text;
     
     update=true;
+}
+
+function updateNodeInformationQuadrantIForBiconnectivity(node)
+{
+    var text = "";
+    if(node.number != null)
+    {
+        text += node.number;
+        if(node.lowpt!=null)
+        {
+            text += " [" + node.lowpt +"]";
+        }
+    }
+    containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = text;
+    
+    update=true;
+
 }
 
 function clearNodesInformationQuadrantIForNodeInCanvas()

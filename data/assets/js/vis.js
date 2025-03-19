@@ -37,7 +37,7 @@ function getLevelRec(node, level)
 
 function getLevel(node)
 {
-  level = 0;
+  var level = 0;
   if(node.parent != null)
   {
     node.level = getLevelRec(node.parent, level);
@@ -105,14 +105,7 @@ function drawTreeDFS()
     //add all edges to the array of edges to be draw
     for(edge of canvasGraphs[currentCanvasId].edges)
     {
-      if(canvasGraphs[currentCanvasId].visitedEdges.includes(edge))
-      {
-        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
-      }
-      else
-      {
-        currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
-      }
+      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }
   
     var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
@@ -315,6 +308,146 @@ function drawTreeDijkstra()
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderDijkstraGrid();
+}
+
+function drawTreeDFS_Tarjan()
+{
+    var currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisNetwork = visNetworks[currentCanvasId];
+    destroyCurrentVisNetwork();
+    currentVisGraph.nodes = [];
+    currentVisGraph.edges = [];
+
+    //add all visited, completed and currently selected nodes to an array of nodes to be drawn
+    for(node of canvasGraphs[currentCanvasId].nodes)
+    {
+        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        {
+            node.level = 0;
+            node.label = node.text;
+            getLevel(node);
+            currentVisGraph.nodes.push(node);
+            console.log(currentVisGraph.nodes);
+        }
+    }
+
+    for(edge of canvasGraphs[currentCanvasId].edges)
+    {
+      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+    }
+  
+    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
+    // create a network
+    var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    var data = {
+        nodes: currentVisGraph.nodes,
+        edges: currentVisGraph.edges,
+    };
+
+    var options = {
+        edges: {
+        smooth: {
+            type: "cubicBezier",
+            forceDirection: "vertical",
+            //roundness: 0.4,
+            roundness: 0.0,
+            /*type: "curvedCW",
+            forceDirection: "vertical",
+            roundness: -2.1,*/
+        },
+        arrows: {
+          to: {
+            enabled: arrowsEnabled,
+            type: "arrow"
+          },
+        }
+        },
+        layout: {
+        hierarchical: {
+            direction: "UD"
+        },
+        },
+        physics: { //physics:false
+          "hierarchicalRepulsion": {
+            "avoidOverlap": 1
+          },
+        }
+    };
+    currentVisNetwork = new vis.Network(container, data, options);
+    visNetworks[currentCanvasId] = currentVisNetwork;
+    renderTarjanGrid();
+}
+
+function drawTreeBiconnectivity()
+{
+    var currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisNetwork = visNetworks[currentCanvasId];
+    destroyCurrentVisNetwork();
+    currentVisGraph.nodes = [];
+    currentVisGraph.edges = [];
+
+    //add all visited, completed and currently selected nodes to an array of nodes to be drawn
+    for(node of canvasGraphs[currentCanvasId].nodes)
+    {
+        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" || node.color == "ORANGE")
+        {
+            node.level = 0;
+            node.label = node.text;
+            getLevel(node);
+            currentVisGraph.nodes.push(node);
+            console.log(currentVisGraph.nodes);
+        }
+    }
+
+    for(edge of canvasGraphs[currentCanvasId].edges)
+    {
+      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+    }
+  
+    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
+    // create a network
+    var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    var data = {
+        nodes: currentVisGraph.nodes,
+        edges: currentVisGraph.edges,
+    };
+
+    var options = {
+        edges: {
+        smooth: {
+            type: "cubicBezier",
+            forceDirection: "vertical",
+            //roundness: 0.4,
+            roundness: 0.0,
+            /*type: "curvedCW",
+            forceDirection: "vertical",
+            roundness: -2.1,*/
+        },
+        arrows: {
+          to: {
+            enabled: arrowsEnabled,
+            type: "arrow"
+          },
+        }
+        },
+        layout: {
+        hierarchical: {
+            direction: "UD"
+        },
+        },
+        physics: { //physics:false
+          "hierarchicalRepulsion": {
+            "avoidOverlap": 1
+          },
+        }
+    };
+    currentVisNetwork = new vis.Network(container, data, options);
+    visNetworks[currentCanvasId] = currentVisNetwork;
+    renderBiconnectivityGrid();
 }
 
 /*var directionInput = document.getElementById("direction");

@@ -35,8 +35,8 @@ function drawBiconnectivity()
         updateNodeInformationQuadrantIForBiconnectivity(u);
     }
     drawEdges(canvasGraphs[currentCanvasId].edges);
-    renderBiconnectivityGrid();
-    //drawTreeBiconnectivity();
+    //renderBiconnectivityGrid();
+    drawTreeBiconnectivity();
 }
 
 function saveBiconnectivityStepToHistory()
@@ -62,6 +62,7 @@ function resetBiconnectivity()
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
+        node.color = "BLUE";
     }
 
     for(var edge of canvasGraphs[currentCanvasId].edges)
@@ -86,10 +87,10 @@ function resetBiconnectivity()
     containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
 
-function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
+function doParenthesisForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)
 {
-    var edge = getEdgeFromNodeToNode(nodeA,nodeB);
-    if(nodeA.timeDiscovered < nodeB.timeDiscovered)
+    var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
+    if(nodeA.number < nodeB.number)
     {
         if(isInTheSameTree(nodeB,nodeA))
         {
@@ -101,7 +102,7 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
         }
         
     }
-    else if(nodeA.timeDiscovered > nodeB.timeDiscovered)
+    else if(nodeA.number > nodeB.number)
     {
         if(isInTheSameTree(nodeA,nodeB))
         {
@@ -143,6 +144,7 @@ function Biconnect(v,u){
                 v.color = "RED";
             }
             w.color = "PURPLE";
+            w.parent = v;
 
             saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
@@ -155,6 +157,7 @@ function Biconnect(v,u){
             edge.color = "purple";
 
             canvasGraphs[currentCanvasId].edgeStack.push(edge);
+            
             Biconnect(w,v);
             v.lowpt = Math.min(v.lowpt,w.lowpt);
 
@@ -220,6 +223,8 @@ function Biconnect(v,u){
             var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
             canvasGraphs[currentCanvasId].edgeStack.push(edge);
             v.lowpt = Math.min(v.lowpt,w.number);
+
+            doParenthesisForEdgeBetweenNodesBiconnectivity(v,w);
 
             edge.color = "red";
 
@@ -321,6 +326,7 @@ function Biconnectivity(){
     for (var u of nodes) {
         u.number = null;
         u.lowpt = null;
+        u.parent = null;
     }
 
     for (var e of canvasGraphs[currentCanvasId].edges) {

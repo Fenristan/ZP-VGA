@@ -29,11 +29,11 @@ function drawDFS_Tarjan()
             containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=articulationNodeImage;
         }
 
-        updateNodeInformationQuadrantIForDFS(u);
+        updateNodeInformationQuadrantIForDFS_Tarjan(u);
     }
     drawEdges(canvasGraphs[currentCanvasId].edges);
     renderTarjanGrid();
-    //drawTreeDFS_Tarjan();
+    drawTreeDFS_Tarjan();
 }
 
 function saveDFS_TarjanStepToHistory()
@@ -61,7 +61,7 @@ function resetDFS_Tarjan()
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        node.lowpt = null;
+        node.lowlink = null;
         node.inComponent = null;
     }
 
@@ -87,35 +87,6 @@ function resetDFS_Tarjan()
     containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
 }
 
-function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
-{
-    var edge = getEdgeFromNodeToNode(nodeA,nodeB);
-    if(nodeA.timeDiscovered < nodeB.timeDiscovered)
-    {
-        if(isInTheSameTree(nodeB,nodeA))
-        {
-            edge.label = "F";
-        }
-        else
-        {
-            edge.label = "C";
-        }
-        
-    }
-    else if(nodeA.timeDiscovered > nodeB.timeDiscovered)
-    {
-        if(isInTheSameTree(nodeA,nodeB))
-        {
-            edge.label = "B";
-        }
-        else
-        {
-            edge.label = "C";
-        }
-        
-    }
-}
-
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
 function DFS_Tarjan_visit(u)
 {
@@ -123,7 +94,7 @@ function DFS_Tarjan_visit(u)
     u.color = "RED";
     time += 1;
     u.timeDiscovered = time;
-    u.lowpt = time;
+    u.lowlink = time;
     u.inComponent = false;
     canvasGraphs[currentCanvasId].stack.push(u);
 
@@ -149,7 +120,7 @@ function DFS_Tarjan_visit(u)
             v.color = "PURPLE";
             v.parent = u;
 
-            v.timeDiscovered = time+1;
+            //v.timeDiscovered = time+1;
 
             saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
@@ -166,7 +137,7 @@ function DFS_Tarjan_visit(u)
             var edge = getEdgeFromNodeToNode(u, v);
             edge.color = "red";
 
-            //doParenthesisForEdgeBetweenNodes(canvasGraphs[currentCanvasId].nodes[u.id],canvasGraphs[currentCanvasId].nodes[v.id]);
+            doParenthesisForEdgeBetweenNodes(u,v);
 
             saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
             canvasGraphs[currentCanvasId].stepCounter++;
@@ -180,13 +151,13 @@ function DFS_Tarjan_visit(u)
 
         if(v.inComponent == false)
         {
-            console.log("v.lowpt: "+v.lowpt);
-            u.lowpt = Math.min(u.lowpt,v.lowpt);
+            console.log("v.lowlink: "+v.lowlink);
+            u.lowlink = Math.min(u.lowlink,v.lowlink);
         }
 
     }
 
-    if(u.lowpt == u.timeDiscovered)
+    if(u.lowlink == u.timeDiscovered)
     {
         //u.color = "ORANGE";
         var C = [];
@@ -255,7 +226,7 @@ function DFS_Tarjan(){
         u.timeDiscovered=null;
         u.timeCompleted=null;
         u.inComponent=false;
-        u.lowpt=null;
+        u.lowlink=null;
     }
 
     for (var e of canvasGraphs[currentCanvasId].edges) {

@@ -349,8 +349,8 @@ function Biconnectivity(){
         }
     }
 
-    /*saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;*/
+    saveBiconnectivityStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
+    canvasGraphs[currentCanvasId].stepCounter++;
 
     console.log(canvasGraphs[currentCanvasId].components);
 

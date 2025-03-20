@@ -745,51 +745,22 @@ function removeEdgeBetweenNodes(nodes,edges)
     //var edge = new Edge(edges.length,nodes);
     for(let i = 0; i<edges.length; i++)
     {
-        //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
-        if((edges[i].nodes[0].id==nodes[0].id) && (edges[i].nodes[1].id==nodes[1].id))
+        var deleteThisEdge = false;
+        if(canvases[currentCanvasId].directed == true)
         {
-            /*for(let j = edges[i].id; j < edges.length-1; j++)
-            {
-                let edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id)
-                edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j+1])
-                edgeWeight.id = (stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id))-1
-                this.parent.addChild(edgeWeight);
+            deleteThisEdge = (edges[i].nodes[0].id==nodes[0].id) && (edges[i].nodes[1].id==nodes[1].id);
+        }
+        else
+        {
+            deleteThisEdge = (nodes[0].id == edges[i].nodes[0].id)&&(nodes[1].id == edges[i].nodes[1].id)||(nodes[0].id == edges[i].nodes[1].id)&&(nodes[1].id == edges[i].nodes[0].id)
+        }
+        //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
+        if(deleteThisEdge)
+        {
 
-            }*/
             console.log("removing edge: "+edges[i].id)
             console.log("removing "+(containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id)).name)
-            //stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].length));
 
-            //let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edges[i].id);
-            //text.parentNode.removeChild(text);
-
-            //drawEdges(edges,oldEdges);
-
-
-            /*for(let j = edges[i].id+1; j < edges.length-1; j++)
-            {
-                
-                console.log("id je:"+j)
-                
-                //tohle je špatně
-                stage[currentCanvasId].removeChild(stage[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id));
-
-                let edgeWeight = stage[currentCanvasId].getChildByName("edgeWeight_"+edges[j].id);
-                edgeWeight.id = edgeWeight.id-1;
-                edgeWeight.name = "edgeWeight_" + edges[j].id-1;
-                stage[currentCanvasId].addChild(edgeWeight);
-                
-                
-                let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edges[j].id);
-                let index = edges[j].id+1
-                console.log("zkousim edgeWeightText_:"+index);
-                console.log("edges length: "+edges.length);
-                let nextTextInnerHTML = (document.getElementById("edgeWeightText_"+currentCanvasId+"_"+(index))).innerHTML;
-                text.innerHTML = nextTextInnerHTML;
-
-                text.id = "edgeWeightText_"+currentCanvasId+"_"+edgeWeight.id;
-
-            }*/
             let indexDeleted = edges[i].id;
             console.log("indexDeleted je:"+indexDeleted)
             console.log("edges length je:"+edges.length)
@@ -899,7 +870,6 @@ function removeAllEdgesFromNode(node,nodes,edges)
     {
         if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
         {
-            console.log("delam")
             edgesToBeRemoved.push(edges[i]);
         }
     }

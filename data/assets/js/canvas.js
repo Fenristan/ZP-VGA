@@ -380,14 +380,18 @@ function displayCanvas(evt)
 
 function checkBoxDirectedClicked(evt)
 {
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    //if canvas was undirected and I am switching to a directed graph, delete all edges
+    if(canvases[currentCanvasId].directed == false)
     {
-        removeAllEdgesFromNode(node,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges);
+        for(node of canvasGraphs[currentCanvasId].nodes)
+        {
+            removeAllEdgesFromNode(node,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges);
+        }
     }
     
+    
     canvases[currentCanvasId].directed ^= true;
-    console.log(canvases)
-    update=true;
+    drawEdges(canvasGraphs[currentCanvasId].edges);
 }
 
 function setFunctionToCheckboxDirected(checkboxDirected)

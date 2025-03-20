@@ -58,8 +58,6 @@ function resetBFS()
 {
     canvasGraphs[currentCanvasId] = originalBFSGraph;
 
-    canvasGraphs[currentCanvasId].visitedEdges = [];
-    canvasGraphs[currentCanvasId].selectedNodes = [];
     canvasGraphs[currentCanvasId].queue = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {

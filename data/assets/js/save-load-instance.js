@@ -32,13 +32,13 @@ file.addEventListener("change", function(){
         //document.getElementById('file').innerText = this.result;
         var fileText = this.result;
         console.log(fileText);
-        const loadedCanvas = JSON.parse(fileText);
-        //const loadedCanvas = fromJSON(fileText); 
+        const loadedGraph = JSON.parse(fileText);
+        //const loadedGraph = fromJSON(fileText); 
         console.log("new canvas:");
-        console.log(loadedCanvas);
+        console.log(loadedGraph);
         console.log("old canvas:");
         console.log(canvasGraphs[currentCanvasId]);
-        //canvasGraphs[currentCanvasId]= loadedCanvas; // tady kdyžtak nezapomeň
+        //canvasGraphs[currentCanvasId]= loadedGraph; // tady kdyžtak nezapomeň
         
         update = true;
         
@@ -74,7 +74,7 @@ file.addEventListener("change", function(){
             removeNode(bitmap,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges)
         }
         
-        loadedCanvas.nodes.forEach(node => {
+        loadedGraph.nodes.forEach(node => {
             console.log("pridavam node");
             console.log(node);
             
@@ -85,32 +85,40 @@ file.addEventListener("change", function(){
             bindFunctionalityToBitmap(node,bitmap,canvasGraphs[currentCanvasId].edges,canvasGraphs[currentCanvasId].nodes);
 
             //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
-            for(var i = 0; i < loadedCanvas.edges.length; i++)
+            for(var i = 0; i < loadedGraph.edges.length; i++)
             {
-                if(node.id===loadedCanvas.edges[i].nodes[0].id)
+                if(node.id===loadedGraph.edges[i].nodes[0].id)
                 {
-                    loadedCanvas.edges[i].nodes[0]=node;
+                    loadedGraph.edges[i].nodes[0]=node;
                 }
-                else if(node.id===loadedCanvas.edges[i].nodes[1].id)
+                else if(node.id===loadedGraph.edges[i].nodes[1].id)
                 {
-                    loadedCanvas.edges[i].nodes[1]=node;
+                    loadedGraph.edges[i].nodes[1]=node;
                 }
             }
             
             //update = true;
             //stage[currentCanvasId].update(new Event("stagemousedown"));
         });
-        loadedCanvas.edges.forEach(edge => {
-            console.log("pridavam edge");
-            console.log(edge);
+
+        //add edges. If the loaded graph was undirected and we are trying to load it as directed, then don't add any edges.
+        if(!(loadedGraph.directed == false && canvases[currentCanvasId].directed == true))
+        {
+            loadedGraph.edges.forEach(edge => {
+                console.log("pridavam edge");
+                console.log(edge);
+                
+                addEdgeBetweenNodes(edge.nodes,canvasGraphs[currentCanvasId].edges);
+                canvasGraphs[currentCanvasId].edges[canvasGraphs[currentCanvasId].edges.length-1].weight = edge.weight;
+            });
             
-            addEdgeBetweenNodes(edge.nodes,canvasGraphs[currentCanvasId].edges);
-            canvasGraphs[currentCanvasId].edges[canvasGraphs[currentCanvasId].edges.length-1].weight = edge.weight;
-            //update = true;
-            //stage[currentCanvasId].update(new Event("stagemousedown"));
-        });
+            updateEdgeWeights();
+        }
+        else
+        {
+            alert("You have tried to load an undirected graph as a directed one. Nodes will be loaded, but the edges will not.");
+        }
         
-        updateEdgeWeights();
 
 
         
@@ -145,6 +153,7 @@ function saveInstanceToFile()
         console.log(JSON.stringify(currentEdges[i]));
     }*/
 
+    //if the simulation hasn't been started for the graph we are trying to save, it will not have it's nodes named and edges weighted.
     for(node of canvasGraphs[currentCanvasId].nodes)
     {
         canvasGraphs[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
@@ -154,7 +163,8 @@ function saveInstanceToFile()
         canvasGraphs[currentCanvasId].edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
     }
 
-    
+    //add information to the saved json file, whether or not the graph was directed
+    canvasGraphs[currentCanvasId].directed = canvases[currentCanvasId].directed;
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(canvasGraphs[currentCanvasId]));
 
     var today = new Date();
@@ -162,7 +172,7 @@ function saveInstanceToFile()
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
 
-    today = mm + '_' + dd + '_' + yyyy;
+    today = dd + '_' + mm + '_' + yyyy;
 
 
     var exportName = "graph"+currentCanvasId+"-"+today;

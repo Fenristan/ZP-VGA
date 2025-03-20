@@ -50,8 +50,6 @@ function resetDFS()
 {
     canvasGraphs[currentCanvasId] = originalDFSGraph;
 
-    canvasGraphs[currentCanvasId].visitedEdges = [];
-    canvasGraphs[currentCanvasId].selectedNodes = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
@@ -157,8 +155,6 @@ function DFS_visit(u)
         }
         else 
         {
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[u.id]);
-            //canvasGraphs[currentCanvasId].selectedNodes.push(canvasGraphs[currentCanvasId].nodes[v.id]);
             console.log(canvasGraphs[currentCanvasId].nodes[u.id]);
             console.log(canvasGraphs[currentCanvasId].nodes[v.id]);
             var edge = getEdgeFromNodeToNode(u,v);

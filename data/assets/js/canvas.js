@@ -69,7 +69,7 @@ var canvasFlags = [];
 for(let i = 0; i < canvases.length; i++)
 {
     stage.push(new createjs.Stage(canvases[i]));
-    canvasGraphs.push({ nodes: [], edges: [], selectedNodes: [], visitedEdges: [], startingNode: null, stepCounter: 0 });
+    canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0 });
     canvasFlags.push({ stopFlag: false, restartFlag: false, running: false, automaticAdvanceFlag: false});
 }
 
@@ -383,6 +383,7 @@ function checkBoxDirectedClicked(evt)
     //if canvas was undirected and I am switching to a directed graph, delete all edges
     if(canvases[currentCanvasId].directed == false)
     {
+        alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
         for(node of canvasGraphs[currentCanvasId].nodes)
         {
             removeAllEdgesFromNode(node,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges);

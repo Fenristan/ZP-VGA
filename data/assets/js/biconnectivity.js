@@ -57,8 +57,6 @@ function resetBiconnectivity()
 {
     canvasGraphs[currentCanvasId] = originalBiconnectivityGraph;
 
-    canvasGraphs[currentCanvasId].visitedEdges = [];
-    canvasGraphs[currentCanvasId].selectedNodes = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;

@@ -54,8 +54,6 @@ function resetDFS_Tarjan()
 {
     canvasGraphs[currentCanvasId] = originalDFS_TarjanGraph;
 
-    canvasGraphs[currentCanvasId].visitedEdges = [];
-    canvasGraphs[currentCanvasId].selectedNodes = [];
     canvasGraphs[currentCanvasId].SCC = [];
     canvasGraphs[currentCanvasId].stack = [];
     for(var node of canvasGraphs[currentCanvasId].nodes)

@@ -96,6 +96,7 @@ var CurrentStepBackwardsButton = null;
 var CurrentPlayPauseAutoButton = null;
 
 var currentCanvasId = 0;
+var currentCanvasGraph = null;
 var canvas;
 var context;
 
@@ -196,18 +197,18 @@ for (i = 0; i < StartStopButtons.length; i++)
         CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
 
         // after the start simulation button has been clicked, each node is assigned it's given name (text)
-        canvasGraphs[currentCanvasId].nodes.forEach(node => {
+        currentCanvasGraph.nodes.forEach(node => {
             console.log("assigning name to node: "+node.id);
-            canvasGraphs[currentCanvasId].nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
+            currentCanvasGraph.nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
             node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-            console.log("node is now called: " + canvasGraphs[currentCanvasId].nodes[node.id].text);
+            console.log("node is now called: " + currentCanvasGraph.nodes[node.id].text);
         });
         //the same is true for weighted edges
-        for(edge of canvasGraphs[currentCanvasId].edges)
+        for(edge of currentCanvasGraph.edges)
         {
-            canvasGraphs[currentCanvasId].edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
+            currentCanvasGraph.edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
             console.log("assigning weight to edge: "+edge.id);
-            console.log("edge weight is now : " + canvasGraphs[currentCanvasId].edges[edge.id].weight);
+            console.log("edge weight is now : " + currentCanvasGraph.edges[edge.id].weight);
         }
     
         console.log("starting simulation");
@@ -334,6 +335,8 @@ function displayCanvas(evt)
     //StepForwardButton.classList.remove('stepforward');
     currentCanvasId = evt.currentTarget.index;
 
+    currentCanvasGraph = canvasGraphs[currentCanvasId];
+
     CurrentRestartButton = RestartButtons[currentCanvasId];
     CurrentStartStopButton = StartStopButtons[currentCanvasId];
     CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
@@ -384,15 +387,15 @@ function checkBoxDirectedClicked(evt)
     if(canvases[currentCanvasId].directed == false)
     {
         alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
-        for(node of canvasGraphs[currentCanvasId].nodes)
+        for(node of currentCanvasGraph.nodes)
         {
-            removeAllEdgesFromNode(node,canvasGraphs[currentCanvasId].nodes,canvasGraphs[currentCanvasId].edges);
+            removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
         }
     }
     
     
     canvases[currentCanvasId].directed ^= true;
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
 }
 
 function setFunctionToCheckboxDirected(checkboxDirected)

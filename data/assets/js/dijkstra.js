@@ -4,7 +4,7 @@ var originalDijkstraGraph = null;
 
 function drawDijkstra()
 {
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -26,18 +26,18 @@ function drawDijkstra()
         updateNodeInformationQuadrantIForDijkstra(u);
     }
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     drawTreeDijkstra();
 }
 
 function saveDijkstraStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
+    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
 
     for(var node of canvasGraphCopy.nodes)
     {
-        node.distance = canvasGraphs[currentCanvasId].nodes[node.id].distance;
+        node.distance = currentCanvasGraph.nodes[node.id].distance;
     }
 
     dijkstraGraphHistory.push(canvasGraphCopy);
@@ -45,45 +45,45 @@ function saveDijkstraStepToHistory()
 
 function resetDijkstra()
 {
-    canvasGraphs[currentCanvasId] = originalDijkstraGraph;
+    currentCanvasGraph = originalDijkstraGraph;
 
-    canvasGraphs[currentCanvasId].queue = [];
-    for(var node of canvasGraphs[currentCanvasId].nodes)
+    currentCanvasGraph.queue = [];
+    for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
 
-    for(var edge of canvasGraphs[currentCanvasId].edges)
+    for(var edge of currentCanvasGraph.edges)
     {
         edge.color = "black";
     }
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     destroyCurrentVisNetwork();
     clearDijkstraGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
 
 
-    canvasGraphs[currentCanvasId].stepCounter = 0;
+    currentCanvasGraph.stepCounter = 0;
 
     canvasFlags[currentCanvasId].running = false;
 
     dijkstraGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
 }
 
 async function startDijkstra()
 {
-    originalDijkstraGraph = canvasGraphs[currentCanvasId];
+    originalDijkstraGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
-    canvasGraphs[currentCanvasId].queue = [];
-    canvasGraphs[currentCanvasId].set = [];
-    canvasGraphs[currentCanvasId].startingNode=canvasGraphs[currentCanvasId].nodes[canvasGraphs[currentCanvasId].startingNode.id]
+    currentCanvasGraph.queue = [];
+    currentCanvasGraph.set = [];
+    currentCanvasGraph.startingNode=currentCanvasGraph.nodes[currentCanvasGraph.startingNode.id]
 
     canvasFlags[currentCanvasId].running = true;
 
@@ -98,7 +98,7 @@ async function startDijkstra()
         console.log(dijkstraGraphHistory);
 
         console.log("accesuji BFSGraphHistory na indexu: "+step);
-        canvasGraphs[currentCanvasId] = dijkstraGraphHistory[step];
+        currentCanvasGraph = dijkstraGraphHistory[step];
 
         drawDijkstra();
 
@@ -141,7 +141,7 @@ function extractMin()
     var min = Number.MAX_VALUE;
     var minNode = null;
 
-    for(node of canvasGraphs[currentCanvasId].queue)
+    for(node of currentCanvasGraph.queue)
     {
         if(node.distance != "∞")
         {    
@@ -155,8 +155,8 @@ function extractMin()
 
     if(minNode != null)
     {
-        const findIndex = canvasGraphs[currentCanvasId].queue.findIndex(node => node.id === minNode.id);
-        findIndex !== -1 && canvasGraphs[currentCanvasId].queue.splice(findIndex , 1);
+        const findIndex = currentCanvasGraph.queue.findIndex(node => node.id === minNode.id);
+        findIndex !== -1 && currentCanvasGraph.queue.splice(findIndex , 1);
     }
 
     return minNode;
@@ -164,7 +164,7 @@ function extractMin()
 
 function dijkstra()
 {
-    nodes = canvasGraphs[currentCanvasId].nodes.slice();
+    nodes = currentCanvasGraph.nodes.slice();
     
     var numberOfNodes = nodes.length;
     var adjacencyList = [];
@@ -184,15 +184,15 @@ function dijkstra()
         u.distance = "∞";
         u.parent = null;
     }
-    for (var e of canvasGraphs[currentCanvasId].edges) {
+    for (var e of currentCanvasGraph.edges) {
         e.color = "black";
     }
 
-    canvasGraphs[currentCanvasId].startingNode.distance = 0;
+    currentCanvasGraph.startingNode.distance = 0;
 
-    canvasGraphs[currentCanvasId].queue = nodes;
+    currentCanvasGraph.queue = nodes;
 
-    while (canvasGraphs[currentCanvasId].queue.length > 0) {
+    while (currentCanvasGraph.queue.length > 0) {
         var u = extractMin();
         if(u == null)
         {
@@ -205,23 +205,23 @@ function dijkstra()
         }
         console.log("extracted min: ");
         console.log(u);
-        canvasGraphs[currentCanvasId].set.push(u);
+        currentCanvasGraph.set.push(u);
 
         u.color = "RED";
-        saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
+        saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;
 
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
             var edge = getEdgeFromNodeToNode(u,v)
             edge.color = "red";
-            //saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            //canvasGraphs[currentCanvasId].stepCounter++;
+            //saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+            //currentCanvasGraph.stepCounter++;
             //edge.color = "black";
 
             var alt = u.distance + edge.weight;
             console.log("alt je: " +alt)
-            console.log(canvasGraphs[currentCanvasId].set);
+            console.log(currentCanvasGraph.set);
             if(alt < v.distance || v.distance == "∞")
             {
                 console.log("v.distance: "+v.distance)
@@ -230,11 +230,11 @@ function dijkstra()
                 //v.color = "PURPLE";
                 //edge.color = "purple"
 
-                //saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-                //canvasGraphs[currentCanvasId].stepCounter++;
+                //saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+                //currentCanvasGraph.stepCounter++;
             }
-            saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
             edge.color = "black";
 
             //edge.color = "purple";
@@ -244,12 +244,12 @@ function dijkstra()
         
     }
 
-    saveDijkstraStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;
+    saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+    currentCanvasGraph.stepCounter++;
 
     console.log("set je: ")
-    console.log(canvasGraphs[currentCanvasId].set);
+    console.log(currentCanvasGraph.set);
 
     console.log("nodes jsou: ")
-    console.log(canvasGraphs[currentCanvasId].nodes);
+    console.log(currentCanvasGraph.nodes);
 }

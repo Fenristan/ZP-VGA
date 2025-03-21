@@ -6,7 +6,7 @@ var originalDFS_TarjanGraph = null;
 
 function drawDFS_Tarjan()
 {
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -31,7 +31,7 @@ function drawDFS_Tarjan()
 
         updateNodeInformationQuadrantIForDFS_Tarjan(u);
     }
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     renderTarjanGrid();
     drawTreeDFS_Tarjan();
 }
@@ -39,12 +39,13 @@ function drawDFS_Tarjan()
 function saveDFS_TarjanStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
+    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
 
     for(var node of canvasGraphCopy.nodes)
     {
-        node.timeDiscovered = canvasGraphs[currentCanvasId].nodes[node.id].timeDiscovered;
-        node.timeCompleted = canvasGraphs[currentCanvasId].nodes[node.id].timeCompleted;
+        node.timeDiscovered = currentCanvasGraph.nodes[node.id].timeDiscovered;
+        node.timeCompleted = currentCanvasGraph.nodes[node.id].timeCompleted;
+        node.parent = currentCanvasGraph.nodes[node.id].parent
     }
 
     tarjanGraphHistory.push(canvasGraphCopy);
@@ -52,37 +53,37 @@ function saveDFS_TarjanStepToHistory()
 
 function resetDFS_Tarjan()
 {
-    canvasGraphs[currentCanvasId] = originalDFS_TarjanGraph;
+    currentCanvasGraph = originalDFS_TarjanGraph;
 
-    canvasGraphs[currentCanvasId].SCC = [];
-    canvasGraphs[currentCanvasId].stack = [];
-    for(var node of canvasGraphs[currentCanvasId].nodes)
+    currentCanvasGraph.SCC = [];
+    currentCanvasGraph.stack = [];
+    for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         node.lowlink = null;
         node.inComponent = null;
     }
 
-    for(var edge of canvasGraphs[currentCanvasId].edges)
+    for(var edge of currentCanvasGraph.edges)
     {
         edge.color = "black";
         edge.label = "";
     }
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     destroyCurrentVisNetwork();
     clearTarjanGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
 
-    canvasGraphs[currentCanvasId].stepCounter = 0;
+    currentCanvasGraph.stepCounter = 0;
 
     canvasFlags[currentCanvasId].running = false;
 
     tarjanGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
@@ -94,16 +95,16 @@ function DFS_Tarjan_visit(u)
     u.timeDiscovered = time;
     u.lowlink = time;
     u.inComponent = false;
-    canvasGraphs[currentCanvasId].stack.push(u);
+    currentCanvasGraph.stack.push(u);
 
-    saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;
+    saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+    currentCanvasGraph.stepCounter++;
             
     for (var vId of adjacencyList[u.id]) {
-        var v = canvasGraphs[currentCanvasId].nodes[vId];
+        var v = currentCanvasGraph.nodes[vId];
 
-        /*saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;*/
+        /*saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;*/
         
         if(v.color=="BLUE")
         {
@@ -120,8 +121,8 @@ function DFS_Tarjan_visit(u)
 
             //v.timeDiscovered = time+1;
 
-            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
             
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
@@ -137,13 +138,13 @@ function DFS_Tarjan_visit(u)
 
             doParenthesisForEdgeBetweenNodes(u,v);
 
-            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
 
             edge.color = "black";
             
-            saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
 
         }
 
@@ -161,24 +162,24 @@ function DFS_Tarjan_visit(u)
         var C = [];
         do
         {
-            var v = canvasGraphs[currentCanvasId].stack.pop(); 
+            var v = currentCanvasGraph.stack.pop(); 
             v.inComponent = true;
             C.push(v); 
         }while(v != u);
 
-        canvasGraphs[currentCanvasId].SCC.push(C);
+        currentCanvasGraph.SCC.push(C);
         console.log("SCC: ");
-        console.log(canvasGraphs[currentCanvasId].SCC);
+        console.log(currentCanvasGraph.SCC);
 
-        /*canvasGraphs[currentCanvasId].SCC = [...canvasGraphs[currentCanvasId].SCC, ...C];
+        /*currentCanvasGraph.SCC = [...currentCanvasGraph.SCC, ...C];
         
         
-        //console.log( canvasGraphs[currentCanvasId].SCC);
-        for(var u of canvasGraphs[currentCanvasId].SCC)
+        //console.log( currentCanvasGraph.SCC);
+        for(var u of currentCanvasGraph.SCC)
         {
             console.log(u.text);
         }
-        canvasGraphs[currentCanvasId].SCC = [];*/
+        currentCanvasGraph.SCC = [];*/
     }
 
     
@@ -191,8 +192,8 @@ function DFS_Tarjan_visit(u)
     u.timeCompleted = time;
     //updateNodeInformationQuadrantIForNodeInCanvas(u);
 
-    saveDFS_TarjanStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;
+    saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+    currentCanvasGraph.stepCounter++;
 
     
     
@@ -200,9 +201,9 @@ function DFS_Tarjan_visit(u)
 
 function DFS_Tarjan(){
 
-    nodes = canvasGraphs[currentCanvasId].nodes.slice();
+    nodes = currentCanvasGraph.nodes.slice();
 
-    var splicedNode = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id,1);
+    var splicedNode = nodes.splice(currentCanvasGraph.startingNode.id,1);
     nodes.unshift(splicedNode[0]);
 
     var numberOfNodes = nodes.length;
@@ -227,13 +228,13 @@ function DFS_Tarjan(){
         u.lowlink=null;
     }
 
-    for (var e of canvasGraphs[currentCanvasId].edges) {
+    for (var e of currentCanvasGraph.edges) {
         e.color = "black";
     }
 
     time = 0;
-    canvasGraphs[currentCanvasId].stack = [];
-    canvasGraphs[currentCanvasId].SCC = [];
+    currentCanvasGraph.stack = [];
+    currentCanvasGraph.SCC = [];
 
     for (var u of nodes) {
         if(u.color == "BLUE")
@@ -247,8 +248,8 @@ function DFS_Tarjan(){
 
 async function startTarjan(){
 
-    //originalDFS_TarjanGraph = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]))
-    originalDFS_TarjanGraph = canvasGraphs[currentCanvasId];
+    //originalDFS_TarjanGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    originalDFS_TarjanGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
@@ -265,7 +266,7 @@ async function startTarjan(){
         console.log("tarjanGraphHistory je nasledujici: ");
         console.log(tarjanGraphHistory);
 
-        canvasGraphs[currentCanvasId] = tarjanGraphHistory[step];
+        currentCanvasGraph = tarjanGraphHistory[step];
 
         drawDFS_Tarjan();
 
@@ -301,7 +302,7 @@ async function startTarjan(){
     }
     resetDFS_Tarjan();
     
-    //drawEdges(canvasGraphs[currentCanvasId].edges);
+    //drawEdges(currentCanvasGraph.edges);
     //drawTreeDFS_Tarjan();
 
 

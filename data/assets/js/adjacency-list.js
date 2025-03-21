@@ -1,7 +1,7 @@
 function convertToAdjacencyListUndirected(numberOfNodes) {
 
     var adjacencyList = Array.from({ length: numberOfNodes }, () => []);
-    var edges = canvasGraphs[currentCanvasId].edges;
+    var edges = currentCanvasGraph.edges;
     
     edges.forEach(edge => {
         
@@ -19,7 +19,7 @@ function convertToAdjacencyListUndirected(numberOfNodes) {
   function convertToAdjacencyListDirected(numberOfNodes) {
 
     var adjacencyList = Array.from({ length: numberOfNodes }, () => []);
-    var edges = canvasGraphs[currentCanvasId].edges;
+    var edges = currentCanvasGraph.edges;
     
     edges.forEach(edge => {
         

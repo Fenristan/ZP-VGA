@@ -4,7 +4,7 @@ var originalBFSGraph = null;
 
 function drawBFS()
 {
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -26,74 +26,74 @@ function drawBFS()
         updateNodeInformationQuadrantIForBFS(u);
     }
 
-    /*canvasGraphs[currentCanvasId].startingNode.color = "RED";
-    canvasGraphs[currentCanvasId].startingNode.distance = 0;*/
+    /*currentCanvasGraph.startingNode.color = "RED";
+    currentCanvasGraph.startingNode.distance = 0;*/
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     drawTreeBFS();
 }
 
 function saveBFSStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
+    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
 
     for(var node of canvasGraphCopy.nodes)
     {
-        //node.timeDiscovered = canvasGraphs[currentCanvasId].nodes[node.id].timeDiscovered;
-        //node.timeCompleted = canvasGraphs[currentCanvasId].nodes[node.id].timeCompleted;
-        node.distance = canvasGraphs[currentCanvasId].nodes[node.id].distance;
-        /*if(node.id == canvasGraphs[currentCanvasId].startingNode.id)
+        //node.timeDiscovered = currentCanvasGraph.nodes[node.id].timeDiscovered;
+        //node.timeCompleted = currentCanvasGraph.nodes[node.id].timeCompleted;
+        node.distance = currentCanvasGraph.nodes[node.id].distance;
+        /*if(node.id == currentCanvasGraph.startingNode.id)
         {
-            node = canvasGraphs[currentCanvasId].startingNode;
+            node = currentCanvasGraph.startingNode;
         }*/
     }
 
-    //canvasGraphCopy.startingNode = canvasGraphs[currentCanvasId].startingNode;
+    //canvasGraphCopy.startingNode = currentCanvasGraph.startingNode;
 
     BFSGraphHistory.push(canvasGraphCopy);
 }
 
 function resetBFS()
 {
-    canvasGraphs[currentCanvasId] = originalBFSGraph;
+    currentCanvasGraph = originalBFSGraph;
 
-    canvasGraphs[currentCanvasId].queue = [];
-    for(var node of canvasGraphs[currentCanvasId].nodes)
+    currentCanvasGraph.queue = [];
+    for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
 
-    for(var edge of canvasGraphs[currentCanvasId].edges)
+    for(var edge of currentCanvasGraph.edges)
     {
         edge.color = "black";
     }
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     destroyCurrentVisNetwork();
     clearBFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
 
-    canvasGraphs[currentCanvasId].stepCounter = 0;
+    currentCanvasGraph.stepCounter = 0;
 
     canvasFlags[currentCanvasId].running = false;
 
     BFSGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
 }
 
 async function startBFS()
 {
-    originalBFSGraph = canvasGraphs[currentCanvasId];
+    originalBFSGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
-    canvasGraphs[currentCanvasId].queue = [];
-    canvasGraphs[currentCanvasId].startingNode=canvasGraphs[currentCanvasId].nodes[canvasGraphs[currentCanvasId].startingNode.id]
+    currentCanvasGraph.queue = [];
+    currentCanvasGraph.startingNode=currentCanvasGraph.nodes[currentCanvasGraph.startingNode.id]
 
     canvasFlags[currentCanvasId].running = true;
 
@@ -109,7 +109,7 @@ async function startBFS()
         console.log(BFSGraphHistory);
 
         console.log("accesuji BFSGraphHistory na indexu: "+step);
-        canvasGraphs[currentCanvasId] = BFSGraphHistory[step];
+        currentCanvasGraph = BFSGraphHistory[step];
 
         drawBFS();
 
@@ -151,7 +151,7 @@ async function startBFS()
 //WHITE == BLUE, GRAY == PURPLE, BLACK == GREEN
 function BFS(){
 
-    nodes = canvasGraphs[currentCanvasId].nodes.slice();
+    nodes = currentCanvasGraph.nodes.slice();
     
     var numberOfNodes = nodes.length;
     var adjacencyList = [];
@@ -171,31 +171,31 @@ function BFS(){
         u.parent = null;
         //updateNodeInformationQuadrantIForBFS(u);
     }
-    for (var e of canvasGraphs[currentCanvasId].edges) {
+    for (var e of currentCanvasGraph.edges) {
         e.color = "black";
     }
 
-    canvasGraphs[currentCanvasId].startingNode.color = "PURPLE";
-    canvasGraphs[currentCanvasId].startingNode.distance = 0;
+    currentCanvasGraph.startingNode.color = "PURPLE";
+    currentCanvasGraph.startingNode.distance = 0;
     
 
-    //updateNodeInformationQuadrantIForBFS(canvasGraphs[currentCanvasId].startingNode)
+    //updateNodeInformationQuadrantIForBFS(currentCanvasGraph.startingNode)
 
 
-    canvasGraphs[currentCanvasId].queue.push(canvasGraphs[currentCanvasId].startingNode);
+    currentCanvasGraph.queue.push(currentCanvasGraph.startingNode);
 
-    while (canvasGraphs[currentCanvasId].queue.length > 0) {
+    while (currentCanvasGraph.queue.length > 0) {
         
-        var u = canvasGraphs[currentCanvasId].queue.shift();
+        var u = currentCanvasGraph.queue.shift();
         
         //I want to draw edges here because otherwise there could be a colored (selected) edge left hanging
-        //drawEdges(canvasGraphs[currentCanvasId].edges);
+        //drawEdges(currentCanvasGraph.edges);
         //drawTreeBFS();
 
         u.color = "RED";
 
-        saveBFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
+        saveBFSStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;
 
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
@@ -208,14 +208,14 @@ function BFS(){
                 console.log("distance "+v.id+" je: " + v.distance)
 
                 v.parent = u;
-                canvasGraphs[currentCanvasId].queue.push(v);
+                currentCanvasGraph.queue.push(v);
 
                 var edge = getEdgeFromNodeToNode(u,v);
                 edge.color = "red";
 
 
-                saveBFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-                canvasGraphs[currentCanvasId].stepCounter++;
+                saveBFSStepToHistory(currentCanvasGraph.stepCounter);
+                currentCanvasGraph.stepCounter++;
 
                 u.color = "PURPLE";
                 edge.color = "purple";
@@ -227,8 +227,8 @@ function BFS(){
         //containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
         u.color = "GREEN";
         
-        saveBFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;
+        saveBFSStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;
     }
     
     

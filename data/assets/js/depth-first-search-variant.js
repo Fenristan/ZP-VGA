@@ -7,7 +7,7 @@ var originalDFSGraph = null;
 
 function drawDFS()
 {
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -28,19 +28,20 @@ function drawDFS()
 
         updateNodeInformationQuadrantIForDFS(u);
     }
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     drawTreeDFS();
 }
 
 function saveDFSStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]));
+    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
 
     for(var node of canvasGraphCopy.nodes)
     {
-        node.timeDiscovered = canvasGraphs[currentCanvasId].nodes[node.id].timeDiscovered;
-        node.timeCompleted = canvasGraphs[currentCanvasId].nodes[node.id].timeCompleted;
+        node.timeDiscovered = currentCanvasGraph.nodes[node.id].timeDiscovered;
+        node.timeCompleted = currentCanvasGraph.nodes[node.id].timeCompleted;
+        node.parent = currentCanvasGraph.nodes[node.id].parent
     }
 
     DFSGraphHistory.push(canvasGraphCopy);
@@ -48,33 +49,33 @@ function saveDFSStepToHistory()
 
 function resetDFS()
 {
-    canvasGraphs[currentCanvasId] = originalDFSGraph;
+    currentCanvasGraph = originalDFSGraph;
 
-    for(var node of canvasGraphs[currentCanvasId].nodes)
+    for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
 
-    for(var edge of canvasGraphs[currentCanvasId].edges)
+    for(var edge of currentCanvasGraph.edges)
     {
         edge.color = "black";
         edge.label = "";
     }
 
-    drawEdges(canvasGraphs[currentCanvasId].edges);
+    drawEdges(currentCanvasGraph.edges);
     destroyCurrentVisNetwork();
     clearDFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
     toggleNodeInformationQuadrantIVisibility();
     //disableNodeInformationQuadrantIVisibility();
 
-    canvasGraphs[currentCanvasId].stepCounter = 0;
+    currentCanvasGraph.stepCounter = 0;
 
     canvasFlags[currentCanvasId].running = false;
 
     DFSGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+canvasGraphs[currentCanvasId].startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
 }
 
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
@@ -115,16 +116,16 @@ function DFS_visit(u)
     time += 1;
     u.timeDiscovered = time;
 
-    saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;
+    saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+    currentCanvasGraph.stepCounter++;
             
     for (var vId of adjacencyList[u.id]) {
-        var v = canvasGraphs[currentCanvasId].nodes[vId];
+        var v = currentCanvasGraph.nodes[vId];
         //every time we go from this node to another, highlight it as the currently selected Node
         u.color = "RED";
 
-        /*saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-        canvasGraphs[currentCanvasId].stepCounter++;*/
+        /*saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;*/
         
         if(v.color=="BLUE")
         {
@@ -133,7 +134,7 @@ function DFS_visit(u)
             console.log("jeho color je: "+v.color);
 
             //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(canvasGraphs[currentCanvasId].nodes[u.id], canvasGraphs[currentCanvasId].nodes[v.id]);
+            var edge = getEdgeFromNodeToNode(currentCanvasGraph.nodes[u.id], currentCanvasGraph.nodes[v.id]);
             edge.color = "red";
 
 
@@ -144,8 +145,8 @@ function DFS_visit(u)
 
             v.timeDiscovered = time+1;
 
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
             
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
@@ -155,8 +156,8 @@ function DFS_visit(u)
         }
         else 
         {
-            console.log(canvasGraphs[currentCanvasId].nodes[u.id]);
-            console.log(canvasGraphs[currentCanvasId].nodes[v.id]);
+            console.log(currentCanvasGraph.nodes[u.id]);
+            console.log(currentCanvasGraph.nodes[v.id]);
             var edge = getEdgeFromNodeToNode(u,v);
             edge.color = "red";
 
@@ -171,10 +172,10 @@ function DFS_visit(u)
             
             
 
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
 
-            //canvasGraphs[currentCanvasId].visitedEdges.pop();
+            //currentCanvasGraph.visitedEdges.pop();
 
             //if this is an undirected graph, then should check if the edge leads to the parent node, if it does, make it purple again, if not, then make it black. If it isn't undirected, simply make the edge black.
             if(canvases[currentCanvasId].directed == false)
@@ -198,8 +199,8 @@ function DFS_visit(u)
             
             
             
-            saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-            canvasGraphs[currentCanvasId].stepCounter++;
+            saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
 
         }
         /*
@@ -218,23 +219,23 @@ function DFS_visit(u)
     u.timeCompleted = time;
     //updateNodeInformationQuadrantIForNodeInCanvas(u);
 
-    saveDFSStepToHistory(canvasGraphs[currentCanvasId].stepCounter);
-    canvasGraphs[currentCanvasId].stepCounter++;
+    saveDFSStepToHistory(currentCanvasGraph.stepCounter);
+    currentCanvasGraph.stepCounter++;
 
     
     
 }
 
 function DFS(){
-    //canvasGraphs[currentCanvasId].stepCounter = 0;
+    //currentCanvasGraph.stepCounter = 0;
 
     //canvasFlags[currentCanvasId].running = true;
 
-    nodes = canvasGraphs[currentCanvasId].nodes.slice();
+    nodes = currentCanvasGraph.nodes.slice();
 
-    //nodes = canvasGraphs[currentCanvasId].nodes;
+    //nodes = currentCanvasGraph.nodes;
 
-    var splicedNode = nodes.splice(canvasGraphs[currentCanvasId].startingNode.id,1);
+    var splicedNode = nodes.splice(currentCanvasGraph.startingNode.id,1);
     nodes.unshift(splicedNode[0]);
 
     //console.log("novy order nodes je: ")
@@ -261,12 +262,12 @@ function DFS(){
         u.timeCompleted=null;
     }
 
-    for (var e of canvasGraphs[currentCanvasId].edges) {
+    for (var e of currentCanvasGraph.edges) {
         e.color = "black";
     }
 
-    //canvasGraphs[currentCanvasId].startingNode.distance = 0;
-    //updateNodeInformationQuadrantIForNodeInCanvas(canvasGraphs[currentCanvasId].startingNode);
+    //currentCanvasGraph.startingNode.distance = 0;
+    //updateNodeInformationQuadrantIForNodeInCanvas(currentCanvasGraph.startingNode);
 
     time = 0;
 
@@ -282,8 +283,8 @@ function DFS(){
 
 async function startDFS(){
 
-    //originalDFSGraph = JSON.parse(JSON.stringify(canvasGraphs[currentCanvasId]))
-    originalDFSGraph = canvasGraphs[currentCanvasId];
+    //originalDFSGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    originalDFSGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
@@ -300,7 +301,7 @@ async function startDFS(){
         console.log("DFSGraphHistory je nasledujici: ");
         console.log(DFSGraphHistory);
 
-        canvasGraphs[currentCanvasId] = DFSGraphHistory[step];
+        currentCanvasGraph = DFSGraphHistory[step];
 
         drawDFS();
 
@@ -336,7 +337,7 @@ async function startDFS(){
     }
     resetDFS();
     
-    //drawEdges(canvasGraphs[currentCanvasId].edges);
+    //drawEdges(currentCanvasGraph.edges);
     //drawTreeDFS();
 
 

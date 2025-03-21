@@ -88,9 +88,9 @@ function drawTreeDFS()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    for(node of currentCanvasGraph.nodes)
     {
-        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        //node = currentCanvasGraph.nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = 0;
@@ -103,7 +103,7 @@ function drawTreeDFS()
 
 
     //add all edges to the array of edges to be draw
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(edge of currentCanvasGraph.edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }
@@ -160,9 +160,9 @@ function drawTreeBFS()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    for(node of currentCanvasGraph.nodes)
     {
-        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        //node = currentCanvasGraph.nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = node.distance;
@@ -175,7 +175,7 @@ function drawTreeBFS()
 
 
     //add all edges to the array of edges to be drawn
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(edge of currentCanvasGraph.edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
     }
@@ -232,9 +232,9 @@ function drawTreeDijkstra()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    for(node of currentCanvasGraph.nodes)
     {
-        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        //node = currentCanvasGraph.nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" )
         {
             //node.level = node.distance;
@@ -246,7 +246,7 @@ function drawTreeDijkstra()
     }
 
     //add all edges to the array of edges to be drawn
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(edge of currentCanvasGraph.edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
       if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
@@ -319,9 +319,9 @@ function drawTreeDFS_Tarjan()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    for(node of currentCanvasGraph.nodes)
     {
-        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        //node = currentCanvasGraph.nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
         {
             node.level = 0;
@@ -332,7 +332,7 @@ function drawTreeDFS_Tarjan()
         }
     }
 
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(edge of currentCanvasGraph.edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }
@@ -389,9 +389,9 @@ function drawTreeBiconnectivity()
     currentVisGraph.edges = [];
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
-    for(node of canvasGraphs[currentCanvasId].nodes)
+    for(node of currentCanvasGraph.nodes)
     {
-        //node = canvasGraphs[currentCanvasId].nodes.slice(node.id,1);
+        //node = currentCanvasGraph.nodes.slice(node.id,1);
         if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" || node.color == "ORANGE")
         {
             node.level = 0;
@@ -402,7 +402,7 @@ function drawTreeBiconnectivity()
         }
     }
 
-    for(edge of canvasGraphs[currentCanvasId].edges)
+    for(edge of currentCanvasGraph.edges)
     {
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }

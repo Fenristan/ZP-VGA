@@ -10,7 +10,7 @@ function renderBFSGrid()
     var gridVisitedData = [];
     var gridQueueData = [];
 
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -22,7 +22,7 @@ function renderBFSGrid()
         }
     }
 
-    for(var u of canvasGraphs[currentCanvasId].queue)
+    for(var u of currentCanvasGraph.queue)
     {
         gridQueueData.push([u.text]);
     }
@@ -75,7 +75,7 @@ function renderDFSGrid()
     var gridVisitedData = [];
     var gridParentData = [];
 
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -86,8 +86,11 @@ function renderDFSGrid()
             gridVisitedData.push([u.text,"T"]);
         }
 
+        console.log(currentCanvasGraph.nodes);
+        console.log("parent je: "+ u.parent);
         if(u.parent != null)
         {
+            console.log("parent text je: "+ u.parent.text);
             gridParentData.push([u.text,u.parent.text]);
         }
         else
@@ -153,7 +156,7 @@ function renderDijkstraGrid()
     var gridDistanceData = [];
     var gridParentData = [];
 
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
 
         gridDistanceData.push([u.text,u.distance]);
@@ -228,7 +231,7 @@ function renderTarjanGrid()
     var gridStackData = [];
     var gridSCCData = [];
 
-    for(var u of canvasGraphs[currentCanvasId].nodes)
+    for(var u of currentCanvasGraph.nodes)
     {
         if(u.color == "BLUE")
         {
@@ -249,12 +252,12 @@ function renderTarjanGrid()
         }
     }
 
-    for(var u of canvasGraphs[currentCanvasId].stack)
+    for(var u of currentCanvasGraph.stack)
     {
         gridStackData.push([u.text]);
     }
 
-    for(var C of canvasGraphs[currentCanvasId].SCC)
+    for(var C of currentCanvasGraph.SCC)
     {
         var C_text = "{";
         var len = C.length;
@@ -351,8 +354,8 @@ function renderBiconnectivityGrid()
     var gridComponentsData = [];
 
     console.log("components: ");
-    console.log(canvasGraphs[currentCanvasId].components);
-    for(var c of canvasGraphs[currentCanvasId].components)
+    console.log(currentCanvasGraph.components);
+    for(var c of currentCanvasGraph.components)
     {
         var c_text = "{";
         var len = c.length;

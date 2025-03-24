@@ -3,9 +3,9 @@ SaveButton.addEventListener("click", function(){
 });
 
 LoadButton.addEventListener("click", function(){
-    //if there is a running simulation, stop it first
+    //if there is a runningFlag simulation, stop it first
     //RestartButton.click();
-    if(canvasFlags[currentCanvasId].running == true)
+    if(canvasFlags[currentCanvasId].runningFlag == true)
     {
         console.log("simulation runnovala");
         canvasFlags[currentCanvasId].stopFlag = true;
@@ -45,7 +45,7 @@ file.addEventListener("change", function(){
         console.log(currentCanvasGraph);
         console.log("test edges:");
 
-        //drawEdges(currentCanvasGraph.edges); //ok so basically potřebuju nějak postupně přidat nodes, pak edges mezi nima, jinak to nepůjde.
+        //drawEdges(); //ok so basically potřebuju nějak postupně přidat nodes, pak edges mezi nima, jinak to nepůjde.
 
         //console.log(currentCanvasGraph);
 
@@ -66,11 +66,6 @@ file.addEventListener("change", function(){
             for(var i = currentCanvasGraph.nodes.length-1; i>=0; i--)
             {
                 var node = currentCanvasGraph.nodes[i]
-                console.log("mazu stare nodes");
-                console.log(node);
-                
-                //console.log("test bitmap parent");
-                //console.log(stage[currentCanvasId]);
                 var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
                 console.log(bitmap);
                 removeNode(bitmap,currentCanvasGraph.nodes,currentCanvasGraph.edges)
@@ -79,13 +74,9 @@ file.addEventListener("change", function(){
         
         
         loadedGraph.nodes.forEach(node => {
-            console.log("pridavam node");
-            console.log(node);
-            
-            //console.log(stage[currentCanvasId]);
             var bitmap = new createjs.Bitmap(node_image);
             currentCanvasGraph.nodes.push(node);
-            addNodeToBitmap(node,containers[currentCanvasId],bitmap);
+            createNodeBitmap(node,containers[currentCanvasId],bitmap);
             bindFunctionalityToBitmap(node,bitmap,currentCanvasGraph.edges,currentCanvasGraph.nodes);
 
             //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
@@ -100,9 +91,7 @@ file.addEventListener("change", function(){
                     loadedGraph.edges[i].nodes[1]=node;
                 }
             }
-            
-            //update = true;
-            //stage[currentCanvasId].update(new Event("stagemousedown"));
+
         });
 
         //add edges. If the loaded graph was undirected and we are trying to load it as directed, then don't add any edges.

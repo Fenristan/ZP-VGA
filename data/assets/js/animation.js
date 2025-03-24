@@ -126,10 +126,7 @@ var mouseTarget;	// the display object currently under the mouse, or being dragg
 var dragStarted;	// indicates whether we are currently in a drag operation
 var offset;
 var update = true;
-var addNodeFlag = false;
-var addEdgeFlag = false;
-var removeNodeFlag = false;
-var removeEdgeFlag = false;
+
 var selectedNodesNumber = 0;
 var selectedNodes = [];
 var textoffset = 3;
@@ -137,18 +134,15 @@ var node_image = "./assets/images/node.png";
 var add_edge_image = "./assets/images/addedge.png";
 var containers = [];
 var selectedEdge;
-var stepForwardFlag = false;
-//var stopFlag = false;
-//var canvasFlags[currentCanvasId].stepBackwardsFlag = false;
-//var restartFlag = false;
+
 
 var nodeRadius;
 
 var nodeImage = new Image();
-var completedNodeImage = new Image();
-var selectedNodeImage = new Image();
-var visitedNodeImage = new Image();
-var articulationNodeImage = new Image();
+var greenNodeImage = new Image();
+var redNodeImage = new Image();
+var purpleNodeImage = new Image();
+var yellowNodeImage = new Image();
 
 var playImage = new Image();
 var stopImage = new Image();
@@ -158,18 +152,18 @@ var pauseAutoImage = new Image();
 
 function init() {
     examples.showDistractor();
-    // create stage and point it to the canvas:
+    // create stages and point it to the canvas:
     //canvas = document.getElementById("currentCanvas"+1);
     currentCanvas = canvases[currentCanvasId];
     context = currentCanvas.getContext("2d");
-    //stage = new createjs.Stage(currentCanvas);
+    //stages = new createjs.stages(currentCanvas);
 
     // enable touch interactions if supported on the current device:
-    createjs.Touch.enable(stage[currentCanvasId]);
+    createjs.Touch.enable(stages[currentCanvasId]);
 
     // enabled mouse over / out events
-    stage[currentCanvasId].enableMouseOver(10);
-    stage[currentCanvasId].mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
+    stages[currentCanvasId].enableMouseOver(10);
+    stages[currentCanvasId].mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
 
     // load the source image and call handleImageLoad which will create a few nodes with edges between them in the first canvas, as a starting point
     var image = new Image();
@@ -177,10 +171,10 @@ function init() {
     image.onload = handleImageLoad;
 
     nodeImage.src = "./assets/images/node.png";
-    completedNodeImage.src = "./assets/images/nodeCompleted.png";
-    selectedNodeImage.src = "./assets/images/nodeSelected2.png";
-    visitedNodeImage.src = "./assets/images/nodeVisited.png";
-    articulationNodeImage.src = "./assets/images/nodeArticulation.png";
+    greenNodeImage.src = "./assets/images/nodeGreen.png";
+    redNodeImage.src = "./assets/images/nodeRed.png";
+    purpleNodeImage.src = "./assets/images/nodePurple.png";
+    yellowNodeImage.src = "./assets/images/nodeYellow.png";
 
     playImage.src = "./assets/images/start_icon.png";
     stopImage.src = "./assets/images/stop_icon.png";
@@ -188,6 +182,28 @@ function init() {
     playAutoImage.src = "./assets/images/play_auto_icon.png";
     pauseAutoImage.src = "./assets/images/pause_auto_icon.png";
     
+    for(var i = 0; i < stages.length; i++)
+    {
+        stages[i].on("stagemousedown", function(evt) {
+
+            console.log("clicked in canvas "+currentCanvasId);
+            
+            if(currentCanvasFlags.addNodeFlag==true)
+            {
+                var newNode = new Node(currentCanvasGraph.nodes.length,currentCanvasGraph.nodes.length,(evt.stageX),(evt.stageY))
+                currentCanvasGraph.nodes.push(newNode);
+                console.log(newNode);
+                console.log(currentCanvasGraph.nodes);
+                var bitmap = new createjs.Bitmap(node_image);
+                createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
+                bindFunctionalityToBitmap(newNode,bitmap);
+                currentCanvasFlags.addNodeFlag=false;
+                update = true;
+            }
+            stages[currentCanvasId].update(event)
+            
+        });
+    }
 }
 
 function stop() {
@@ -235,9 +251,10 @@ function edgeBetweenNodesBothWays(nodeA, nodeB, edges)
     }
     
 }
-function edgeFromNodeToNode(nodeA, nodeB, edges)
+function edgeFromNodeToNode(nodeA, nodeB)
 {
-    for(let i = 0; i<edges.length;i++)
+    var edges = currentCanvasGraph.edges;
+    for(var i = 0; i<edges.length;i++)
     {
         if((edges[i].nodes[0].id==nodeA.id) &&(edges[i].nodes[1].id==nodeB.id))
         {
@@ -249,8 +266,6 @@ function edgeFromNodeToNode(nodeA, nodeB, edges)
 
 function getEdgeFromNodeToNode(nodeA, nodeB)
 {
-    console.log(nodeA);
-    console.log(nodeB);
     for(var edge of currentCanvasGraph.edges)
     {
         if(canvases[currentCanvasId].directed == true)
@@ -273,8 +288,6 @@ function getEdgeFromNodeToNode(nodeA, nodeB)
 
 function getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA, nodeB)
 {
-    console.log(nodeA);
-    console.log(nodeB);
     for(var edge of currentCanvasGraph.edges)
     {
 
@@ -300,123 +313,31 @@ function getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA, nodeB)
 
 
 
-function drawEdges(edges,oldEdges=edges) {
+function drawEdges(oldEdges=currentCanvasGraph.edges) {
     g = new createjs.Graphics();
-    //g.clear();
     context.beginPath();
-    console.log("new length: "+edges.length);
-    console.log("old length: "+oldEdges.length);
-    console.log(oldEdges);
 
+    var edges = currentCanvasGraph.edges;
     currentCanvas = canvases[currentCanvasId];
 
-    for(let i = 0; i<edges.length; i++)
-            {
-                    let index = edges[i].id
-                    //console.log("existing edgeWeight_ is: "+(containers[currentCanvasId].getChildByName("edgeWeight_"+index)));
-            }
-
-
-        for(let i = 0; i<oldEdges.length;i++)
+    for(let i = 0; i<oldEdges.length;i++)
+    {
+        if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
         {
-            if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
-            {
-                //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
-                containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
-                containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
-            }
+            //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
+            containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
+            containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
         }
+    }
 
     for(let i = 0; i<edges.length;i++)
     {
         if(edges[i].nodes.length===2) //if this edge has both nodes, draw
         {
-            var r_start = 24;
-            var r_end = -24;//(edges[i].nodes[1].size/2)*-1
-
-            var a=edges[i].nodes[1].x-edges[i].nodes[0].x;
-            var b=edges[i].nodes[1].y-edges[i].nodes[0].y;
-            var dist = Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
-
-            /*var start_x = a/dist;
-            var start_y = b/dist;*/
-
-            var start_x = edges[i].nodes[0].x + r_start*a/dist;
-            var start_y = edges[i].nodes[0].y + r_start*b/dist;
-
-            var end_x = edges[i].nodes[1].x + r_end*a/dist;
-            var end_y = edges[i].nodes[1].y + r_end*b/dist;
-
-            //console.log("selectedNodes: ");
-            //console.log(currentCanvasGraph.selectedNodes);
-
-            //console.log("visitedEdges: ");
-            //console.log(currentCanvasGraph.visitedEdges);
-            
-            /*if(currentCanvasGraph.visitedEdges.includes(edges[i]))
-            {
-                //console.log("yep already there");
-                g.beginStroke("purple");
-                edges[i].color = "purple";
-            }
-
-
-
-            //if the edge that is about to be draw is the one, that we have just visited, then change color. Check if there are selectedNodes, if so, they will be painted red
-            else if(currentCanvasGraph.selectedNodes[0] != null && currentCanvasGraph.selectedNodes[1] != null)
-            {
-                // 
-                if(currentCanvas.directed == true)
-                {
-                    if((currentCanvasGraph.selectedNodes[0].id == edges[i].nodes[0].id)&&(currentCanvasGraph.selectedNodes[1].id == edges[i].nodes[1].id))
-                    {
-                        g.beginStroke("red");
-                        edges[i].color = "red";
-                        if(!(edges[i] in currentCanvasGraph.visitedEdges))
-                        {
-                            currentCanvasGraph.visitedEdges.push(edges[i]);
-                        }
-                        currentCanvasGraph.selectedNodes.shift();
-                        currentCanvasGraph.selectedNodes.shift();
-                    }
-                    else 
-                    {
-                        g.beginStroke("black");
-                        edges[i].color = "black";
-                    } 
-                    
-                }
-                else
-                {
-                    //if undirected, then the edge can go from nodes A to B or B to A
-                    if((currentCanvasGraph.selectedNodes[0].id == edges[i].nodes[0].id)&&(currentCanvasGraph.selectedNodes[1].id == edges[i].nodes[1].id)||(currentCanvasGraph.selectedNodes[0].id == edges[i].nodes[1].id)&&(currentCanvasGraph.selectedNodes[1].id == edges[i].nodes[0].id))
-                    {
-                        g.beginStroke("red");
-                        edges[i].color = "red";
-                        if(!(edges[i] in currentCanvasGraph.visitedEdges))
-                        {
-                            currentCanvasGraph.visitedEdges.push(edges[i]);
-                        }
-                        currentCanvasGraph.selectedNodes.shift();
-                        currentCanvasGraph.selectedNodes.shift();
-                    }
-                    else 
-                    {
-                        g.beginStroke("black");
-                        edges[i].color = "black";
-                    }     
-                }      
-            }
-            else
-            {
-                g.beginStroke("black");
-                //edges[i].color = "black";
-            }*/
-
-
-
             
             g.beginStroke( edges[i].color );
+
+            var isMultigraph = edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges);
             
             
             if(edges[i].nodes[0].id == edges[i].nodes[1].id)
@@ -445,23 +366,21 @@ function drawEdges(edges,oldEdges=edges) {
 
                 g.bezierCurveTo(cp1_x,cp1_y,cp3_x,cp3_y,end_x,end_y);
 
-                //calculate end points for arrows of bezier
-                var dx = end_x - cp3_x;
-                var dy = end_y - cp3_y;
-
                 //calculate points where I will place the edge weight text element
                 var mp_x = cp2_x + nodeRadius;
                 var mp_y = cp2_y + nodeRadius;
-
 
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = mp_x;
                 edgeWeightDom.y = mp_y;
                 
+                //calculate end points for arrows of bezier
+                var dx = end_x - cp3_x;
+                var dy = end_y - cp3_y;
 
             }
             //if multigraph, do bezier
-            else if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+            else if(isMultigraph)
             {
                 g.setStrokeStyle(3);
                 
@@ -500,40 +419,51 @@ function drawEdges(edges,oldEdges=edges) {
 
                 g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y);
 
-                //calculate end points for arrows of bezier
-                var dx = end_x - cp_x;
-                var dy = end_y - cp_y;
-
                 //change location of edge weight texts
                 //console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
                 var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                 edgeWeightDom.x = cp_x;
                 edgeWeightDom.y = cp_y;
+
+                //calculate end points for arrows of bezier
+                var dx = end_x - cp_x;
+                var dy = end_y - cp_y;
                 
 
             }
             else //draw a regular edge
             {
                 g.setStrokeStyle(3);
+
+                var r_start = 24;
+                var r_end = -24;//(edges[i].nodes[1].size/2)*-1
+
+                var a=edges[i].nodes[1].x-edges[i].nodes[0].x;
+                var b=edges[i].nodes[1].y-edges[i].nodes[0].y;
+                var dist = Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
+
+
+                var start_x = edges[i].nodes[0].x + r_start*a/dist;
+                var start_y = edges[i].nodes[0].y + r_start*b/dist;
+
+                var end_x = edges[i].nodes[1].x + r_end*a/dist;
+                var end_y = edges[i].nodes[1].y + r_end*b/dist;
                 
-                /*g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y);
-                g.lineTo(edges[i].nodes[1].x,edges[i].nodes[1].y);*/
-                //g.moveTo(edges[i].nodes[0].x,edges[i].nodes[0].y)
+
                 g.moveTo(start_x,start_y);
                 g.lineTo(end_x,end_y);
+
+                
+                var mp_x = (start_x + end_x)/2
+                var mp_y = (start_y + end_y)/2
+
+                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                edgeWeightDom.x = mp_x;
+                edgeWeightDom.y = mp_y;
 
                 //calculate end points for arrows of regular edges
                 var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
                 var dy = edges[i].nodes[0].y - edges[i].nodes[1].y;
-
-                var mp_x = (start_x + end_x)/2
-                var mp_y = (start_y + end_y)/2
-
-                //console.log("moving: "+"edgeWeight_"+edges[i].id)
-                //console.log(edgeWeightDom)
-                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                edgeWeightDom.x = mp_x;
-                edgeWeightDom.y = mp_y;
                     
                 
             }
@@ -559,7 +489,7 @@ function drawEdges(edges,oldEdges=edges) {
                 end_y = end_y + Math.round(dy / ((length / (15))));
 
                 //arrows of bezier point to a different spot and the degree is inverse
-                if(edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges))
+                if(isMultigraph)
                 {
                     //extend the end point so that it points to the edge of the node
                     end_x = end_x + Math.round(dx / ((length / (11))));
@@ -641,7 +571,7 @@ function updateEdgeWeights()
     }
 }
 
-function addNodeToBitmap(node,container,bitmap) {
+function createNodeBitmap(node,container,bitmap) {
     bitmap.x = node.x;
     bitmap.y = node.y;
     //bitmap.rotation = 360 * Math.random() | 0;
@@ -687,7 +617,7 @@ function addNodeToBitmap(node,container,bitmap) {
     textName.x = node.x-textoffset;
     textName.y = node.y-textoffset-3;
 
-    container.addChild(bitmap,textName);
+    //container.addChild(bitmap,textName);
 
     var textInformationQuadrantI = new createjs.Text("∞","16px Arial","red");
     textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
@@ -696,17 +626,18 @@ function addNodeToBitmap(node,container,bitmap) {
     textInformationQuadrantI.name = "nodeInformationQuadrantIText_" + node.id;
     textInformationQuadrantI.visible = false;
 
-    container.addChild(bitmap,textInformationQuadrantI);
+    container.addChild(bitmap,textInformationQuadrantI,textName);
 
 }
 
-function addEdgeBetweenNodes(nodes,edges)
+function addEdgeBetweenNodes(nodes)
 {
-    if(edgeFromNodeToNode(nodes[0],nodes[1],edges))
+    var edges = currentCanvasGraph.edges;
+    if(edgeFromNodeToNode(nodes[0],nodes[1]))
     {
         console.log("there already is an edge between these nodes");
     }
-    else if(currentCanvas.directed == false && edgeFromNodeToNode(nodes[1],nodes[0],edges))
+    else if(currentCanvas.directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
     {
         console.log("undirected graph - there is already an edge between these nodes");
     }
@@ -734,13 +665,14 @@ function addEdgeBetweenNodes(nodes,edges)
         containers[currentCanvasId].addChild(edgeWeightDom);
         console.log("edge Weight Dom name: "+edgeWeightDom.name)
 
-        drawEdges(edges);
+        drawEdges();
     }
     
     
 }
-function removeEdgeBetweenNodes(nodes,edges)
+function removeEdgeBetweenNodes(nodes)
 {
+    var edges = currentCanvasGraph.edges;
     let oldEdges = edges.slice(0);
     //var edge = new Edge(edges.length,nodes);
     for(let i = 0; i<edges.length; i++)
@@ -834,7 +766,7 @@ function removeEdgeBetweenNodes(nodes,edges)
             //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
         }
     }
-    drawEdges(edges,oldEdges);
+    drawEdges(oldEdges);
 }
 function removeAllEdgesFromNode(node,nodes,edges)
 {
@@ -876,15 +808,16 @@ function removeAllEdgesFromNode(node,nodes,edges)
 
     for(let i = 0; i<edgesToBeRemoved.length; i++)
     {
-        removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes,edges);
+        removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes);
     }
 
-    drawEdges(edges,oldEdges);
+    drawEdges(oldEdges);
 }
 
-function removeNode(bitmap, nodes, edges)
+function removeNode(bitmap)
 {
     var nodes = currentCanvasGraph.nodes;
+    var edges = currentCanvasGraph.edges;
     var oldEdges = edges.slice(0);
     var parent = bitmap.parent;
     var nodeId = bitmap.id;
@@ -925,7 +858,7 @@ function removeNode(bitmap, nodes, edges)
         nodes[i].id-=1;
     }
 
-    drawEdges(edges,oldEdges);
+    drawEdges(oldEdges);
     
 }
 
@@ -972,7 +905,6 @@ function updateNodeInformationQuadrantIForNodeInCanvas(node)
         {
             timeDiscoveredCompletedText += "" + node.timeCompleted;
         }
-        console.log("time discovered completed text: "+timeDiscoveredCompletedText);
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
     }
     else if(node.distance!=null)
@@ -992,7 +924,6 @@ function updateNodeInformationQuadrantIForDFS(node)
         {
             timeDiscoveredCompletedText += "" + node.timeCompleted;
         }
-        console.log("time discovered completed text: "+timeDiscoveredCompletedText);
         containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
     }
     else
@@ -1076,7 +1007,7 @@ function clearNodesInformationQuadrantIForNodeInCanvas()
 function toggleWeightedEdgesVisibility()
 {
     canvases[currentCanvasId].visible ^= true;
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
 }
 
 function bindFunctionalityToBitmap(node,bitmap) {
@@ -1084,14 +1015,14 @@ function bindFunctionalityToBitmap(node,bitmap) {
     var edges = currentCanvasGraph.edges;
     var nodes = currentCanvasGraph.nodes;
     bitmap.on("mousedown", function (evt) {
-        //this.parent.addChild(this);
+
         console.log(""+bitmap.id);
         console.log(""+this.name)
         console.log(edges)
         console.log(nodes);
         
         this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
-        if(addEdgeFlag==true)
+        if(currentCanvasFlags.addEdgeFlag==true)
         {
             if(selectedNodesNumber<1)
             {
@@ -1101,19 +1032,17 @@ function bindFunctionalityToBitmap(node,bitmap) {
             else
             {
                 selectedNodes.push(nodes[bitmap.id]);
-                addEdgeBetweenNodes(selectedNodes,edges);
+                addEdgeBetweenNodes(selectedNodes);
                 selectedNodesNumber=0;
                 selectedNodes = []
-                addEdgeFlag=false;
+                currentCanvasFlags.addEdgeFlag=false;
             }
         }
-        else if(removeNodeFlag==true)
+        else if(currentCanvasFlags.removeNodeFlag==true)
         {
-            console.log("this je v tomhle pripade:");
-            console.log(this);
-            removeNode(bitmap,nodes,edges);
+            removeNode(bitmap);
         }
-        else if(removeEdgeFlag==true)
+        else if(currentCanvasFlags.removeEdgeFlag==true)
         {
             if(selectedNodesNumber<1)
             {
@@ -1123,14 +1052,14 @@ function bindFunctionalityToBitmap(node,bitmap) {
             else
             {
                 selectedNodes.push(nodes[bitmap.id]);
-                removeEdgeBetweenNodes(selectedNodes,edges);
+                removeEdgeBetweenNodes(selectedNodes);
                 selectedNodesNumber=0;
                 selectedNodes = []
-                removeEdgeFlag=false;
+                currentCanvasFlags.removeEdgeFlag=false;
             }
         }
         update=true;
-        removeNodeFlag=false;
+        currentCanvasFlags.removeNodeFlag=false;
     });
 
     // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
@@ -1152,13 +1081,13 @@ function bindFunctionalityToBitmap(node,bitmap) {
                 {
                     g.clear();
                     edges[i].nodes[0]=node
-                    drawEdges(edges);
+                    drawEdges();
                 }
                 else if(node.id===edges[i].nodes[1].id)
                 {
                     g.clear();
                     edges[i].nodes[1]=node
-                    drawEdges(edges);
+                    drawEdges();
                 }
             }
             var textName = this.parent.getChildByName("nodeNameText_"+this.id);
@@ -1171,7 +1100,7 @@ function bindFunctionalityToBitmap(node,bitmap) {
             textInformationQuadrantI.y = node.y-(bitmap.image.height/3)
             this.parent.addChild(textInformationQuadrantI);
 
-            // indicate that the stage should be updated on the next tick:
+            // indicate that the stages should be updated on the next tick:
             update = true;
         }
 
@@ -1198,10 +1127,34 @@ function bindFunctionalityToBitmap(node,bitmap) {
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
         }
-        this.image = selectedNodeImage;
+        this.image = redNodeImage;
         currentCanvasGraph.startingNode=node;
         update = true;
     });
+}
+
+function updateNodeBitmapColor(u)
+{
+    if(u.color == "BLUE")
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
+    }
+    else if(u.color == "RED")
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=redNodeImage;
+    }
+    else if(u.color == "PURPLE")
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=purpleNodeImage;
+    }
+    else if(u.color == "GREEN")
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
+    }
+    else if(u.color == "ORANGE")
+    {
+        containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=yellowNodeImage;
+    }
 }
 
 function handleImageLoad(event) {
@@ -1209,16 +1162,16 @@ function handleImageLoad(event) {
     var bitmap;
     currentCanvasGraph = canvasGraphs[0];
     
-    for(let i = 0; i < stage.length; i++)
+    for(let i = 0; i < stages.length; i++)
     {
         containers[i] = new createjs.Container();
     }
     var text;
     
 
-    for(let i = 0; i < stage.length; i++)
+    for(let i = 0; i < stages.length; i++)
     {
-        stage[i].addChild(containers[i]);
+        stages[i].addChild(containers[i]);
     }
 
 
@@ -1235,51 +1188,18 @@ function handleImageLoad(event) {
 
     currentCanvasGraph.edges = [];
 
-    addEdgeBetweenNodes([currentCanvasGraph.nodes[0],currentCanvasGraph.nodes[1]],currentCanvasGraph.edges);
-    addEdgeBetweenNodes([currentCanvasGraph.nodes[1],currentCanvasGraph.nodes[2]],currentCanvasGraph.edges);
+    addEdgeBetweenNodes([currentCanvasGraph.nodes[0],currentCanvasGraph.nodes[1]]);
+    addEdgeBetweenNodes([currentCanvasGraph.nodes[1],currentCanvasGraph.nodes[2]]);
 
     for (var i = 0; i < currentCanvasGraph.nodes.length; i++) {
 
         bitmap = new createjs.Bitmap(node_image);
-        addNodeToBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
+        createNodeBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
 
         // using "on" binds the listener to the scope of the currentTarget by default
         // in this case that means it executes in the scope of the button.
         bindFunctionalityToBitmap(currentCanvasGraph.nodes[i],bitmap);
     }
-    for(let i = 0; i < stage.length; i++)
-    {
-        stage[i].on("stagemousedown", function(evt) {
-            if(addNodeFlag==true)
-            {
-                var newNode = new Node(currentCanvasGraph.nodes.length,currentCanvasGraph.nodes.length,(evt.stageX),(evt.stageY))
-                currentCanvasGraph.nodes.push(newNode);
-                console.log(newNode);
-                console.log(currentCanvasGraph.nodes);
-                var bitmap = new createjs.Bitmap(node_image);
-                addNodeToBitmap(newNode,containers[currentCanvasId],bitmap);
-                bindFunctionalityToBitmap(newNode,bitmap);
-                addNodeFlag=false;
-                update = true;
-            }
-            /*else if(addEdge==true)
-            {
-                selectedNodesNumber++;
-                selectedNodes.push()
-
-                var newEdge = new Edge(edges.length,)
-            }*/
-            stage[currentCanvasId].update(event)
-            /*for(let i =0; i<edges.length;i++)
-            {
-                console.log(""+stage.getChildByName("line_"+edges[i].id));
-            }*/
-            console.log("clicked in canvas "+currentCanvasId);
-            //drawEdges(edges);
-
-        });
-    }
-
 
     drawEdges(currentCanvasGraph.edges);
 
@@ -1288,24 +1208,24 @@ function handleImageLoad(event) {
 }
 
 function tick(event) {
-    // this set makes it so the stage only re-renders when an event handler indicates a change has happened.
+    // this set makes it so the stages only re-renders when an event handler indicates a change has happened.
     if (update) {
         update = false; // only update once
-        stage[currentCanvasId].update(event);
+        stages[currentCanvasId].update(event);
     }
 }
 
 function addNodeBtnClicked() {
-    addNodeFlag=!addNodeFlag;
+    currentCanvasFlags.addNodeFlag=!currentCanvasFlags.addNodeFlag;
 }
 function addEdgeBtnClicked() {
-    addEdgeFlag=!addEdgeFlag;
+    currentCanvasFlags.addEdgeFlag=!currentCanvasFlags.addEdgeFlag;
 }
 function removeNodeBtnClicked() {
-    removeNodeFlag=!removeNodeFlag;
+    currentCanvasFlags.removeNodeFlag=!currentCanvasFlags.removeNodeFlag;
 }
 function removeEdgeBtnClicked() {
-    removeEdgeFlag=!removeEdgeFlag;
+    currentCanvasFlags.removeEdgeFlag=!currentCanvasFlags.removeEdgeFlag;
 }
 function stepForwardBtnClicked() {
     stepForwardFlag=true;

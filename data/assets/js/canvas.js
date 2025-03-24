@@ -62,15 +62,15 @@ menuOptions.push(menuOption4);
 menuOptions.push(menuOption5);
 menuOptions.push(menuOption6);
 
-var stage = []
+var stages = []
 
 var canvasFlags = [];
 
 for(let i = 0; i < canvases.length; i++)
 {
-    stage.push(new createjs.Stage(canvases[i]));
+    stages.push(new createjs.Stage(canvases[i]));
     canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0 });
-    canvasFlags.push({ stopFlag: false, restartFlag: false, running: false, automaticAdvanceFlag: false});
+    canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
 }
 
 
@@ -97,6 +97,7 @@ var CurrentPlayPauseAutoButton = null;
 
 var currentCanvasId = 0;
 var currentCanvasGraph = null;
+var currentCanvasFlags = null;
 var canvas;
 var context;
 
@@ -198,17 +199,13 @@ for (i = 0; i < StartStopButtons.length; i++)
 
         // after the start simulation button has been clicked, each node is assigned it's given name (text)
         currentCanvasGraph.nodes.forEach(node => {
-            console.log("assigning name to node: "+node.id);
             currentCanvasGraph.nodes[node.id].text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
             node.text = document.getElementById("nodeNameText_"+currentCanvasId+"_"+node.id).innerHTML;
-            console.log("node is now called: " + currentCanvasGraph.nodes[node.id].text);
         });
         //the same is true for weighted edges
         for(edge of currentCanvasGraph.edges)
         {
             currentCanvasGraph.edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
-            console.log("assigning weight to edge: "+edge.id);
-            console.log("edge weight is now : " + currentCanvasGraph.edges[edge.id].weight);
         }
     
         console.log("starting simulation");
@@ -244,7 +241,7 @@ for (i = 0; i < StartStopButtons.length; i++)
         {
             //StopButton.click();
             canvasFlags[currentCanvasId].stopFlag = true;
-            //when the search is supposed to end, check if automatic Advance wasn't running, if so, click the button, making it pause
+            //when the search is supposed to end, check if automatic Advance wasn't runningFlag, if so, click the button, making it pause
             if(canvasFlags[currentCanvasId].automaticAdvanceFlag == true)
             {
                 CurrentPlayPauseAutoButton.click();
@@ -257,35 +254,19 @@ for (i = 0; i < StartStopButtons.length; i++)
     });
 }
 
-/*for(var StopButton of StopButtons)
-{
-    StopButton.addEventListener("click", function(){
-        //if there is a running simulation, stop it
-        stopFlag = true;
-        CurrentStepForwardButton.click();
-    
-    
-    });
-}*/
+
 
 for(var RestartButton of RestartButtons)
 {
     RestartButton.addEventListener("click", function(){
-        //if there is a running simulation, stop it
-        //canvasFlags[currentCanvasId].stopFlag = true;
         canvasFlags[currentCanvasId].restartFlag = true;
-        //CurrentStepForwardButton.click();
-    
     });
 }
 
 for(var StepBackwardsButton of StepBackwardsButtons)
 {
     StepBackwardsButton.addEventListener("click", function(){
-        //if there is a running simulation, set canvasFlags[currentCanvasId].stepBackwardsFlag to true.
-        //canvasFlags[currentCanvasId].stopFlag = true;
         canvasFlags[currentCanvasId].stepBackwardsFlag = true;
-        //CurrentStepForwardButton.click(); 
     });
 }
 
@@ -307,12 +288,6 @@ for(var StartPauseAutoButton of PlayPauseAutoButtons)
 }
 
   
-
-/*StepForwardButton.addEventListener("click", function(){
-
-    stepForwardFlag = true;
-});*/
-
 function setFunctionToMenuOption(menuOption, index)
 {
     menuOption.addEventListener("click",displayCanvas);
@@ -321,9 +296,6 @@ function setFunctionToMenuOption(menuOption, index)
 
 menuOptions.forEach(setFunctionToMenuOption)
 
-/*window.onload = function() {
-    //loadCanvas()
-}*/
 function displayCanvas(evt)
 {
     menuCardsContainer.classList.add('canvas-container-hidden');
@@ -336,6 +308,7 @@ function displayCanvas(evt)
     currentCanvasId = evt.currentTarget.index;
 
     currentCanvasGraph = canvasGraphs[currentCanvasId];
+    currentCanvasFlags = canvasFlags[currentCanvasId];
 
     CurrentRestartButton = RestartButtons[currentCanvasId];
     CurrentStartStopButton = StartStopButtons[currentCanvasId];
@@ -358,8 +331,8 @@ function displayCanvas(evt)
     canvas = canvases[currentCanvasId];
     context = canvas.getContext("2d");
 
-    stage[currentCanvasId].enableMouseOver(10);
-    stage[currentCanvasId].mouseMoveOutside = true;
+    stages[currentCanvasId].enableMouseOver(10);
+    stages[currentCanvasId].mouseMoveOutside = true;
 
     canvasContainers.forEach(function (canvasContainer){
         if(canvasContainer.id != canvasContainerId)
@@ -395,7 +368,7 @@ function checkBoxDirectedClicked(evt)
     
     
     canvases[currentCanvasId].directed ^= true;
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
 }
 
 function setFunctionToCheckboxDirected(checkboxDirected)

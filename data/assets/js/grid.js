@@ -86,11 +86,8 @@ function renderDFSGrid()
             gridVisitedData.push([u.text,"T"]);
         }
 
-        console.log(currentCanvasGraph.nodes);
-        console.log("parent je: "+ u.parent);
         if(u.parent != null)
         {
-            console.log("parent text je: "+ u.parent.text);
             gridParentData.push([u.text,u.parent.text]);
         }
         else
@@ -353,8 +350,6 @@ function renderBiconnectivityGrid()
 {
     var gridComponentsData = [];
 
-    console.log("components: ");
-    console.log(currentCanvasGraph.components);
     for(var c of currentCanvasGraph.components)
     {
         var c_text = "{";

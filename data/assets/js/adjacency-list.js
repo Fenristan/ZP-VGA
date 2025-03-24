@@ -12,7 +12,7 @@ function convertToAdjacencyListUndirected(numberOfNodes) {
       adjacencyList[destination].push(source);
 
     });
-    console.log(adjacencyList);
+
     return adjacencyList;
 }
 
@@ -29,7 +29,6 @@ function convertToAdjacencyListUndirected(numberOfNodes) {
       adjacencyList[source].push(destination);
 
     });
-    console.log("adjacencyLisT:")
-    console.log(adjacencyList);
+
     return adjacencyList;
 }

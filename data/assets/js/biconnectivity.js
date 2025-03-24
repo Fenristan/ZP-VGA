@@ -11,30 +11,11 @@ function drawBiconnectivity()
 {
     for(var u of currentCanvasGraph.nodes)
     {
-        if(u.color == "BLUE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
-        }
-        else if(u.color == "RED")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
-        }
-        else if(u.color == "PURPLE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
-        }
-        else if(u.color == "GREEN")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
-        }
-        else if(u.color == "ORANGE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=articulationNodeImage;
-        }
+        updateNodeBitmapColor(u);
 
         updateNodeInformationQuadrantIForBiconnectivity(u);
     }
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     //renderBiconnectivityGrid();
     drawTreeBiconnectivity();
 }
@@ -57,7 +38,7 @@ function resetBiconnectivity()
 {
     currentCanvasGraph = originalBiconnectivityGraph;
 
-    for(var node of currentCanvasGraph.nodes)
+    /*for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
         node.color = "BLUE";
@@ -67,9 +48,14 @@ function resetBiconnectivity()
     {
         edge.color = "black";
         edge.label = "";
-    }
+    }*/
 
-    drawEdges(currentCanvasGraph.edges);
+    for(var u of currentCanvasGraph.nodes)
+    {
+        updateNodeBitmapColor(u);
+    }    
+
+    drawEdges();
     destroyCurrentVisNetwork();
     clearBiconnectivityGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
@@ -78,11 +64,11 @@ function resetBiconnectivity()
 
     currentCanvasGraph.stepCounter = 0;
 
-    canvasFlags[currentCanvasId].running = false;
+    canvasFlags[currentCanvasId].runningFlag = false;
 
     BiconnectivityGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
 }
 
 function doParenthesisForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)
@@ -128,8 +114,6 @@ function Biconnect(v,u){
 
     for (var wId of adjacencyList[v.id]) {
         var w = currentCanvasGraph.nodes[wId];
-        console.log("jdu z node: "+v.text +" do node w: "+w.text);
-        //console.log("a w.number je: "+w.number );
 
         var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
         edge.color = "red";
@@ -166,13 +150,11 @@ function Biconnect(v,u){
                 var C = [];
                 if(currentCanvasGraph.edgeStack.length != 0)
                 {
-                    console.log("zacinam while, length je: "+currentCanvasGraph.edgeStack.length);
                     while(currentCanvasGraph.edgeStack[(currentCanvasGraph.edgeStack.length-1)].nodes[0].number >= w.number)
                     {
                         var topEdge = currentCanvasGraph.edgeStack.pop();
                         C.push(topEdge);
     
-                        console.log("length: " + currentCanvasGraph.edgeStack.length);
                         if(currentCanvasGraph.edgeStack.length == 0)
                         {
                             break;
@@ -188,12 +170,8 @@ function Biconnect(v,u){
                 {
                     var vWIndex = currentCanvasGraph.edgeStack.findIndex(edgeVW => edgeVW.id === edge.id);
                     
-                    var vWEdge = currentCanvasGraph.edgeStack.splice(vWIndex,1)[0];
+                    currentCanvasGraph.edgeStack.splice(vWIndex,1)[0];
 
-
-                    console.log("vWIndex: "+vWIndex);
-                    console.log("vWId: "+vWEdge.id);
-                    console.log("edge id: "+edge.id);
                 }
 
                 saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
@@ -217,7 +195,6 @@ function Biconnect(v,u){
         //else if((w.number < v.number) && w!=u)
         else if((w.number < v.number) && w.id!=u.id)
         {
-            console.log("a w.number neni null a je mensi nez v.number: "+w.number );
             var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
             currentCanvasGraph.edgeStack.push(edge);
             v.lowpt = Math.min(v.lowpt,w.number);
@@ -299,13 +276,9 @@ function Biconnectivity(){
 
     nodes = currentCanvasGraph.nodes.slice();
 
-    //nodes = currentCanvasGraph.nodes;
 
     var splicedNode = nodes.splice(currentCanvasGraph.startingNode.id,1);
     nodes.unshift(splicedNode[0]);
-
-    //console.log("novy order nodes je: ")
-    //console.log(nodes)
 
     var numberOfNodes = nodes.length;
     
@@ -318,8 +291,6 @@ function Biconnectivity(){
         adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
     }
 
-    console.log("adjacency list:");
-    console.log(adjacencyList);
 
     for (var u of nodes) {
         u.number = null;
@@ -350,29 +321,26 @@ function Biconnectivity(){
     saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
     currentCanvasGraph.stepCounter++;
 
-    console.log(currentCanvasGraph.components);
 
 };
 
 async function startBiconnectivity(){
 
-    //originalBiconnectivityGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
-    originalBiconnectivityGraph = currentCanvasGraph;
+    originalBiconnectivityGraph = JSON.parse(JSON.stringify(currentCanvasGraph));
+    //originalBiconnectivityGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
     Biconnectivity();
 
-    canvasFlags[currentCanvasId].running = true;
+    canvasFlags[currentCanvasId].runningFlag = true;
     
     var step = 0;
     var lastStep = BiconnectivityGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        console.log("BiconnectivityGraphHistory je nasledujici: ");
-        console.log(BiconnectivityGraphHistory);
 
         currentCanvasGraph = BiconnectivityGraphHistory[step];
 
@@ -404,7 +372,6 @@ async function startBiconnectivity(){
             if(step < lastStep-1)
             {
                 step++;
-                console.log("jdu delat step: "+step);
             }
         }
     }

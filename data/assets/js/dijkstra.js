@@ -6,27 +6,12 @@ function drawDijkstra()
 {
     for(var u of currentCanvasGraph.nodes)
     {
-        if(u.color == "BLUE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
-        }
-        else if(u.color == "RED")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
-        }
-        else if(u.color == "PURPLE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
-        }
-        else if(u.color == "GREEN")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
-        }
+        updateNodeBitmapColor(u);
 
         updateNodeInformationQuadrantIForDijkstra(u);
     }
 
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     drawTreeDijkstra();
 }
 
@@ -47,7 +32,7 @@ function resetDijkstra()
 {
     currentCanvasGraph = originalDijkstraGraph;
 
-    currentCanvasGraph.queue = [];
+    /*currentCanvasGraph.queue = [];
     for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
@@ -56,9 +41,14 @@ function resetDijkstra()
     for(var edge of currentCanvasGraph.edges)
     {
         edge.color = "black";
-    }
+    }*/
 
-    drawEdges(currentCanvasGraph.edges);
+    for(var u of currentCanvasGraph.nodes)
+    {
+        updateNodeBitmapColor(u);
+    }  
+
+    drawEdges();
     destroyCurrentVisNetwork();
     clearDijkstraGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
@@ -67,16 +57,17 @@ function resetDijkstra()
 
     currentCanvasGraph.stepCounter = 0;
 
-    canvasFlags[currentCanvasId].running = false;
+    canvasFlags[currentCanvasId].runningFlag = false;
 
     dijkstraGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
 }
 
 async function startDijkstra()
 {
-    originalDijkstraGraph = currentCanvasGraph;
+    originalDijkstraGraph = JSON.parse(JSON.stringify(currentCanvasGraph));
+    //originalDijkstraGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
@@ -85,7 +76,7 @@ async function startDijkstra()
     currentCanvasGraph.set = [];
     currentCanvasGraph.startingNode=currentCanvasGraph.nodes[currentCanvasGraph.startingNode.id]
 
-    canvasFlags[currentCanvasId].running = true;
+    canvasFlags[currentCanvasId].runningFlag = true;
 
     dijkstra();
 
@@ -94,10 +85,6 @@ async function startDijkstra()
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        console.log("BFSGraphHistory je nasledujici: ");
-        console.log(dijkstraGraphHistory);
-
-        console.log("accesuji BFSGraphHistory na indexu: "+step);
         currentCanvasGraph = dijkstraGraphHistory[step];
 
         drawDijkstra();

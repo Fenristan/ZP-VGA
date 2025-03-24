@@ -9,26 +9,11 @@ function drawDFS()
 {
     for(var u of currentCanvasGraph.nodes)
     {
-        if(u.color == "BLUE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
-        }
-        else if(u.color == "RED")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
-        }
-        else if(u.color == "PURPLE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
-        }
-        else if(u.color == "GREEN")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
-        }
+        updateNodeBitmapColor(u);
 
         updateNodeInformationQuadrantIForDFS(u);
     }
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     drawTreeDFS();
 }
 
@@ -51,7 +36,7 @@ function resetDFS()
 {
     currentCanvasGraph = originalDFSGraph;
 
-    for(var node of currentCanvasGraph.nodes)
+    /*for(var node of currentCanvasGraph.nodes)
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
     }
@@ -60,9 +45,13 @@ function resetDFS()
     {
         edge.color = "black";
         edge.label = "";
-    }
+    }*/
+    for(var u of currentCanvasGraph.nodes)
+    {
+        updateNodeBitmapColor(u);
+    }  
 
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     destroyCurrentVisNetwork();
     clearDFSGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
@@ -71,11 +60,11 @@ function resetDFS()
 
     currentCanvasGraph.stepCounter = 0;
 
-    canvasFlags[currentCanvasId].running = false;
+    canvasFlags[currentCanvasId].runningFlag = false;
 
     DFSGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
 }
 
 function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
@@ -110,7 +99,6 @@ function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
 function DFS_visit(u)
 {
-    //console.log("printing u.id: "+u.id);
 
     u.color = "RED";
     time += 1;
@@ -129,9 +117,6 @@ function DFS_visit(u)
         
         if(v.color=="BLUE")
         {
-
-            console.log("norim do: "+v.id);
-            console.log("jeho color je: "+v.color);
 
             //highlight edge between these nodes red
             var edge = getEdgeFromNodeToNode(currentCanvasGraph.nodes[u.id], currentCanvasGraph.nodes[v.id]);
@@ -156,8 +141,6 @@ function DFS_visit(u)
         }
         else 
         {
-            console.log(currentCanvasGraph.nodes[u.id]);
-            console.log(currentCanvasGraph.nodes[v.id]);
             var edge = getEdgeFromNodeToNode(u,v);
             edge.color = "red";
 
@@ -211,7 +194,7 @@ function DFS_visit(u)
 
     
     u.color = "GREEN";
-    /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
+    /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
     update=true;
     drawTreeDFS();*/
 
@@ -229,7 +212,7 @@ function DFS_visit(u)
 function DFS(){
     //currentCanvasGraph.stepCounter = 0;
 
-    //canvasFlags[currentCanvasId].running = true;
+    //canvasFlags[currentCanvasId].runningFlag = true;
 
     nodes = currentCanvasGraph.nodes.slice();
 
@@ -237,9 +220,6 @@ function DFS(){
 
     var splicedNode = nodes.splice(currentCanvasGraph.startingNode.id,1);
     nodes.unshift(splicedNode[0]);
-
-    //console.log("novy order nodes je: ")
-    //console.log(nodes)
 
     var numberOfNodes = nodes.length;
     adjacencyList = [];
@@ -283,23 +263,21 @@ function DFS(){
 
 async function startDFS(){
 
-    //originalDFSGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
-    originalDFSGraph = currentCanvasGraph;
+    originalDFSGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    //originalDFSGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
     DFS();
 
-    canvasFlags[currentCanvasId].running = true;
+    canvasFlags[currentCanvasId].runningFlag = true;
     
     var step = 0;
     var lastStep = DFSGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        console.log("DFSGraphHistory je nasledujici: ");
-        console.log(DFSGraphHistory);
 
         currentCanvasGraph = DFSGraphHistory[step];
 
@@ -331,13 +309,12 @@ async function startDFS(){
             if(step < lastStep-1)
             {
                 step++;
-                console.log("jdu delat step: "+step);
             }
         }
     }
     resetDFS();
     
-    //drawEdges(currentCanvasGraph.edges);
+    //drawEdges();
     //drawTreeDFS();
 
 

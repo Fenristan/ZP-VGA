@@ -24,7 +24,6 @@ function destroyCurrentVisNetwork() {
 function getLevelRec(node, level)
 {
   level += 1;
-  console.log(level);
   if(node.parent != null)
   {
     return getLevelRec(node.parent, level);
@@ -51,14 +50,12 @@ function getLevel(node)
 
 function searchParents(currentNode, lookingForNode)
 {
-  console.log("I am currently in node: "+currentNode.id+" and I am looking for: "+ lookingForNode.id);
   if(currentNode.parent == null)
   {
     return false;
   }
   else if(currentNode.parent == lookingForNode)
   {
-    console.log("The parent I am looking for");
     return true;
   }
   else
@@ -97,7 +94,6 @@ function drawTreeDFS()
             node.label = node.text;
             getLevel(node);
             currentVisGraph.nodes.push(node);
-            console.log(currentVisGraph.nodes);
         }
     }
 
@@ -169,7 +165,6 @@ function drawTreeBFS()
             node.label = node.text;
             //getLevel(node);
             currentVisGraph.nodes.push(node);
-            console.log(currentVisGraph.nodes);
         }
     }
 
@@ -241,7 +236,6 @@ function drawTreeDijkstra()
             node.label = node.text;
             getLevel(node);
             currentVisGraph.nodes.push(node);
-            //console.log(currentVisGraph.nodes);
         }
     }
 
@@ -251,10 +245,6 @@ function drawTreeDijkstra()
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
       if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
       {
-        console.log("currentVisGraph.nodes");
-        console.log(currentVisGraph.nodes);
-        console.log("edge");
-        console.log(edge.nodes[1]);
         if(edge.nodes[1].distance != "∞")
         {
           //edge.nodes[1].level = edge.nodes[1].distance;
@@ -328,7 +318,6 @@ function drawTreeDFS_Tarjan()
             node.label = node.text;
             getLevel(node);
             currentVisGraph.nodes.push(node);
-            console.log(currentVisGraph.nodes);
         }
     }
 
@@ -398,7 +387,6 @@ function drawTreeBiconnectivity()
             node.label = node.text;
             getLevel(node);
             currentVisGraph.nodes.push(node);
-            console.log(currentVisGraph.nodes);
         }
     }
 

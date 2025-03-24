@@ -8,30 +8,11 @@ function drawDFS_Tarjan()
 {
     for(var u of currentCanvasGraph.nodes)
     {
-        if(u.color == "BLUE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=nodeImage;
-        }
-        else if(u.color == "RED")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=selectedNodeImage;
-        }
-        else if(u.color == "PURPLE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=visitedNodeImage;
-        }
-        else if(u.color == "GREEN")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
-        }
-        else if(u.color == "ORANGE")
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=articulationNodeImage;
-        }
+        updateNodeBitmapColor(u);
 
         updateNodeInformationQuadrantIForDFS_Tarjan(u);
     }
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     renderTarjanGrid();
     drawTreeDFS_Tarjan();
 }
@@ -54,8 +35,12 @@ function saveDFS_TarjanStepToHistory()
 function resetDFS_Tarjan()
 {
     currentCanvasGraph = originalDFS_TarjanGraph;
+    console.log("original");
+    console.log(originalDFS_TarjanGraph);
+    console.log("current");
+    console.log(currentCanvasGraph);
 
-    currentCanvasGraph.SCC = [];
+    /*currentCanvasGraph.SCC = [];
     currentCanvasGraph.stack = [];
     for(var node of currentCanvasGraph.nodes)
     {
@@ -68,9 +53,14 @@ function resetDFS_Tarjan()
     {
         edge.color = "black";
         edge.label = "";
+    }*/
+
+    for(var u of currentCanvasGraph.nodes)
+    {
+        updateNodeBitmapColor(u);
     }
 
-    drawEdges(currentCanvasGraph.edges);
+    drawEdges();
     destroyCurrentVisNetwork();
     clearTarjanGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
@@ -79,11 +69,11 @@ function resetDFS_Tarjan()
 
     currentCanvasGraph.stepCounter = 0;
 
-    canvasFlags[currentCanvasId].running = false;
+    canvasFlags[currentCanvasId].runningFlag = false;
 
     tarjanGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=selectedNodeImage;
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
@@ -184,7 +174,7 @@ function DFS_Tarjan_visit(u)
 
     
     u.color = "GREEN";
-    /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=completedNodeImage;
+    /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
     update=true;
     drawTreeDFS_Tarjan();*/
 
@@ -248,23 +238,22 @@ function DFS_Tarjan(){
 
 async function startTarjan(){
 
-    //originalDFS_TarjanGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
-    originalDFS_TarjanGraph = currentCanvasGraph;
+    originalDFS_TarjanGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    
+    //originalDFS_TarjanGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();
     showCurrentVisNetwork();
 
     DFS_Tarjan();
 
-    canvasFlags[currentCanvasId].running = true;
+    canvasFlags[currentCanvasId].runningFlag = true;
     
     var step = 0;
     var lastStep = tarjanGraphHistory.length;
 
     while(canvasFlags[currentCanvasId].stopFlag != true)
     {
-        console.log("tarjanGraphHistory je nasledujici: ");
-        console.log(tarjanGraphHistory);
 
         currentCanvasGraph = tarjanGraphHistory[step];
 
@@ -302,7 +291,7 @@ async function startTarjan(){
     }
     resetDFS_Tarjan();
     
-    //drawEdges(currentCanvasGraph.edges);
+    //drawEdges();
     //drawTreeDFS_Tarjan();
 
 

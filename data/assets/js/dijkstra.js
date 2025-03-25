@@ -74,7 +74,7 @@ async function startDijkstra()
 
     currentCanvasGraph.queue = [];
     currentCanvasGraph.set = [];
-    currentCanvasGraph.startingNode=currentCanvasGraph.nodes[currentCanvasGraph.startingNode.id]
+    currentCanvasGraph.startingNode=currentCanvasGraph.nodes[currentCanvasGraph.startingNode.id];
 
     canvasFlags[currentCanvasId].runningFlag = true;
 
@@ -175,6 +175,9 @@ function dijkstra()
         e.color = "black";
     }
 
+    console.log("startingNode: ")
+    console.log(currentCanvasGraph.startingNode)
+    
     currentCanvasGraph.startingNode.distance = 0;
 
     currentCanvasGraph.queue = nodes;
@@ -190,8 +193,7 @@ function dijkstra()
             var edge = getEdgeFromNodeToNode(u.parent,u);
             edge.color = "purple";
         }
-        console.log("extracted min: ");
-        console.log(u);
+
         currentCanvasGraph.set.push(u);
 
         u.color = "RED";
@@ -201,6 +203,7 @@ function dijkstra()
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
             var edge = getEdgeFromNodeToNode(u,v)
+            edge.previousColor = edge.color;
             edge.color = "red";
             //saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
             //currentCanvasGraph.stepCounter++;
@@ -222,7 +225,7 @@ function dijkstra()
             }
             saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
             currentCanvasGraph.stepCounter++;
-            edge.color = "black";
+            edge.color = edge.previousColor;
 
             //edge.color = "purple";
         }

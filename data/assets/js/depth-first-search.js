@@ -152,11 +152,17 @@ function DFS_visit(u)
                     doParenthesisForEdgeBetweenNodes(u,v);
                 }
             }
+            else
+            {
+                doParenthesisForEdgeBetweenNodes(u,v); 
+            }
             
             
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
             currentCanvasGraph.stepCounter++;
+
+            edge.color = "purple";
 
             //currentCanvasGraph.visitedEdges.pop();
 

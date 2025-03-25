@@ -11,6 +11,14 @@ function drawBiconnectivity()
 {
     for(var u of currentCanvasGraph.nodes)
     {
+        if(u.articulation == true)
+        {
+            if(u.color != "RED")
+            {
+                u.color = "ORANGE";
+            }
+        }
+
         updateNodeBitmapColor(u);
 
         updateNodeInformationQuadrantIForBiconnectivity(u);
@@ -117,25 +125,19 @@ function Biconnect(v,u){
 
         var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
         edge.color = "red";
+        v.color = "RED";
 
         if(w.number == null)
         {
             edge.color = "red";
-            if(v.color != "ORANGE")
-            {
-                v.color = "RED";
-            }
+            v.color = "RED";
             w.color = "PURPLE";
             w.parent = v;
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
             currentCanvasGraph.stepCounter++;
 
-            if(v.color != "ORANGE")
-            {
-                v.color = "PURPLE";
-            }
-            
+            v.color = "PURPLE";  
             edge.color = "purple";
 
             currentCanvasGraph.edgeStack.push(edge);
@@ -145,8 +147,8 @@ function Biconnect(v,u){
 
             if(w.lowpt >= v.number)
             {
-                //v.articulation = true;
-                v.color = "ORANGE";
+                v.articulation = true;
+                //v.color = "ORANGE";
                 var C = [];
                 if(currentCanvasGraph.edgeStack.length != 0)
                 {
@@ -174,22 +176,44 @@ function Biconnect(v,u){
 
                 }
 
-                saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-                currentCanvasGraph.stepCounter++;
+                //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
+                //currentCanvasGraph.stepCounter++;
                 
 
             }
             if(w.lowpt > v.number)
             {
                 edge.color = "red";
+                v.previousColor = v.color;
+                v.color = "RED";
 
                 saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
                 currentCanvasGraph.stepCounter++;
 
                 edge.color = "orange";
+                v.color = v.previousColor;
+
+                //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
+                //currentCanvasGraph.stepCounter++;
+            }
+
+            if(w.lowpt < v.number)
+            {
+                edge.previousColor = edge.color;
+                edge.color = "red";
+                v.previousColor = v.color;
+                v.color = "RED";
+
                 saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
                 currentCanvasGraph.stepCounter++;
+
+                edge.color = edge.previousColor
+                v.color = v.previousColor;
+
             }
+
+            saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
+            currentCanvasGraph.stepCounter++;
             
         }
         //else if((w.number < v.number) && w!=u)
@@ -260,15 +284,21 @@ function Biconnect(v,u){
 
         //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
         //currentCanvasGraph.stepCounter++;
+        if(v.articulation && v.color == "RED")
+        {
+            v.color = "ORANGE";
+        }
     }
 
-    if(v.color != "ORANGE")
+    if(v.articulation == false)
     {
         v.color = "GREEN";
+
+        saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
+        currentCanvasGraph.stepCounter++;
     }
     
-    saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
     
 }
 
@@ -296,6 +326,7 @@ function Biconnectivity(){
         u.number = null;
         u.lowpt = null;
         u.parent = null;
+        u.articulation = false;
     }
 
     for (var e of currentCanvasGraph.edges) {

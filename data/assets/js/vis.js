@@ -76,6 +76,40 @@ function isInTheSameTree(startingNode, lookingForNode)
   }
 }
 
+function getOptions()
+{
+  var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+  var options = {
+    edges: {
+    smooth: {
+        type: "cubicBezier",
+        forceDirection: "vertical",
+        //roundness: 0.0,
+        roundness: 0.2,
+        type: "curvedCW",
+    },
+    arrows: {
+      to: {
+        enabled: arrowsEnabled,
+        type: "arrow"
+      },
+    }
+    },
+    layout: {
+    hierarchical: {
+        direction: "UD"
+    },
+    },
+    physics: { //physics:false
+      "hierarchicalRepulsion": {
+        "avoidOverlap": 1
+      },
+    }
+  };
+  return options;
+}
+
+
 function drawTreeDFS()
 {
     var currentVisGraph = visGraphs[currentCanvasId];
@@ -101,10 +135,15 @@ function drawTreeDFS()
     //add all edges to the array of edges to be draw
     for(edge of currentCanvasGraph.edges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color };
+      if(edge.color == "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
     }
   
-    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
@@ -113,35 +152,8 @@ function drawTreeDFS()
         edges: currentVisGraph.edges,
     };
 
-    var options = {
-        edges: {
-        smooth: {
-            type: "cubicBezier",
-            forceDirection: "vertical",
-            //roundness: 0.4,
-            roundness: 0.0,
-            /*type: "curvedCW",
-            forceDirection: "vertical",
-            roundness: -2.1,*/
-        },
-        arrows: {
-          to: {
-            enabled: arrowsEnabled,
-            type: "arrow"
-          },
-        }
-        },
-        layout: {
-        hierarchical: {
-            direction: "UD"
-        },
-        },
-        physics: { //physics:false
-          "hierarchicalRepulsion": {
-            "avoidOverlap": 1
-          },
-        }
-    };
+    var options = getOptions();
+    
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderDFSGrid();
@@ -175,7 +187,7 @@ function drawTreeBFS()
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
     }
   
-    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
@@ -184,35 +196,8 @@ function drawTreeBFS()
         edges: currentVisGraph.edges,
     };
 
-    var options = {
-        edges: {
-        smooth: {
-            type: "cubicBezier",
-            forceDirection: "vertical",
-            roundness: 0.0,
+    var options = getOptions();
 
-            /*type: "curvedCW",
-            forceDirection: "vertical",
-            roundness: -2.1,*/
-        },
-        arrows: {
-          to: {
-            enabled: arrowsEnabled,
-            type: "arrow"
-          },
-        }
-        },
-        layout: {
-        hierarchical: {
-            direction: "UD"
-        },
-        },
-        physics: { //physics:false
-          "hierarchicalRepulsion": {
-            "avoidOverlap": 1
-          },
-        }
-    };
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderBFSGrid();
@@ -225,6 +210,9 @@ function drawTreeDijkstra()
     destroyCurrentVisNetwork();
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
+
+    console.log("currentVisGraph");
+    console.log(currentVisGraph);
 
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
     for(node of currentCanvasGraph.nodes)
@@ -245,8 +233,10 @@ function drawTreeDijkstra()
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
       if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
       {
-        if(edge.nodes[1].distance != "∞")
+        if(edge.nodes[1].distance != "∞" && edge.nodes[1].distance != null)
         {
+          console.log("ten blue node vypadá takto: ");
+          console.log(edge.nodes[1]);
           //edge.nodes[1].level = edge.nodes[1].distance;
           getLevel(edge.nodes[1]);
           edge.nodes[1].label = edge.nodes[1].text;
@@ -257,7 +247,7 @@ function drawTreeDijkstra()
       
     }
   
-    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
@@ -266,35 +256,8 @@ function drawTreeDijkstra()
         edges: currentVisGraph.edges,
     };
 
-    var options = {
-        edges: {
-        smooth: {
-            type: "cubicBezier",
-            forceDirection: "vertical",
-            roundness: 0.0,
+    var options = getOptions();
 
-            /*type: "curvedCW",
-            forceDirection: "vertical",
-            roundness: -2.1,*/
-        },
-        arrows: {
-          to: {
-            enabled: arrowsEnabled,
-            type: "arrow"
-          },
-        }
-        },
-        layout: {
-        hierarchical: {
-            direction: "UD"
-        },
-        },
-        physics: { //physics:false
-          "hierarchicalRepulsion": {
-            "avoidOverlap": 1
-          },
-        }
-    };
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderDijkstraGrid();
@@ -326,7 +289,7 @@ function drawTreeDFS_Tarjan()
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }
   
-    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
@@ -335,35 +298,8 @@ function drawTreeDFS_Tarjan()
         edges: currentVisGraph.edges,
     };
 
-    var options = {
-        edges: {
-        smooth: {
-            type: "cubicBezier",
-            forceDirection: "vertical",
-            //roundness: 0.4,
-            roundness: 0.0,
-            /*type: "curvedCW",
-            forceDirection: "vertical",
-            roundness: -2.1,*/
-        },
-        arrows: {
-          to: {
-            enabled: arrowsEnabled,
-            type: "arrow"
-          },
-        }
-        },
-        layout: {
-        hierarchical: {
-            direction: "UD"
-        },
-        },
-        physics: { //physics:false
-          "hierarchicalRepulsion": {
-            "avoidOverlap": 1
-          },
-        }
-    };
+    var options = getOptions();
+
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderTarjanGrid();
@@ -395,7 +331,7 @@ function drawTreeBiconnectivity()
       currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
     }
   
-    var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+    
     
     // create a network
     var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
@@ -404,35 +340,8 @@ function drawTreeBiconnectivity()
         edges: currentVisGraph.edges,
     };
 
-    var options = {
-        edges: {
-        smooth: {
-            type: "cubicBezier",
-            forceDirection: "vertical",
-            //roundness: 0.4,
-            roundness: 0.0,
-            /*type: "curvedCW",
-            forceDirection: "vertical",
-            roundness: -2.1,*/
-        },
-        arrows: {
-          to: {
-            enabled: arrowsEnabled,
-            type: "arrow"
-          },
-        }
-        },
-        layout: {
-        hierarchical: {
-            direction: "UD"
-        },
-        },
-        physics: { //physics:false
-          "hierarchicalRepulsion": {
-            "avoidOverlap": 1
-          },
-        }
-    };
+    var options = getOptions();
+
     currentVisNetwork = new vis.Network(container, data, options);
     visNetworks[currentCanvasId] = currentVisNetwork;
     renderBiconnectivityGrid();

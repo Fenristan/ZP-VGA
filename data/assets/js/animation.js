@@ -67,6 +67,7 @@ class Edge{
         this._weight=weight;
         this._color="black";
         this._label="";
+        this._changed=true;
     }
     get id() {
         return this._id;
@@ -83,6 +84,10 @@ class Edge{
     get label() {
         return this._label;
     }
+    get changed() {
+        return this._changed;
+    }
+
 
     set nodes(value) {
         this._nodes = value;
@@ -102,6 +107,9 @@ class Edge{
     set label(label) {
         this._label=label;
     }
+    set changed(changed) {
+        this._changed=changed;
+    }
 }
 Edge.prototype.toJSON = function () {
 return {
@@ -109,9 +117,11 @@ return {
     nodes: this.nodes,
     weight: this.weight,
     color: this.color,
-    label: this.label
+    label: this.label,
+    changed: this.changed
 };
 };
+
 
 /*const CanvasStorage = {
     nodes: [],
@@ -298,12 +308,9 @@ function getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA, nodeB)
         if((nodeA.id == edge.nodes[1].id)&&(nodeB.id == edge.nodes[0].id))
         {
 
-            console.log(" poradi nodes bylo: " + edge.nodes[0].text + edge.nodes[1].text);
             var tmpNode = edge.nodes.slice(0,1)[0];
             edge.nodes[0] = edge.nodes[1];
             edge.nodes[1] = tmpNode;
-
-            console.log(" poradi nodes je nyni: " + edge.nodes[0].text + edge.nodes[1].text);
             
             return edge;
         }
@@ -314,250 +321,262 @@ function getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA, nodeB)
 
 
 function drawEdges(oldEdges=currentCanvasGraph.edges) {
-    g = new createjs.Graphics();
-    context.beginPath();
-
+    
     var edges = currentCanvasGraph.edges;
     currentCanvas = canvases[currentCanvasId];
 
-    for(let i = 0; i<oldEdges.length;i++)
+    for(var i = 0; i<oldEdges.length;i++)
     {
-        if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
+        if(oldEdges[i].changed == true)
         {
-            //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
-            containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
-            containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
+            if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
+            {
+                //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
+                containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
+                containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
+            }
         }
+        
     }
 
-    for(let i = 0; i<edges.length;i++)
+    for(var i = 0; i<edges.length;i++)
     {
-        if(edges[i].nodes.length===2) //if this edge has both nodes, draw
+        
+        if(edges[i].changed == true)
         {
-            
-            g.beginStroke( edges[i].color );
-
-            var isMultigraph = edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges);
-            
-            
-            if(edges[i].nodes[0].id == edges[i].nodes[1].id)
+            if(edges[i].nodes.length===2) //if this edge has both nodes, draw
             {
-                //console.log("This edge leads to the same node where it started, doing bezier");
+                g = new createjs.Graphics();
+                context.beginPath();
 
-                g.setStrokeStyle(3);
+                g.beginStroke( edges[i].color );
 
-                var start_x = edges[i].nodes[0].x-nodeRadius/2;
-                var start_y = edges[i].nodes[0].y;
-
-                var end_x = edges[i].nodes[0].x
-                var end_y = edges[i].nodes[0].y-nodeRadius/2;
-
-                g.moveTo(start_x,start_y);
-
-                //I do nodeRadius *2 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
-                var cp1_x = start_x - nodeRadius*2;
-                var cp1_y = start_y;
-
-                var cp3_x = end_x;
-                var cp3_y = end_y - nodeRadius*2;
-
-                var cp2_x = cp1_x;
-                var cp2_y = cp3_y;
-
-                g.bezierCurveTo(cp1_x,cp1_y,cp3_x,cp3_y,end_x,end_y);
-
-                //calculate points where I will place the edge weight text element
-                var mp_x = cp2_x + nodeRadius;
-                var mp_y = cp2_y + nodeRadius;
-
-                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                edgeWeightDom.x = mp_x;
-                edgeWeightDom.y = mp_y;
+                var isMultigraph = edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges);
                 
-                //calculate end points for arrows of bezier
-                var dx = end_x - cp3_x;
-                var dy = end_y - cp3_y;
-
-            }
-            //if multigraph, do bezier
-            else if(isMultigraph)
-            {
-                g.setStrokeStyle(3);
                 
-
-                var start_x = edges[i].nodes[0].x;
-                var start_y = edges[i].nodes[0].y;
-
-                var end_x = edges[i].nodes[1].x
-                var end_y = edges[i].nodes[1].y
-
-                //console.log("there is already an edge between these nodes, doing bezier")
-                g.moveTo(start_x,start_y);
-
-                /*
-                    x1 = mp_x, y1 = mp_y
-                    x2 = end_x, y2 = end_y
-                    
-                */
-
-                //calculate vector from node to node
-                //var v = [end_x-start_x,end_y-start_y]
-                //calculate normal 
-                //var dx = end_x - start_x
-                //var dy = end_y - start_y
-                //var n = [-(dy),dx]
-
-                //calculate middle point between nodes
-                var mp_x = (start_x + end_x)/2;
-                var mp_y = (start_y + end_y)/2;
-
-                var s = 1/Math.sqrt(3);
-
-                //calculate control point
-                var cp_x = mp_x + s*(end_y - mp_y);
-                var cp_y = mp_y + s*(mp_x - end_x);
-
-                g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y);
-
-                //change location of edge weight texts
-                //console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
-                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                edgeWeightDom.x = cp_x;
-                edgeWeightDom.y = cp_y;
-
-                //calculate end points for arrows of bezier
-                var dx = end_x - cp_x;
-                var dy = end_y - cp_y;
-                
-
-            }
-            else //draw a regular edge
-            {
-                g.setStrokeStyle(3);
-
-                var r_start = 24;
-                var r_end = -24;//(edges[i].nodes[1].size/2)*-1
-
-                var a=edges[i].nodes[1].x-edges[i].nodes[0].x;
-                var b=edges[i].nodes[1].y-edges[i].nodes[0].y;
-                var dist = Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
-
-
-                var start_x = edges[i].nodes[0].x + r_start*a/dist;
-                var start_y = edges[i].nodes[0].y + r_start*b/dist;
-
-                var end_x = edges[i].nodes[1].x + r_end*a/dist;
-                var end_y = edges[i].nodes[1].y + r_end*b/dist;
-                
-
-                g.moveTo(start_x,start_y);
-                g.lineTo(end_x,end_y);
-
-                
-                var mp_x = (start_x + end_x)/2
-                var mp_y = (start_y + end_y)/2
-
-                var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
-                edgeWeightDom.x = mp_x;
-                edgeWeightDom.y = mp_y;
-
-                //calculate end points for arrows of regular edges
-                var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
-                var dy = edges[i].nodes[0].y - edges[i].nodes[1].y;
-                    
-                
-            }
-
-            //set visibility of weighted edges
-            edgeWeightDom.visible = canvases[currentCanvasId].weighted;
-            containers[currentCanvasId].addChild(edgeWeightDom);
-            
-            //if directed, draw arrows
-            if(currentCanvas.directed == true)
-            {
-                    /*start_x = edges[i].nodes[0].x;
-                    start_y = edges[i].nodes[0].y;
-
-                    end_x = edges[i].nodes[1].x;
-                    end_y = edges[i].nodes[1].y;*/
-
-                var length = Math.sqrt(dx * dx + dy * dy);
-
-                start_x = start_x - Math.round(dx / ((length / (15))));
-                start_y = start_y - Math.round(dy / ((length / (15))));
-                end_x = end_x + Math.round(dx / ((length / (15))));
-                end_y = end_y + Math.round(dy / ((length / (15))));
-
-                //arrows of bezier point to a different spot and the degree is inverse
-                if(isMultigraph)
+                if(edges[i].nodes[0].id == edges[i].nodes[1].id)
                 {
-                    //extend the end point so that it points to the edge of the node
-                    end_x = end_x + Math.round(dx / ((length / (11))));
-                    end_y = end_y + Math.round(dy / ((length / (11))));
+                    //console.log("This edge leads to the same node where it started, doing bezier");
 
-                    //rotate the end point around the center of the node
-                    var radians = (Math.PI / 180) * 180;
-                    cos = Math.cos(radians);
-                    sin = Math.sin(radians);
-                    end_x = (cos * (end_x - edges[i].nodes[1].x)) + (sin * (end_y - edges[i].nodes[1].y)) + edges[i].nodes[1].x;
-                    end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;
+                    g.setStrokeStyle(3);
 
-                    // calculate the angle of the edge
-                    var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                    if (dx < 0) {
-                        deg -= 180.0;
-                    }
-                    if (deg < 0) {
-                        deg -= 360.0;
-                    }
-                    // calculate the angle for the two triangle points
-                    var deg1 = ((deg - 25 - 90) % 360) * Math.PI * 2 / 360.0;
-                    var deg2 = ((deg - 335 - 90) % 360) * Math.PI * 2 / 360.0;
+                    var start_x = edges[i].nodes[0].x-nodeRadius/2;
+                    var start_y = edges[i].nodes[0].y;
+
+                    var end_x = edges[i].nodes[0].x
+                    var end_y = edges[i].nodes[0].y-nodeRadius/2;
+
+                    g.moveTo(start_x,start_y);
+
+                    //I do nodeRadius *2 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
+                    var cp1_x = start_x - nodeRadius*2;
+                    var cp1_y = start_y;
+
+                    var cp3_x = end_x;
+                    var cp3_y = end_y - nodeRadius*2;
+
+                    var cp2_x = cp1_x;
+                    var cp2_y = cp3_y;
+
+                    g.bezierCurveTo(cp1_x,cp1_y,cp3_x,cp3_y,end_x,end_y);
+
+                    //calculate points where I will place the edge weight text element
+                    var mp_x = cp2_x + nodeRadius;
+                    var mp_y = cp2_y + nodeRadius;
+
+                    var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                    edgeWeightDom.x = mp_x;
+                    edgeWeightDom.y = mp_y;
+                    
+                    //calculate end points for arrows of bezier
+                    var dx = end_x - cp3_x;
+                    var dy = end_y - cp3_y;
+
                 }
-                else
+                //if multigraph, do bezier
+                else if(isMultigraph)
                 {
-                    // calculate the angle of the edge
-                    var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                    if (dx < 0) {
-                        deg += 180.0;
-                    }
-                    if (deg < 0) {
-                        deg += 360.0;
-                    }
-                    // calculate the angle for the two triangle points
-                    var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
-                    var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
+                    g.setStrokeStyle(3);
+                    
+
+                    var start_x = edges[i].nodes[0].x;
+                    var start_y = edges[i].nodes[0].y;
+
+                    var end_x = edges[i].nodes[1].x
+                    var end_y = edges[i].nodes[1].y
+
+                    //console.log("there is already an edge between these nodes, doing bezier")
+                    g.moveTo(start_x,start_y);
+
+                    /*
+                        x1 = mp_x, y1 = mp_y
+                        x2 = end_x, y2 = end_y
+                        
+                    */
+
+                    //calculate vector from node to node
+                    //var v = [end_x-start_x,end_y-start_y]
+                    //calculate normal 
+                    //var dx = end_x - start_x
+                    //var dy = end_y - start_y
+                    //var n = [-(dy),dx]
+
+                    //calculate middle point between nodes
+                    var mp_x = (start_x + end_x)/2;
+                    var mp_y = (start_y + end_y)/2;
+
+                    var s = 1/Math.sqrt(3);
+
+                    //calculate control point
+                    var cp_x = mp_x + s*(end_y - mp_y);
+                    var cp_y = mp_y + s*(mp_x - end_x);
+
+                    g.bezierCurveTo(cp_x,cp_y,cp_x,cp_y,end_x,end_y);
+
+                    //change location of edge weight texts
+                    //console.log("drawing edgeWeight for bezier: "+"edgeWeight_"+edges[i].id);
+                    var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                    edgeWeightDom.x = cp_x;
+                    edgeWeightDom.y = cp_y;
+
+                    //calculate end points for arrows of bezier
+                    var dx = end_x - cp_x;
+                    var dy = end_y - cp_y;
+                    
+
+                }
+                else //draw a regular edge
+                {
+                    g.setStrokeStyle(3);
+
+                    var r_start = 24;
+                    var r_end = -24;//(edges[i].nodes[1].size/2)*-1
+
+                    var a=edges[i].nodes[1].x-edges[i].nodes[0].x;
+                    var b=edges[i].nodes[1].y-edges[i].nodes[0].y;
+                    var dist = Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
+
+
+                    var start_x = edges[i].nodes[0].x + r_start*a/dist;
+                    var start_y = edges[i].nodes[0].y + r_start*b/dist;
+
+                    var end_x = edges[i].nodes[1].x + r_end*a/dist;
+                    var end_y = edges[i].nodes[1].y + r_end*b/dist;
+                    
+
+                    g.moveTo(start_x,start_y);
+                    g.lineTo(end_x,end_y);
+
+                    
+                    var mp_x = (start_x + end_x)/2
+                    var mp_y = (start_y + end_y)/2
+
+                    var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
+                    edgeWeightDom.x = mp_x;
+                    edgeWeightDom.y = mp_y;
+
+                    //calculate end points for arrows of regular edges
+                    var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
+                    var dy = edges[i].nodes[0].y - edges[i].nodes[1].y;
+                        
                     
                 }
 
-                // calculate the triangle points
-                var arrowx = [];
-                var arrowy = [];
-                arrowx[0] = end_x;
-                arrowy[0] = end_y;
-                arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
-                arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
-                arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
-                arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
+                //set visibility of weighted edges
+                edgeWeightDom.visible = canvases[currentCanvasId].weighted;
+                containers[currentCanvasId].addChild(edgeWeightDom);
                 
+                //if directed, draw arrows
+                if(currentCanvas.directed == true)
+                {
+                        /*start_x = edges[i].nodes[0].x;
+                        start_y = edges[i].nodes[0].y;
 
-                g.beginFill("white");
-                g.moveTo(arrowx[0], arrowy[0]);
-                g.lineTo(arrowx[1], arrowy[1]);
-                g.lineTo(arrowx[2], arrowy[2]);
-                g.lineTo(arrowx[0], arrowy[0]);
-                g.endFill();
+                        end_x = edges[i].nodes[1].x;
+                        end_y = edges[i].nodes[1].y;*/
+
+                    var length = Math.sqrt(dx * dx + dy * dy);
+
+                    start_x = start_x - Math.round(dx / ((length / (15))));
+                    start_y = start_y - Math.round(dy / ((length / (15))));
+                    end_x = end_x + Math.round(dx / ((length / (15))));
+                    end_y = end_y + Math.round(dy / ((length / (15))));
+
+                    //arrows of bezier point to a different spot and the degree is inverse
+                    if(isMultigraph)
+                    {
+                        //extend the end point so that it points to the edge of the node
+                        end_x = end_x + Math.round(dx / ((length / (11))));
+                        end_y = end_y + Math.round(dy / ((length / (11))));
+
+                        //rotate the end point around the center of the node
+                        var radians = (Math.PI / 180) * 180;
+                        cos = Math.cos(radians);
+                        sin = Math.sin(radians);
+                        end_x = (cos * (end_x - edges[i].nodes[1].x)) + (sin * (end_y - edges[i].nodes[1].y)) + edges[i].nodes[1].x;
+                        end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;
+
+                        // calculate the angle of the edge
+                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                        if (dx < 0) {
+                            deg -= 180.0;
+                        }
+                        if (deg < 0) {
+                            deg -= 360.0;
+                        }
+                        // calculate the angle for the two triangle points
+                        var deg1 = ((deg - 25 - 90) % 360) * Math.PI * 2 / 360.0;
+                        var deg2 = ((deg - 335 - 90) % 360) * Math.PI * 2 / 360.0;
+                    }
+                    else
+                    {
+                        // calculate the angle of the edge
+                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
+                        if (dx < 0) {
+                            deg += 180.0;
+                        }
+                        if (deg < 0) {
+                            deg += 360.0;
+                        }
+                        // calculate the angle for the two triangle points
+                        var deg1 = ((deg + 25 + 90) % 360) * Math.PI * 2 / 360.0;
+                        var deg2 = ((deg + 335 + 90) % 360) * Math.PI * 2 / 360.0;
+                        
+                    }
+
+                    // calculate the triangle points
+                    var arrowx = [];
+                    var arrowy = [];
+                    arrowx[0] = end_x;
+                    arrowy[0] = end_y;
+                    arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
+                    arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
+                    arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
+                    arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
+                    
+
+                    g.beginFill("white");
+                    g.moveTo(arrowx[0], arrowy[0]);
+                    g.lineTo(arrowx[1], arrowy[1]);
+                    g.lineTo(arrowx[2], arrowy[2]);
+                    g.lineTo(arrowx[0], arrowy[0]);
+                    g.endFill();
+
+                    
+                }
+                var line = new createjs.Shape(g);
+                line.id=edges[i].id;
+                line.name="line_"+edges[i].id;
+                
+                containers[currentCanvasId].addChild(line);
+                containers[currentCanvasId].setChildIndex( line, 0);
 
                 
             }
-            var line = new createjs.Shape(g);
-            line.id=edges[i].id;
-            line.name="line_"+edges[i].id;
+            edges[i].changed = false;
             
-            containers[currentCanvasId].addChild(line);
-            containers[currentCanvasId].setChildIndex( line, 0);
-
         }
+        
     }
     update = true;
 }
@@ -689,6 +708,8 @@ function removeEdgeBetweenNodes(nodes)
         //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
         if(deleteThisEdge)
         {
+            //oldEdges[i].changed = true;
+            //edges[i].changed = true;
 
             console.log("removing edge: "+edges[i].id)
             console.log("removing "+(containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id)).name)
@@ -705,6 +726,8 @@ function removeEdgeBetweenNodes(nodes)
             edgeWeightText.remove();
             
             containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("edgeWeight_"+indexDeleted));
+
+            containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+indexDeleted));
             
 
             for(let j = edges[i].id+1; j < edges.length; j++)
@@ -730,6 +753,9 @@ function removeEdgeBetweenNodes(nodes)
 
                 text.id = "edgeWeightText_"+currentCanvasId+"_"+indexNext;
 
+                let line = containers[currentCanvasId].getChildByName("line_"+j);
+                line.name = "line_"+(indexNext);
+
             }
 
             for(let j = edges[i].id; j < edges.length-1; j++)
@@ -740,7 +766,7 @@ function removeEdgeBetweenNodes(nodes)
                 edges[j].id=(edges[j].id)-1;
 
                 
-                /*let selectedLine = this.parent.getChildByName("line_"+(i+1));
+                /*let selectedLine = this.parent.getChildByName("line_"+(j+1));
                 selectedLine.id=selectedLine.id-1;
                 selectedLine.name="bmpNode_"+i;
                 this.parent.addChild(selectedLine);*/
@@ -755,18 +781,17 @@ function removeEdgeBetweenNodes(nodes)
             //edgeWeightText.remove();
             
 
-            edges.pop();
+            var poppedEdge = edges.pop();
+            //poppedEdge.changed = true;
             console.log(edges);
-            
+            //console.log("mazu line "+(oldEdges.length-1));
+            //containers[currentCanvasId].getChildByName("line_"+(oldEdges.length-1)).graphics.clear();
+            //containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+(oldEdges.length-1)));
 
-
-            
-
-            
             //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
         }
     }
-    drawEdges(oldEdges);
+    drawEdges();
 }
 function removeAllEdgesFromNode(node,nodes,edges)
 {
@@ -811,7 +836,7 @@ function removeAllEdgesFromNode(node,nodes,edges)
         removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes);
     }
 
-    drawEdges(oldEdges);
+    drawEdges();
 }
 
 function removeNode(bitmap)
@@ -858,7 +883,7 @@ function removeNode(bitmap)
         nodes[i].id-=1;
     }
 
-    drawEdges(oldEdges);
+    drawEdges();
     
 }
 
@@ -1070,26 +1095,29 @@ function bindFunctionalityToBitmap(node,bitmap) {
         //I have to check this, because there is a chance, that someone could try to delete a node and instead of only clicking, they also pressmove at the same time. And when that happens, the original node is deleted, but I am still trying to manipulate it.
         if(this.parent != null)
         {
+            var node = currentCanvasGraph.nodes[bitmap.id];
             node.x=evt.stageX + this.offset.x;
             node.y=evt.stageY + this.offset.y;
-            this.x = node.x
-            this.y = node.y
+            this.x = node.x;
+            this.y = node.y;
 
-            for(var i = 0; i < edges.length; i++)
+            /*for(var i = 0; i < edges.length; i++)
             {
                 if(node.id===edges[i].nodes[0].id)
                 {
                     g.clear();
-                    edges[i].nodes[0]=node
+                    edges[i].nodes[0]=node;
                     drawEdges();
                 }
                 else if(node.id===edges[i].nodes[1].id)
                 {
                     g.clear();
-                    edges[i].nodes[1]=node
+                    edges[i].nodes[1]=node;
                     drawEdges();
                 }
-            }
+            }*/
+            
+
             var textName = this.parent.getChildByName("nodeNameText_"+this.id);
             textName.x=node.x-textoffset;//textoffset;
             textName.y=node.y-textoffset-3;//textoffset;
@@ -1102,6 +1130,28 @@ function bindFunctionalityToBitmap(node,bitmap) {
 
             // indicate that the stages should be updated on the next tick:
             update = true;
+
+            for(var nodeB of currentCanvasGraph.nodes)
+            {
+                
+                var edge = getEdgeFromNodeToNode(node,nodeB);
+                if(edge != null)
+                {
+                    edge.changed = true;
+                    console.log("meni se edge mezi node s id "+node.id+" a node "+nodeB.id);
+                    drawEdges();
+                }
+                
+                edge = getEdgeFromNodeToNode(nodeB,node);
+                if(edge != null)
+                {
+                    edge.changed = true;
+                    console.log("meni se edge mezi node s id "+node.id+" a node "+nodeB.id);
+                    drawEdges();
+                }
+            }
+
+            
         }
 
     });
@@ -1239,3 +1289,20 @@ function stepForwardBtnClicked() {
     }
 }*/
 
+function getCurrentGraphCopy()
+{
+    graphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    /*for(var node of graphCopy.nodes)
+    {
+        node = Object.assign(new Node,node);
+    }*/
+    for(var edge of graphCopy.edges)
+    {
+        //edge = Object.assign(new Edge,edge);
+
+        //Since references are lost when parsing json, make it so that the nodes forming the edge reference the correct nodes.
+        edge.nodes[0] = graphCopy.nodes[edge.nodes[0].id];
+        edge.nodes[1] = graphCopy.nodes[edge.nodes[1].id];
+    }
+    return graphCopy;
+}

@@ -23,6 +23,12 @@ function drawBiconnectivity()
 
         updateNodeInformationQuadrantIForBiconnectivity(u);
     }
+    
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
+
     drawEdges();
     //renderBiconnectivityGrid();
     drawTreeBiconnectivity();
@@ -31,7 +37,7 @@ function drawBiconnectivity()
 function saveBiconnectivityStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    var canvasGraphCopy = getCurrentGraphCopy();
 
     for(var node of canvasGraphCopy.nodes)
     {
@@ -58,12 +64,20 @@ function resetBiconnectivity()
         edge.label = "";
     }*/
 
+    
+
     for(var u of currentCanvasGraph.nodes)
     {
         updateNodeBitmapColor(u);
-    }    
+    }   
+
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     drawEdges();
+
     destroyCurrentVisNetwork();
     clearBiconnectivityGrid();
     clearNodesInformationQuadrantIForNodeInCanvas();
@@ -357,7 +371,7 @@ function Biconnectivity(){
 
 async function startBiconnectivity(){
 
-    originalBiconnectivityGraph = JSON.parse(JSON.stringify(currentCanvasGraph));
+    originalBiconnectivityGraph = getCurrentGraphCopy();
     //originalBiconnectivityGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();

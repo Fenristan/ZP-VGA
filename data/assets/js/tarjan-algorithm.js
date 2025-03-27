@@ -12,6 +12,10 @@ function drawDFS_Tarjan()
 
         updateNodeInformationQuadrantIForDFS_Tarjan(u);
     }
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
     drawEdges();
     renderTarjanGrid();
     drawTreeDFS_Tarjan();
@@ -20,7 +24,7 @@ function drawDFS_Tarjan()
 function saveDFS_TarjanStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    var canvasGraphCopy = getCurrentGraphCopy();
 
     for(var node of canvasGraphCopy.nodes)
     {
@@ -58,6 +62,10 @@ function resetDFS_Tarjan()
     for(var u of currentCanvasGraph.nodes)
     {
         updateNodeBitmapColor(u);
+    }
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
     }
 
     drawEdges();
@@ -238,7 +246,7 @@ function DFS_Tarjan(){
 
 async function startTarjan(){
 
-    originalDFS_TarjanGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    originalDFS_TarjanGraph = getCurrentGraphCopy()
     
     //originalDFS_TarjanGraph = currentCanvasGraph;
 

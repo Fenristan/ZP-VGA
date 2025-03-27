@@ -10,6 +10,10 @@ function drawDijkstra()
 
         updateNodeInformationQuadrantIForDijkstra(u);
     }
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     drawEdges();
     drawTreeDijkstra();
@@ -18,7 +22,7 @@ function drawDijkstra()
 function saveDijkstraStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    var canvasGraphCopy = getCurrentGraphCopy();
 
     for(var node of canvasGraphCopy.nodes)
     {
@@ -47,6 +51,10 @@ function resetDijkstra()
     {
         updateNodeBitmapColor(u);
     }  
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     drawEdges();
     destroyCurrentVisNetwork();
@@ -66,7 +74,7 @@ function resetDijkstra()
 
 async function startDijkstra()
 {
-    originalDijkstraGraph = JSON.parse(JSON.stringify(currentCanvasGraph));
+    originalDijkstraGraph = getCurrentGraphCopy();
     //originalDijkstraGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();

@@ -13,6 +13,10 @@ function drawDFS()
 
         updateNodeInformationQuadrantIForDFS(u);
     }
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
     drawEdges();
     drawTreeDFS();
 }
@@ -20,7 +24,7 @@ function drawDFS()
 function saveDFSStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    var canvasGraphCopy = getCurrentGraphCopy();
 
     for(var node of canvasGraphCopy.nodes)
     {
@@ -50,6 +54,10 @@ function resetDFS()
     {
         updateNodeBitmapColor(u);
     }  
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     drawEdges();
     destroyCurrentVisNetwork();
@@ -114,16 +122,16 @@ function DFS_visit(u)
 
         /*saveDFSStepToHistory(currentCanvasGraph.stepCounter);
         currentCanvasGraph.stepCounter++;*/
+
+        //highlight edge between these nodes red
+        var edge = getEdgeFromNodeToNode(u, v);
+        edge.previousColor = edge.color;
+        edge.color = "red";
         
         if(v.color=="BLUE")
         {
 
-            //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(currentCanvasGraph.nodes[u.id], currentCanvasGraph.nodes[v.id]);
-            edge.color = "red";
-
-
-            u.color = "RED";
+            //u.color = "RED";
             //highlight the newly visited node as visited
             v.color = "PURPLE";
             v.parent = u;
@@ -141,9 +149,6 @@ function DFS_visit(u)
         }
         else 
         {
-            var edge = getEdgeFromNodeToNode(u,v);
-            edge.color = "red";
-
 
             if(u.parent != null)
             {
@@ -162,12 +167,12 @@ function DFS_visit(u)
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
             currentCanvasGraph.stepCounter++;
 
-            edge.color = "purple";
+            //edge.color = "purple";
 
             //currentCanvasGraph.visitedEdges.pop();
 
             //if this is an undirected graph, then should check if the edge leads to the parent node, if it does, make it purple again, if not, then make it black. If it isn't undirected, simply make the edge black.
-            if(canvases[currentCanvasId].directed == false)
+            /*if(canvases[currentCanvasId].directed == false)
             {
                 if(u.parent != null)
                 {
@@ -180,11 +185,16 @@ function DFS_visit(u)
                         edge.color = "black";
                     }
                 }
+                else
+                {
+                    edge.color = "black";
+                }
             }
             else
             {
                 edge.color = "black";
-            }
+            }*/
+            edge.color = edge.previousColor ;
             
             
             
@@ -269,7 +279,7 @@ function DFS(){
 
 async function startDFS(){
 
-    originalDFSGraph = JSON.parse(JSON.stringify(currentCanvasGraph))
+    originalDFSGraph = getCurrentGraphCopy()
     //originalDFSGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();

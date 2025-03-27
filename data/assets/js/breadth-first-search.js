@@ -10,6 +10,10 @@ function drawBFS()
 
         updateNodeInformationQuadrantIForBFS(u);
     }
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     /*currentCanvasGraph.startingNode.color = "RED";
     currentCanvasGraph.startingNode.distance = 0;*/
@@ -21,7 +25,7 @@ function drawBFS()
 function saveBFSStepToHistory()
 {
 
-    var canvasGraphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    var canvasGraphCopy = getCurrentGraphCopy();
 
     for(var node of canvasGraphCopy.nodes)
     {
@@ -58,6 +62,10 @@ function resetBFS()
     {
         updateNodeBitmapColor(u);
     }  
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
 
     drawEdges();
     destroyCurrentVisNetwork();
@@ -77,7 +85,7 @@ function resetBFS()
 
 async function startBFS()
 {
-    originalBFSGraph = JSON.parse(JSON.stringify(currentCanvasGraph));
+    originalBFSGraph = getCurrentGraphCopy();
     //originalBFSGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();

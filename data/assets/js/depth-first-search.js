@@ -34,6 +34,7 @@ function saveDFSStepToHistory()
     }
 
     DFSGraphHistory.push(canvasGraphCopy);
+    currentCanvasGraph.stepCounter++;
 }
 
 function resetDFS()
@@ -113,7 +114,7 @@ function DFS_visit(u)
     u.timeDiscovered = time;
 
     saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
             
     for (var vId of adjacencyList[u.id]) {
         var v = currentCanvasGraph.nodes[vId];
@@ -121,7 +122,7 @@ function DFS_visit(u)
         u.color = "RED";
 
         /*saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;*/
+        */
 
         //highlight edge between these nodes red
         var edge = getEdgeFromNodeToNode(u, v);
@@ -139,7 +140,7 @@ function DFS_visit(u)
             v.timeDiscovered = time+1;
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
             
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
@@ -165,7 +166,7 @@ function DFS_visit(u)
             
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
             //edge.color = "purple";
 
@@ -199,7 +200,7 @@ function DFS_visit(u)
             
             
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
         }
         /*
@@ -219,7 +220,7 @@ function DFS_visit(u)
     //updateNodeInformationQuadrantIForNodeInCanvas(u);
 
     saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
 
     
     

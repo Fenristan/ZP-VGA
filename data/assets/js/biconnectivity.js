@@ -46,6 +46,7 @@ function saveBiconnectivityStepToHistory()
     }
 
     BiconnectivityGraphHistory.push(canvasGraphCopy);
+    currentCanvasGraph.stepCounter++;
 }
 
 function resetBiconnectivity()
@@ -130,7 +131,7 @@ function Biconnect(v,u){
     v.lowpt = v.number;
 
     saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
 
     
 
@@ -149,7 +150,7 @@ function Biconnect(v,u){
             w.parent = v;
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
             v.color = "PURPLE";  
             edge.color = "purple";
@@ -191,7 +192,7 @@ function Biconnect(v,u){
                 }
 
                 //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-                //currentCanvasGraph.stepCounter++;
+                //
                 
 
             }
@@ -202,13 +203,13 @@ function Biconnect(v,u){
                 v.color = "RED";
 
                 saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-                currentCanvasGraph.stepCounter++;
+                
 
                 edge.color = "orange";
                 v.color = v.previousColor;
 
                 //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-                //currentCanvasGraph.stepCounter++;
+                //
             }
 
             if(w.lowpt < v.number)
@@ -219,7 +220,7 @@ function Biconnect(v,u){
                 v.color = "RED";
 
                 saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-                currentCanvasGraph.stepCounter++;
+                
 
                 edge.color = edge.previousColor
                 v.color = v.previousColor;
@@ -227,7 +228,7 @@ function Biconnect(v,u){
             }
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
             
         }
         //else if((w.number < v.number) && w!=u)
@@ -244,20 +245,20 @@ function Biconnect(v,u){
             //doParenthesisForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
 
             edge.color = "black";
             
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
         }
         else
         {
             edge.color = "red";
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
             if(u.id == edge.nodes[1].id)
             {
@@ -271,7 +272,7 @@ function Biconnect(v,u){
             //edge.color = "purple";
             
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
         }
         /*else
         {
@@ -282,7 +283,7 @@ function Biconnect(v,u){
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
 
-            currentCanvasGraph.stepCounter++;
+            
             if(u.id == edge.nodes[1].id)
             {
                 edge.color = "purple";
@@ -293,11 +294,11 @@ function Biconnect(v,u){
             }
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
         }*/
 
         //saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-        //currentCanvasGraph.stepCounter++;
+        //
         if(v.articulation && v.color == "RED")
         {
             v.color = "ORANGE";
@@ -309,7 +310,7 @@ function Biconnect(v,u){
         v.color = "GREEN";
 
         saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;
+        
     }
     
     
@@ -364,7 +365,7 @@ function Biconnectivity(){
     }
 
     saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
 
 
 };

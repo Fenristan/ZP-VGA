@@ -34,6 +34,7 @@ function saveDFS_TarjanStepToHistory()
     }
 
     tarjanGraphHistory.push(canvasGraphCopy);
+    currentCanvasGraph.stepCounter++;
 }
 
 function resetDFS_Tarjan()
@@ -96,13 +97,13 @@ function DFS_Tarjan_visit(u)
     currentCanvasGraph.stack.push(u);
 
     saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
             
     for (var vId of adjacencyList[u.id]) {
         var v = currentCanvasGraph.nodes[vId];
 
         /*saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;*/
+        */
         
         if(v.color=="BLUE")
         {
@@ -120,7 +121,7 @@ function DFS_Tarjan_visit(u)
             //v.timeDiscovered = time+1;
 
             saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
             
             //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
             u.color = "PURPLE";
@@ -137,12 +138,12 @@ function DFS_Tarjan_visit(u)
             doParenthesisForEdgeBetweenNodes(u,v);
 
             saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
             edge.color = "black";
             
             saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
 
         }
 
@@ -191,7 +192,7 @@ function DFS_Tarjan_visit(u)
     //updateNodeInformationQuadrantIForNodeInCanvas(u);
 
     saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
 
     
     

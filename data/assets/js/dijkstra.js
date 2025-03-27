@@ -30,6 +30,7 @@ function saveDijkstraStepToHistory()
     }
 
     dijkstraGraphHistory.push(canvasGraphCopy);
+    currentCanvasGraph.stepCounter++;
 }
 
 function resetDijkstra()
@@ -206,7 +207,7 @@ function dijkstra()
 
         u.color = "RED";
         saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;
+        
 
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
@@ -214,7 +215,7 @@ function dijkstra()
             edge.previousColor = edge.color;
             edge.color = "red";
             //saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
-            //currentCanvasGraph.stepCounter++;
+            //
             //edge.color = "black";
 
             var alt = u.distance + edge.weight;
@@ -229,10 +230,10 @@ function dijkstra()
                 //edge.color = "purple"
 
                 //saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
-                //currentCanvasGraph.stepCounter++;
+                //
             }
             saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
-            currentCanvasGraph.stepCounter++;
+            
             edge.color = edge.previousColor;
 
             //edge.color = "purple";
@@ -243,7 +244,7 @@ function dijkstra()
     }
 
     saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
-    currentCanvasGraph.stepCounter++;
+    
 
     console.log("set je: ")
     console.log(currentCanvasGraph.set);

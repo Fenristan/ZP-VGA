@@ -41,6 +41,7 @@ function saveBFSStepToHistory()
     //canvasGraphCopy.startingNode = currentCanvasGraph.startingNode;
 
     BFSGraphHistory.push(canvasGraphCopy);
+    currentCanvasGraph.stepCounter++;
 }
 
 function resetBFS()
@@ -186,7 +187,7 @@ function BFS(){
         u.color = "RED";
 
         saveBFSStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;
+        
 
         for (var vId of adjacencyList[u.id]) {
             var v =  getNodeUsingId(vId);
@@ -205,7 +206,7 @@ function BFS(){
 
 
                 saveBFSStepToHistory(currentCanvasGraph.stepCounter);
-                currentCanvasGraph.stepCounter++;
+                
 
                 u.color = "PURPLE";
                 edge.color = "purple";
@@ -216,7 +217,7 @@ function BFS(){
         u.color = "GREEN";
         
         saveBFSStepToHistory(currentCanvasGraph.stepCounter);
-        currentCanvasGraph.stepCounter++;
+        
     }
     
     

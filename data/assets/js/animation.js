@@ -206,7 +206,7 @@ function init() {
                 console.log(currentCanvasGraph.nodes);
                 var bitmap = new createjs.Bitmap(node_image);
                 createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
-                bindFunctionalityToBitmap(newNode,bitmap);
+                bindFunctionalityToBitmap(bitmap);
                 currentCanvasFlags.addNodeFlag=false;
                 update = true;
             }
@@ -360,20 +360,21 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
 
                     g.setStrokeStyle(3);
 
-                    var start_x = edges[i].nodes[0].x-nodeRadius/2;
+                    console.log("node radius: "+nodeRadius)
+                    var start_x = edges[i].nodes[0].x-nodeRadius;
                     var start_y = edges[i].nodes[0].y;
 
                     var end_x = edges[i].nodes[0].x
-                    var end_y = edges[i].nodes[0].y-nodeRadius/2;
+                    var end_y = edges[i].nodes[0].y-nodeRadius;
 
                     g.moveTo(start_x,start_y);
 
                     //I do nodeRadius *2 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
-                    var cp1_x = start_x - nodeRadius*2;
+                    var cp1_x = start_x - nodeRadius*3;
                     var cp1_y = start_y;
 
                     var cp3_x = end_x;
-                    var cp3_y = end_y - nodeRadius*2;
+                    var cp3_y = end_y - nodeRadius*3;
 
                     var cp2_x = cp1_x;
                     var cp2_y = cp3_y;
@@ -381,16 +382,16 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     g.bezierCurveTo(cp1_x,cp1_y,cp3_x,cp3_y,end_x,end_y);
 
                     //calculate points where I will place the edge weight text element
-                    var mp_x = cp2_x + nodeRadius;
-                    var mp_y = cp2_y + nodeRadius;
+                    var mp_x = cp2_x + nodeRadius*2;
+                    var mp_y = cp2_y + nodeRadius*2;
 
                     var edgeWeightDom = containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id);
                     edgeWeightDom.x = mp_x;
                     edgeWeightDom.y = mp_y;
                     
                     //calculate end points for arrows of bezier
-                    var dx = end_x - cp3_x;
-                    var dy = end_y - cp3_y;
+                    var d_x = cp3_x - end_x;
+                    var d_y = cp3_y - end_y;
 
                 }
                 //if multigraph, do bezier
@@ -417,9 +418,9 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     //calculate vector from node to node
                     //var v = [end_x-start_x,end_y-start_y]
                     //calculate normal 
-                    //var dx = end_x - start_x
-                    //var dy = end_y - start_y
-                    //var n = [-(dy),dx]
+                    //var d_x = end_x - start_x
+                    //var d_y = end_y - start_y
+                    //var n = [-(d_y),d_x]
 
                     //calculate middle point between nodes
                     var mp_x = (start_x + end_x)/2;
@@ -440,8 +441,8 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     edgeWeightDom.y = cp_y;
 
                     //calculate end points for arrows of bezier
-                    var dx = end_x - cp_x;
-                    var dy = end_y - cp_y;
+                    var d_x = end_x - cp_x;
+                    var d_y = end_y - cp_y;
                     
 
                 }
@@ -476,8 +477,8 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     edgeWeightDom.y = mp_y;
 
                     //calculate end points for arrows of regular edges
-                    var dx = edges[i].nodes[0].x - edges[i].nodes[1].x;
-                    var dy = edges[i].nodes[0].y - edges[i].nodes[1].y;
+                    var d_x = edges[i].nodes[0].x - edges[i].nodes[1].x;
+                    var d_y = edges[i].nodes[0].y - edges[i].nodes[1].y;
                         
                     
                 }
@@ -495,30 +496,35 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                         end_x = edges[i].nodes[1].x;
                         end_y = edges[i].nodes[1].y;*/
 
-                    var length = Math.sqrt(dx * dx + dy * dy);
+                    var length = Math.sqrt(d_x * d_x + d_y * d_y);
 
-                    start_x = start_x - Math.round(dx / ((length / (15))));
-                    start_y = start_y - Math.round(dy / ((length / (15))));
-                    end_x = end_x + Math.round(dx / ((length / (15))));
-                    end_y = end_y + Math.round(dy / ((length / (15))));
+                    //start_x = start_x - Math.round(d_x / ((length / (15))));
+                    //start_y = start_y - Math.round(d_y / ((length / (15))));
+                    //end_x = end_x + Math.round(d_x / ((length / (15))));
+                    //end_y = end_y + Math.round(d_y / ((length / (15))));
 
+                    /*if(edges[i].nodes[0].id == edges[i].nodes[1].id)
+                    {
+                        
+                    }*/
                     //arrows of bezier point to a different spot and the degree is inverse
                     if(isMultigraph)
                     {
-                        //extend the end point so that it points to the edge of the node
-                        end_x = end_x + Math.round(dx / ((length / (11))));
-                        end_y = end_y + Math.round(dy / ((length / (11))));
+                        //retract the end point so that it points to the edge of the node
+                        end_x = end_x - Math.round(d_x / ((length / nodeRadius)));
+                        end_y = end_y - Math.round(d_y / ((length / nodeRadius)));
+
 
                         //rotate the end point around the center of the node
-                        var radians = (Math.PI / 180) * 180;
+                        /*var radians = (Math.PI / 180) * 180;
                         cos = Math.cos(radians);
                         sin = Math.sin(radians);
                         end_x = (cos * (end_x - edges[i].nodes[1].x)) + (sin * (end_y - edges[i].nodes[1].y)) + edges[i].nodes[1].x;
-                        end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;
+                        end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;*/
 
                         // calculate the angle of the edge
-                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                        if (dx < 0) {
+                        var deg = (Math.atan(d_y / d_x)) * 180.0 / Math.PI;
+                        if (d_x < 0) {
                             deg -= 180.0;
                         }
                         if (deg < 0) {
@@ -531,8 +537,8 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     else
                     {
                         // calculate the angle of the edge
-                        var deg = (Math.atan(dy / dx)) * 180.0 / Math.PI;
-                        if (dx < 0) {
+                        var deg = (Math.atan(d_y / d_x)) * 180.0 / Math.PI;
+                        if (d_x < 0) {
                             deg += 180.0;
                         }
                         if (deg < 0) {
@@ -545,21 +551,22 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     }
 
                     // calculate the triangle points
-                    var arrowx = [];
-                    var arrowy = [];
-                    arrowx[0] = end_x;
-                    arrowy[0] = end_y;
-                    arrowx[1] = Math.round(end_x + 12 * Math.sin(deg1));
-                    arrowy[1] = Math.round(end_y - 12 * Math.cos(deg1));
-                    arrowx[2] = Math.round(end_x + 12 * Math.sin(deg2));
-                    arrowy[2] = Math.round(end_y - 12 * Math.cos(deg2));
+                    var arrow_x = [];
+                    var arrow_y = [];
+                    var arrowSize = 15;
+                    arrow_x[0] = end_x;
+                    arrow_y[0] = end_y;
+                    arrow_x[1] = Math.round(end_x + arrowSize * Math.sin(deg1));
+                    arrow_y[1] = Math.round(end_y - arrowSize * Math.cos(deg1));
+                    arrow_x[2] = Math.round(end_x + arrowSize * Math.sin(deg2));
+                    arrow_y[2] = Math.round(end_y - arrowSize * Math.cos(deg2));
                     
 
                     g.beginFill("white");
-                    g.moveTo(arrowx[0], arrowy[0]);
-                    g.lineTo(arrowx[1], arrowy[1]);
-                    g.lineTo(arrowx[2], arrowy[2]);
-                    g.lineTo(arrowx[0], arrowy[0]);
+                    g.moveTo(arrow_x[0], arrow_y[0]);
+                    g.lineTo(arrow_x[1], arrow_y[1]);
+                    g.lineTo(arrow_x[2], arrow_y[2]);
+                    g.lineTo(arrow_x[0], arrow_y[0]);
                     g.endFill();
 
                     
@@ -601,9 +608,11 @@ function createNodeBitmap(node,container,bitmap) {
     bitmap.name = "bmpNode_" + node.id;
     bitmap.id = (node.id);
     bitmap.cursor = "pointer";
-    node.size=(bitmap.getBounds().width);
+    //node.size=(bitmap.getBounds().width);
 
-    nodeRadius = bitmap.image.width / 2;
+    nodeRadius = ((bitmap.image.width)*bitmap.scale) / 2;
+    console.log("nodeRadius je: "+nodeRadius);
+    //nodeRadius=(bitmap.getBounds().width/2);
     /*text.x = node.x-textoffset;
     text.y = node.y-textoffset;
     text.name = "nodeNameText_" + node.id;
@@ -684,6 +693,13 @@ function addEdgeBetweenNodes(nodes)
         containers[currentCanvasId].addChild(edgeWeightDom);
         console.log("edge Weight Dom name: "+edgeWeightDom.name)
 
+        // if there is already an edge in the opposite direction - we are creating a multigraph, set this edge as changed, so that is it also drawn as a multigraph
+        var edgeOppositeDirection = getEdgeFromNodeToNode(nodes[1],nodes[0])
+        if(edgeOppositeDirection != null)
+        {
+            edgeOppositeDirection.changed = true;
+        }
+
         drawEdges();
     }
     
@@ -708,6 +724,13 @@ function removeEdgeBetweenNodes(nodes)
         //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
         if(deleteThisEdge)
         {
+            // if there is already an edge in the opposite direction, a multigraph, we have to make sure, so that it updates when we draw edges so that it can be drawn as a regular edge, isntead of a curve
+            var edgeOppositeDirection = getEdgeFromNodeToNode(edges[i].nodes[1],edges[i].nodes[0])
+            if(edgeOppositeDirection != null)
+            {
+                edgeOppositeDirection.changed = true;
+            }
+
             //oldEdges[i].changed = true;
             //edges[i].changed = true;
 
@@ -782,6 +805,9 @@ function removeEdgeBetweenNodes(nodes)
             
 
             var poppedEdge = edges.pop();
+
+            
+        
             //poppedEdge.changed = true;
             console.log(edges);
             //console.log("mazu line "+(oldEdges.length-1));
@@ -1035,7 +1061,7 @@ function toggleWeightedEdgesVisibility()
     drawEdges();
 }
 
-function bindFunctionalityToBitmap(node,bitmap) {
+function bindFunctionalityToBitmap(bitmap) {
 
     var edges = currentCanvasGraph.edges;
     var nodes = currentCanvasGraph.nodes;
@@ -1156,6 +1182,17 @@ function bindFunctionalityToBitmap(node,bitmap) {
 
     });
 
+    bitmap.on("dblclick", function (evt) {
+        
+        for(var i = 0; i<currentCanvasGraph.nodes.length; i++)
+        {
+            containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
+        }
+        this.image = redNodeImage;
+        currentCanvasGraph.startingNode=node;
+        update = true;
+    });
+
     bitmap.on("rollover", function (evt) {
         //this.scale = this.originalScale * 1.2;
         update = true;
@@ -1171,16 +1208,7 @@ function bindFunctionalityToBitmap(node,bitmap) {
         let textName = this;
         textName.text = "";
     });
-    bitmap.on("dblclick", function (evt) {
-        
-        for(var i = 0; i<currentCanvasGraph.nodes.length; i++)
-        {
-            containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
-        }
-        this.image = redNodeImage;
-        currentCanvasGraph.startingNode=node;
-        update = true;
-    });
+    
 }
 
 function updateNodeBitmapColor(u)
@@ -1248,7 +1276,7 @@ function handleImageLoad(event) {
 
         // using "on" binds the listener to the scope of the currentTarget by default
         // in this case that means it executes in the scope of the button.
-        bindFunctionalityToBitmap(currentCanvasGraph.nodes[i],bitmap);
+        bindFunctionalityToBitmap(bitmap);
     }
 
     drawEdges(currentCanvasGraph.edges);

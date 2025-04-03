@@ -356,18 +356,29 @@ function displayCanvas(evt)
 
 function checkBoxDirectedClicked(evt)
 {
-    //if canvas was undirected and I am switching to a directed graph, delete all edges
+    //if canvas was undirected and I am switching to a directed graph, make sure that all edges are now multigraphs
     if(canvases[currentCanvasId].directed == false)
     {
-        alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
-        for(node of currentCanvasGraph.nodes)
+        //alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
+        /*for(node of currentCanvasGraph.nodes)
         {
             removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
-        }
+        }*/
+        canvases[currentCanvasId].directed ^= true;
+        transformUndirectedToDirected();
+    }
+    else
+    {
+        
+        transformDirectedToUndirected();
+        canvases[currentCanvasId].directed ^= true;
     }
     
+    for(edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
     
-    canvases[currentCanvasId].directed ^= true;
     drawEdges();
 }
 

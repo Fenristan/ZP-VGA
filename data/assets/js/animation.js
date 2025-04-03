@@ -665,7 +665,7 @@ function addEdgeBetweenNodes(nodes)
     {
         console.log("there already is an edge between these nodes");
     }
-    else if(currentCanvas.directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
+    else if(canvases[currentCanvasId].directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
     {
         console.log("undirected graph - there is already an edge between these nodes");
     }
@@ -1183,7 +1183,7 @@ function bindFunctionalityToBitmap(bitmap) {
     });
 
     bitmap.on("dblclick", function (evt) {
-        
+        var node = currentCanvasGraph.nodes[bitmap.id];
         for(var i = 0; i<currentCanvasGraph.nodes.length; i++)
         {
             containers[currentCanvasId].getChildByName("bmpNode_"+i).image=nodeImage;
@@ -1232,6 +1232,42 @@ function updateNodeBitmapColor(u)
     else if(u.color == "ORANGE")
     {
         containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=yellowNodeImage;
+    }
+}
+
+function transformUndirectedToDirected()
+{
+    var edgesCopy = currentCanvasGraph.edges.slice();
+    for(edge of edgesCopy)
+    {
+        //if there is no edge going the opposite direction, add it
+        if(!edgeFromNodeToNode(edge.nodes[1],edge.nodes[0]))
+        {
+            var newEdgeNodes = [];
+            newEdgeNodes.push(edge.nodes[1])
+            newEdgeNodes.push(edge.nodes[0]);
+            console.log("pridavam edge z do");
+            console.log(newEdgeNodes[0]);
+            console.log(newEdgeNodes[1]);
+            console.log("a graf je directed?:  "+canvases[currentCanvasId].directed);
+            addEdgeBetweenNodes(newEdgeNodes);
+        }
+    }
+}
+
+function transformDirectedToUndirected()
+{
+    var edgesCopy = currentCanvasGraph.edges.slice();
+    for(edge of currentCanvasGraph.edges)
+    {
+        //if there is a multigraph, delete one of the edges
+        if(edgeFromNodeToNode(edge.nodes[1],edge.nodes[0]))
+        {
+            var nodesOfEdgeToBeRemoved = [];
+            nodesOfEdgeToBeRemoved.push(edge.nodes[1]);
+            nodesOfEdgeToBeRemoved.push(edge.nodes[0]);
+            removeEdgeBetweenNodes(nodesOfEdgeToBeRemoved);
+        }
     }
 }
 

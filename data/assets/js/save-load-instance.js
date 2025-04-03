@@ -77,7 +77,7 @@ file.addEventListener("change", function(){
             var bitmap = new createjs.Bitmap(node_image);
             currentCanvasGraph.nodes.push(node);
             createNodeBitmap(node,containers[currentCanvasId],bitmap);
-            bindFunctionalityToBitmap(node,bitmap,currentCanvasGraph.edges,currentCanvasGraph.nodes);
+            bindFunctionalityToBitmap(bitmap);
 
             //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
             for(var i = 0; i < loadedGraph.edges.length; i++)
@@ -95,7 +95,7 @@ file.addEventListener("change", function(){
         });
 
         //add edges. If the loaded graph was undirected and we are trying to load it as directed, then don't add any edges.
-        if(!(loadedGraph.directed == false && canvases[currentCanvasId].directed == true))
+        /*if(!(loadedGraph.directed == false && canvases[currentCanvasId].directed == true))
         {
             loadedGraph.edges.forEach(edge => {
                 console.log("pridavam edge");
@@ -110,8 +110,31 @@ file.addEventListener("change", function(){
         else
         {
             alert("You have tried to load an undirected graph as a directed one. Nodes will be loaded, but the edges will not.");
-        }
+        }*/
         
+        //if(loadedGraph.directed == canvases[currentCanvasId].directed)
+        //{
+            loadedGraph.edges.forEach(edge => {
+                console.log("pridavam edge");
+                console.log(edge);
+                
+                addEdgeBetweenNodes(edge.nodes,currentCanvasGraph.edges);
+                currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
+            });
+            
+            updateEdgeWeights();
+        //}
+        /*if(loadedGraph.directed == true && canvases[currentCanvasId].directed == false)
+        {
+            transformDirectedToUndirected();
+        }
+        else */
+        //when loading an indirected graph into a directed one, transform it onto a directed one.
+        if(loadedGraph.directed == false && canvases[currentCanvasId].directed == true)
+        {
+            alert("Loading undirected graph as a directed one.");
+            transformUndirectedToDirected();
+        }
 
 
         

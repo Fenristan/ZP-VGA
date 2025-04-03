@@ -136,7 +136,7 @@ function drawTreeDFS()
     for(edge of currentCanvasGraph.edges)
     {
       var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color };
-      if(edge.color == "black")
+      if(edge.color != "black")
       {
         visEdge.width = 3;
       }
@@ -184,7 +184,12 @@ function drawTreeBFS()
     //add all edges to the array of edges to be drawn
     for(edge of currentCanvasGraph.edges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color };
+      if(edge.color != "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
     }
   
     

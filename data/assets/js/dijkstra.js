@@ -240,10 +240,11 @@ function dijkstra()
         }
         
         u.color = "GREEN";
+        saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
         
     }
 
-    saveDijkstraStepToHistory(currentCanvasGraph.stepCounter);
+    
     
 
     console.log("set je: ")

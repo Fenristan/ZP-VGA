@@ -128,7 +128,7 @@ return {
     edges: [],
 }*/
 
-var canvasGraphs = [];
+
 
 var g;
 

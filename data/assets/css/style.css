@@ -19,8 +19,8 @@ body {
   justify-content: space-between;
   border: #fdd663 solid 2px;
   color: #fff;
-  margin-left: 22%;
-  margin-right: 22%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 .current-menu .icon {
   text-align: center;
@@ -96,8 +96,8 @@ body {
   display: flex;
   gap: 35px;
   padding: 30px;
-  padding-left: 22%;
-  padding-right: 22%;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .search-bar
@@ -180,15 +180,15 @@ body {
 
 .canvas
 {
-  width:960px;
-  height:400px;
+  /*width:1200px;
+  height:400px;*/
   background: white;
 }
 
 .menu
 {
   background: white;
-  width:960px;
+  width:1200px;
   margin-bottom: 7px;
   display: inline-flex;
 }
@@ -259,14 +259,14 @@ body.embedded {
 }
 
 .navigation-container {
-	width: 960px;
+	width: 1200px;
 	margin-top: 8px;
 	background: white;
 	padding-left: 5px;
 }
 
 .simulation-container {
-	width: 960px;
+	width: 1200px;
 	margin-top: 4px;
 	background: white;
 	padding-left: 4px;
@@ -376,8 +376,8 @@ body.embedded {
 
 .visNetwork{
   margin-top: 8px;
-  width: 960px;
-  height: 400px;
+  width: 1200px;
+  height: 600px;
   background-color: white;
 }
 

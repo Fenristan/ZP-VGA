@@ -64,6 +64,7 @@ menuOptions.push(menuOption6);
 
 var stages = []
 
+var canvasGraphs = [];
 var canvasFlags = [];
 
 for(let i = 0; i < canvases.length; i++)

@@ -53,45 +53,12 @@ function resetBiconnectivity()
 {
     currentCanvasGraph = originalBiconnectivityGraph;
 
-    /*for(var node of currentCanvasGraph.nodes)
-    {
-        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        node.color = "BLUE";
-    }
-
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.color = "black";
-        edge.label = "";
-    }*/
-
-    
-
-    for(var u of currentCanvasGraph.nodes)
-    {
-        updateNodeBitmapColor(u);
-    }   
-
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.changed = true;
-    }
-
-    drawEdges();
-
-    destroyCurrentVisNetwork();
-    clearBiconnectivityGrid();
-    clearNodesInformationQuadrantIForNodeInCanvas();
-    toggleNodeInformationQuadrantIVisibility();
-    //disableNodeInformationQuadrantIVisibility();
-
-    currentCanvasGraph.stepCounter = 0;
-
-    canvasFlags[currentCanvasId].runningFlag = false;
-
     BiconnectivityGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
+    clearBiconnectivityGrid();
+
+    resetGraph();
+
 }
 
 function doParenthesisForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)

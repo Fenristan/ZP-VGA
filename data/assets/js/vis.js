@@ -122,7 +122,7 @@ function drawTreeDFS()
     for(node of currentCanvasGraph.nodes)
     {
         //node = currentCanvasGraph.nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        if(node.color != "BLUE")
         {
             node.level = 0;
             node.label = node.text;
@@ -171,7 +171,7 @@ function drawTreeBFS()
     for(node of currentCanvasGraph.nodes)
     {
         //node = currentCanvasGraph.nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        if(node.color != "BLUE")
         {
             node.level = node.distance;
             node.label = node.text;
@@ -223,7 +223,7 @@ function drawTreeDijkstra()
     for(node of currentCanvasGraph.nodes)
     {
         //node = currentCanvasGraph.nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" )
+        if(node.color != "BLUE")
         {
             //node.level = node.distance;
             node.label = node.text;
@@ -235,13 +235,17 @@ function drawTreeDijkstra()
     //add all edges to the array of edges to be drawn
     for(edge of currentCanvasGraph.edges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color });
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color };
+      if(edge.color != "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
       if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
       {
         if(edge.nodes[1].distance != "∞" && edge.nodes[1].distance != null)
         {
-          console.log("ten blue node vypadá takto: ");
-          console.log(edge.nodes[1]);
+          //console.log(edge.nodes[1]);
           //edge.nodes[1].level = edge.nodes[1].distance;
           getLevel(edge.nodes[1]);
           edge.nodes[1].label = edge.nodes[1].text;

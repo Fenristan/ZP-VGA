@@ -353,8 +353,6 @@ function renderBiconnectivityGrid()
     for(var c of currentCanvasGraph.components)
     {
         var c_text = "{";
-        var len = c.length;
-        var index = 0;
         var cNodes = [];
         
         for(var e of c)
@@ -368,10 +366,13 @@ function renderBiconnectivityGrid()
             
         }
 
+        var len = cNodes.length;
+        var index = 0;
+
         for(var u of cNodes)
         {
             c_text += u.text
-            if(index != len)
+            if(index != len-1)
             {
                 c_text += ", ";
             }

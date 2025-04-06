@@ -37,40 +37,12 @@ function resetDijkstra()
 {
     currentCanvasGraph = originalDijkstraGraph;
 
-    /*currentCanvasGraph.queue = [];
-    for(var node of currentCanvasGraph.nodes)
-    {
-        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-    }
-
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.color = "black";
-    }*/
-
-    for(var u of currentCanvasGraph.nodes)
-    {
-        updateNodeBitmapColor(u);
-    }  
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.changed = true;
-    }
-
-    drawEdges();
-    destroyCurrentVisNetwork();
-    clearDijkstraGrid();
-    clearNodesInformationQuadrantIForNodeInCanvas();
-    toggleNodeInformationQuadrantIVisibility();
-
-
-    currentCanvasGraph.stepCounter = 0;
-
-    canvasFlags[currentCanvasId].runningFlag = false;
-
     dijkstraGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
+    clearDijkstraGrid();
+
+    resetGraph();
+    
 }
 
 async function startDijkstra()

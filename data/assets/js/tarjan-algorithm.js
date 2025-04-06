@@ -40,49 +40,12 @@ function saveDFS_TarjanStepToHistory()
 function resetDFS_Tarjan()
 {
     currentCanvasGraph = originalDFS_TarjanGraph;
-    console.log("original");
-    console.log(originalDFS_TarjanGraph);
-    console.log("current");
-    console.log(currentCanvasGraph);
-
-    /*currentCanvasGraph.SCC = [];
-    currentCanvasGraph.stack = [];
-    for(var node of currentCanvasGraph.nodes)
-    {
-        containers[currentCanvasId].getChildByName("bmpNode_"+node.id).image=nodeImage;
-        node.lowlink = null;
-        node.inComponent = null;
-    }
-
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.color = "black";
-        edge.label = "";
-    }*/
-
-    for(var u of currentCanvasGraph.nodes)
-    {
-        updateNodeBitmapColor(u);
-    }
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.changed = true;
-    }
-
-    drawEdges();
-    destroyCurrentVisNetwork();
-    clearTarjanGrid();
-    clearNodesInformationQuadrantIForNodeInCanvas();
-    toggleNodeInformationQuadrantIVisibility();
-    //disableNodeInformationQuadrantIVisibility();
-
-    currentCanvasGraph.stepCounter = 0;
-
-    canvasFlags[currentCanvasId].runningFlag = false;
-
+    
     tarjanGraphHistory = [];
 
-    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
+    clearTarjanGrid();
+
+    resetGraph();
 }
 
 // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
@@ -247,8 +210,8 @@ function DFS_Tarjan(){
 
 async function startTarjan(){
 
-    originalDFS_TarjanGraph = getCurrentGraphCopy()
-    
+    originalDFS_TarjanGraph = getCurrentGraphCopy();
+
     //originalDFS_TarjanGraph = currentCanvasGraph;
 
     toggleNodeInformationQuadrantIVisibility();

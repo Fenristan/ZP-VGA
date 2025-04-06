@@ -217,25 +217,28 @@ for (i = 0; i < StartStopButtons.length; i++)
 
         if(startStopButtonsStates[currentCanvasId] == false)
         {
-            if(currentCanvasId == 0)
+            //set the div housing the current canvas and it's controls as uninteractible.
+            canvasContainers[currentCanvasId].getElementsByClassName("canvas-container-row")[0].style.pointerEvents = "none";
+
+            switch(currentCanvasId)
             {
-                startDFS();
-            }
-            else if(currentCanvasId == 1)
-            {
-                startBFS();
-            }
-            else if(currentCanvasId == 2)
-            {
-                startDijkstra();
-            }
-            else if(currentCanvasId == 3)
-            {
-                startTarjan();
-            }
-            else if(currentCanvasId == 4)
-            {
-                startBiconnectivity();
+                case 0:
+                    startDFS();
+                    break;
+                case 1:
+                    startBFS();
+                    break;
+                case 2:
+                    startDijkstra();
+                    break;  
+                case 3:
+                    startTarjan();
+                    break;  
+                case 4:
+                    startBiconnectivity();
+                    break;
+                default:
+                     
             }
         }
         else

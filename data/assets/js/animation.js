@@ -16,22 +16,23 @@ class Node {
     get x() {
         return this._x;
     }
-    set x(x) {
-        this._x=x;
-    }
     get y() {
         return this._y;
+    }
+    get size()
+    {
+        return this._size;
     }
     get color() {
         return this._color;
     }
 
+
+    set x(x) {
+        this._x=x;
+    }
     set y(y) {
         this._y=y;
-    }
-    get size()
-    {
-        return this._size;
     }
     set size(size)
     {
@@ -1271,6 +1272,37 @@ function transformDirectedToUndirected()
     }
 }
 
+function resetGraph()
+{
+    for(var u of currentCanvasGraph.nodes)
+    {
+        updateNodeBitmapColor(u);
+    }   
+
+    for(var edge of currentCanvasGraph.edges)
+    {
+        edge.changed = true;
+    }
+
+    drawEdges();
+
+    destroyCurrentVisNetwork();
+    
+    clearNodesInformationQuadrantIForNodeInCanvas();
+    toggleNodeInformationQuadrantIVisibility();
+    //disableNodeInformationQuadrantIVisibility();
+
+    currentCanvasGraph.stepCounter = 0;
+
+    canvasFlags[currentCanvasId].runningFlag = false;
+
+    
+
+    containers[currentCanvasId].getChildByName("bmpNode_"+currentCanvasGraph.startingNode.id).image=redNodeImage;
+
+    canvasContainers[currentCanvasId].getElementsByClassName("canvas-container-row")[0].style.pointerEvents = "auto";
+}
+
 function handleImageLoad(event) {
     var textoffset = 3;
     var bitmap;
@@ -1356,6 +1388,8 @@ function stepForwardBtnClicked() {
 function getCurrentGraphCopy()
 {
     graphCopy = JSON.parse(JSON.stringify(currentCanvasGraph));
+    console.log("graphCopy:");
+    console.log(graphCopy);
     /*for(var node of graphCopy.nodes)
     {
         node = Object.assign(new Node,node);

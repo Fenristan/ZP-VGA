@@ -7,59 +7,32 @@ LoadButton.addEventListener("click", function(){
     //RestartButton.click();
     if(canvasFlags[currentCanvasId].runningFlag == true)
     {
-        console.log("simulation runnovala");
+        console.log("simulation was running");
         canvasFlags[currentCanvasId].stopFlag = true;
         CurrentStepForwardButton.click();
         toggleCurrentStartStopButton();
     }
     
-
-    //there might be a vis graph already drawn, so destroy it.
-    destroyCurrentVisNetwork();
+    
     file.click();
-    console.log(document.getElementById('file').innerText);
+    //console.log(document.getElementById('file').innerText);
 });
 
-/*function fromJSON(jsonString){
-    var jsonObj = JSON.parse(jsonString);
-    var greeter = new Greeter();
-    return Object.assign(greeter, jsonObj);
-}*/
 
 file.addEventListener("change", function(){
     var reader = new FileReader();
+
     reader.addEventListener('load', function() {
-        //document.getElementById('file').innerText = this.result;
+
         var fileText = this.result;
-        console.log(fileText);
+        //console.log(fileText);
         const loadedGraph = JSON.parse(fileText);
-        //const loadedGraph = fromJSON(fileText); 
-        console.log("new canvas:");
-        console.log(loadedGraph);
-        console.log("old canvas:");
-        console.log(currentCanvasGraph);
-        //currentCanvasGraph= loadedGraph; // tady kdyžtak nezapomeň
         
-        update = true;
+        //update = true;
         
-        console.log(currentCanvasGraph);
-        console.log("test edges:");
-
-        //drawEdges(); //ok so basically potřebuju nějak postupně přidat nodes, pak edges mezi nima, jinak to nepůjde.
-
         //console.log(currentCanvasGraph);
+        //console.log("test edges:");
 
-        /*currentCanvasGraph.nodes.forEach(node => {
-            console.log("mazu stare nodes");
-            console.log(node);
-            
-            //console.log("test bitmap parent");
-            //console.log(stage[currentCanvasId]);
-            var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
-            console.log(bitmap);
-            removeNode(bitmap,currentCanvasGraph.nodes,currentCanvasGraph.edges)
-
-        });*/
 
         if(currentCanvasGraph.nodes.length != 0)
         {
@@ -67,8 +40,8 @@ file.addEventListener("change", function(){
             {
                 var node = currentCanvasGraph.nodes[i]
                 var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
-                console.log(bitmap);
-                removeNode(bitmap,currentCanvasGraph.nodes,currentCanvasGraph.edges)
+                //console.log(bitmap);
+                removeNode(bitmap)
             }
         }
         
@@ -114,15 +87,15 @@ file.addEventListener("change", function(){
         
         //if(loadedGraph.directed == canvases[currentCanvasId].directed)
         //{
-            loadedGraph.edges.forEach(edge => {
-                console.log("pridavam edge");
-                console.log(edge);
-                
-                addEdgeBetweenNodes(edge.nodes,currentCanvasGraph.edges);
-                currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
-            });
+        loadedGraph.edges.forEach(edge => {
+            //console.log("pridavam edge");
+            //console.log(edge);
             
-            updateEdgeWeights();
+            addEdgeBetweenNodes(edge.nodes);
+            currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
+        });
+        
+        updateEdgeWeights();
         //}
         /*if(loadedGraph.directed == true && canvases[currentCanvasId].directed == false)
         {
@@ -145,13 +118,9 @@ file.addEventListener("change", function(){
         }*/
 
     });
+
     reader.readAsText(file.files[0]);
 
-    console.log("=======================================================loaded edges:");
-    console.log(currentCanvasGraph.edges);
-
-
-    
 
     
 });
@@ -198,10 +167,5 @@ function saveInstanceToFile()
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-    
-}   
-
-function loadInstanceFromFile()
-{
     
 }   

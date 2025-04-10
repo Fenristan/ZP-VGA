@@ -209,9 +209,10 @@ function init() {
                 createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
                 bindFunctionalityToBitmap(bitmap);
                 currentCanvasFlags.addNodeFlag=false;
+                highlightSelectedMenuTool();
                 update = true;
             }
-            stages[currentCanvasId].update(event)
+            //stages[currentCanvasId].update(event)
             
         });
     }
@@ -1088,11 +1089,14 @@ function bindFunctionalityToBitmap(bitmap) {
                 selectedNodesNumber=0;
                 selectedNodes = []
                 currentCanvasFlags.addEdgeFlag=false;
+                highlightSelectedMenuTool();
             }
         }
         else if(currentCanvasFlags.removeNodeFlag==true)
         {
             removeNode(bitmap);
+            currentCanvasFlags.removeNodeFlag=false;
+            highlightSelectedMenuTool();
         }
         else if(currentCanvasFlags.removeEdgeFlag==true)
         {
@@ -1108,10 +1112,10 @@ function bindFunctionalityToBitmap(bitmap) {
                 selectedNodesNumber=0;
                 selectedNodes = []
                 currentCanvasFlags.removeEdgeFlag=false;
+                highlightSelectedMenuTool();
             }
         }
         update=true;
-        currentCanvasFlags.removeNodeFlag=false;
     });
 
     // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
@@ -1361,21 +1365,72 @@ function tick(event) {
     }
 }
 
+
+function highlightSelectedMenuTool()
+{
+    for(var i=0; i<4; i++)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[i].style.outline = "none";
+    }
+    
+    if(currentCanvasFlags.addNodeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[0].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.addEdgeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[1].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.removeNodeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[2].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.removeEdgeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[3].style.outline = "2px solid orange";
+    }
+
+}
+
 function addNodeBtnClicked() {
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
     currentCanvasFlags.addNodeFlag=!currentCanvasFlags.addNodeFlag;
+
+    highlightSelectedMenuTool();
 }
 function addEdgeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
     currentCanvasFlags.addEdgeFlag=!currentCanvasFlags.addEdgeFlag;
+
+    highlightSelectedMenuTool();
 }
 function removeNodeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
     currentCanvasFlags.removeNodeFlag=!currentCanvasFlags.removeNodeFlag;
+
+    highlightSelectedMenuTool();
 }
 function removeEdgeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+
     currentCanvasFlags.removeEdgeFlag=!currentCanvasFlags.removeEdgeFlag;
+
+    highlightSelectedMenuTool();
 }
-function stepForwardBtnClicked() {
+/*function stepForwardBtnClicked() {
     stepForwardFlag=true;
-}
+}*/
 /*function startSimulation() {
     console.log("starting simulation");
 

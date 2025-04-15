@@ -141,8 +141,8 @@ var update = true;
 var selectedNodesNumber = 0;
 var selectedNodes = [];
 var textoffset = 3;
-var node_image = "./assets/images/node.png";
-var add_edge_image = "./assets/images/addedge.png";
+var node_image = "data/assets/images/node.png";
+var add_edge_image = "data/assets/images/addedge.png";
 var containers = [];
 var selectedEdge;
 
@@ -178,20 +178,20 @@ function init() {
 
     // load the source image and call handleImageLoad which will create a few nodes with edges between them in the first canvas, as a starting point
     var image = new Image();
-    image.src = "./assets/images/node.png";
+    image.src = "data/assets/images/node.png";
     image.onload = handleImageLoad;
 
-    nodeImage.src = "./assets/images/node.png";
-    greenNodeImage.src = "./assets/images/nodeGreen.png";
-    redNodeImage.src = "./assets/images/nodeRed.png";
-    purpleNodeImage.src = "./assets/images/nodePurple.png";
-    yellowNodeImage.src = "./assets/images/nodeYellow.png";
+    nodeImage.src = "data/assets/images/node.png";
+    greenNodeImage.src = "data/assets/images/nodeGreen.png";
+    redNodeImage.src = "data/assets/images/nodeRed.png";
+    purpleNodeImage.src = "data/assets/images/nodePurple.png";
+    yellowNodeImage.src = "data/assets/images/nodeYellow.png";
 
-    playImage.src = "./assets/images/start_icon.png";
-    stopImage.src = "./assets/images/stop_icon.png";
+    playImage.src = "data/assets/images/start_icon.png";
+    stopImage.src = "data/assets/images/stop_icon.png";
 
-    playAutoImage.src = "./assets/images/play_auto_icon.png";
-    pauseAutoImage.src = "./assets/images/pause_auto_icon.png";
+    playAutoImage.src = "data/assets/images/play_auto_icon.png";
+    pauseAutoImage.src = "data/assets/images/pause_auto_icon.png";
     
     for(var i = 0; i < stages.length; i++)
     {
@@ -1208,11 +1208,11 @@ function bindFunctionalityToBitmap(bitmap) {
         update = true;
     });
 
-    bitmap.parent.getChildByName("nodeNameText_"+bitmap.id).on("dblclick", function (evt)
+    /*bitmap.parent.getChildByName("nodeNameText_"+bitmap.id).on("dblclick", function (evt)
     {
         let textName = this;
         textName.text = "";
-    });
+    });*/
     
 }
 

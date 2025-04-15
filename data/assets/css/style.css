@@ -216,7 +216,7 @@ body.embedded {
   line-height: 1.4em;
 }
 
-.back
+.back-hidden
 {
   position: absolute;
 
@@ -229,7 +229,7 @@ body.embedded {
   overflow: hidden;
 }
 
-.save
+.save-hidden
 {
   position: absolute;
 
@@ -242,7 +242,7 @@ body.embedded {
   overflow: hidden;
 }
 
-.load{
+.load-hidden{
   position: absolute;
 
   width: 1px;

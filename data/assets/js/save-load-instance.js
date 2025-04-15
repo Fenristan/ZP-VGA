@@ -1,4 +1,8 @@
 SaveButton.addEventListener("click", function(){
+    if(currentCanvasFlags.runningFlag)
+    {
+        return;
+    }
     saveInstanceToFile();
 });
 
@@ -156,11 +160,13 @@ function saveInstanceToFile()
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
+    var hour = today.getHours();
+    var minute = today.getMinutes();
 
-    today = dd + '_' + mm + '_' + yyyy;
+    today = yyyy + '_' + mm + '_' + dd + '-' + hour + '_' + minute;
 
 
-    var exportName = "graph"+currentCanvasId+"-"+today;
+    var exportName = "graph"+"-"+today;
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
     downloadAnchorNode.setAttribute("download", exportName + ".json");

@@ -61,7 +61,7 @@ function resetBiconnectivity()
 
 }
 
-function doParenthesisForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)
+function setTypeForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)
 {
     var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
     if(nodeA.number < nodeB.number)
@@ -205,11 +205,11 @@ function Biconnect(v,u){
             currentCanvasGraph.edgeStack.push(edge);
             v.lowpt = Math.min(v.lowpt,w.number);
 
-            doParenthesisForEdgeBetweenNodesBiconnectivity(v,w);
+            setTypeForEdgeBetweenNodesBiconnectivity(v,w);
 
             edge.color = "red";
 
-            //doParenthesisForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
+            //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
 
             saveBiconnectivityStepToHistory(currentCanvasGraph.stepCounter);
             
@@ -246,7 +246,7 @@ function Biconnect(v,u){
             var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
             edge.color = "red";
 
-            //doParenthesisForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
+            //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
 
             saveDFSStepToHistory(currentCanvasGraph.stepCounter);
 

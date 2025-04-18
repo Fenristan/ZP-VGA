@@ -98,7 +98,7 @@ function DFS_Tarjan_visit(u)
             var edge = getEdgeFromNodeToNode(u, v);
             edge.color = "red";
 
-            doParenthesisForEdgeBetweenNodes(u,v);
+            setTypeForEdgeBetweenNodes(u,v);
 
             saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
             

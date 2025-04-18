@@ -132,17 +132,14 @@ return {
 
 
 var g;
-
-var mouseTarget;	// the display object currently under the mouse, or being dragged
-var dragStarted;	// indicates whether we are currently in a drag operation
 var offset;
 var update = true;
 
-var selectedNodesNumber = 0;
-var selectedNodes = [];
+//var selectedNodes.length = 0;
+//var selectedNodes = [];
 var textoffset = 3;
-var node_image = "data/assets/images/node.png";
-var add_edge_image = "data/assets/images/addedge.png";
+//var node_image = "data/assets/node.png";
+//var add_edge_image = "data/assets/addedge.png";
 var containers = [];
 var selectedEdge;
 
@@ -177,21 +174,22 @@ function init() {
     stages[currentCanvasId].mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
 
     // load the source image and call handleImageLoad which will create a few nodes with edges between them in the first canvas, as a starting point
-    var image = new Image();
-    image.src = "data/assets/images/node.png";
-    image.onload = handleImageLoad;
+    /*var image = new Image();
+    image.src = "data/assets/node.png";
+    image.onload = handleImageLoad;*/
 
-    nodeImage.src = "data/assets/images/node.png";
-    greenNodeImage.src = "data/assets/images/nodeGreen.png";
-    redNodeImage.src = "data/assets/images/nodeRed.png";
-    purpleNodeImage.src = "data/assets/images/nodePurple.png";
-    yellowNodeImage.src = "data/assets/images/nodeYellow.png";
+    nodeImage.src = "data/assets/node.png";
+    nodeImage.onload = handleImageLoad;
+    greenNodeImage.src = "data/assets/nodeGreen.png";
+    redNodeImage.src = "data/assets/nodeRed.png";
+    purpleNodeImage.src = "data/assets/nodePurple.png";
+    yellowNodeImage.src = "data/assets/nodeYellow.png";
 
-    playImage.src = "data/assets/images/start_icon.png";
-    stopImage.src = "data/assets/images/stop_icon.png";
+    playImage.src = "data/assets/start_icon.png";
+    stopImage.src = "data/assets/stop_icon.png";
 
-    playAutoImage.src = "data/assets/images/play_auto_icon.png";
-    pauseAutoImage.src = "data/assets/images/pause_auto_icon.png";
+    playAutoImage.src = "data/assets/play_auto_icon.png";
+    pauseAutoImage.src = "data/assets/pause_auto_icon.png";
     
     for(var i = 0; i < stages.length; i++)
     {
@@ -205,11 +203,11 @@ function init() {
                 currentCanvasGraph.nodes.push(newNode);
                 console.log(newNode);
                 console.log(currentCanvasGraph.nodes);
-                var bitmap = new createjs.Bitmap(node_image);
+                var bitmap = new createjs.Bitmap(nodeImage);
                 createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
                 bindFunctionalityToBitmap(bitmap);
-                currentCanvasFlags.addNodeFlag=false;
-                highlightSelectedMenuTool();
+                //currentCanvasFlags.addNodeFlag=false;
+                //highlightSelectedMenuTool();
                 update = true;
             }
             //stages[currentCanvasId].update(event)
@@ -1077,42 +1075,42 @@ function bindFunctionalityToBitmap(bitmap) {
         this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
         if(currentCanvasFlags.addEdgeFlag==true)
         {
-            if(selectedNodesNumber<1)
+            if(currentCanvasGraph.selectedNodes.length<1)
             {
-                selectedNodesNumber++;
-                selectedNodes.push(nodes[bitmap.id]);
+                //currentCanvasGraph.selectedNodes.length++;
+                currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
             }
             else
             {
-                selectedNodes.push(nodes[bitmap.id]);
-                addEdgeBetweenNodes(selectedNodes);
-                selectedNodesNumber=0;
-                selectedNodes = []
-                currentCanvasFlags.addEdgeFlag=false;
-                highlightSelectedMenuTool();
+                currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
+                addEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
+                //currentCanvasGraph.selectedNodes.length=0;
+                currentCanvasGraph.selectedNodes = []
+                //currentCanvasFlags.addEdgeFlag=false;
+                //highlightSelectedMenuTool();
             }
         }
         else if(currentCanvasFlags.removeNodeFlag==true)
         {
             removeNode(bitmap);
-            currentCanvasFlags.removeNodeFlag=false;
-            highlightSelectedMenuTool();
+            //currentCanvasFlags.removeNodeFlag=false;
+            //highlightSelectedMenuTool();
         }
         else if(currentCanvasFlags.removeEdgeFlag==true)
         {
-            if(selectedNodesNumber<1)
+            if(currentCanvasGraph.selectedNodes.length<1)
             {
-                selectedNodesNumber++;
-                selectedNodes.push(nodes[bitmap.id]);
+                //currentCanvasGraph.selectedNodes.length++;
+                currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
             }
             else
             {
-                selectedNodes.push(nodes[bitmap.id]);
-                removeEdgeBetweenNodes(selectedNodes);
-                selectedNodesNumber=0;
-                selectedNodes = []
-                currentCanvasFlags.removeEdgeFlag=false;
-                highlightSelectedMenuTool();
+                currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
+                removeEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
+                //currentCanvasGraph.selectedNodes.length=0;
+                currentCanvasGraph.selectedNodes = []
+                //currentCanvasFlags.removeEdgeFlag=false;
+                //highlightSelectedMenuTool();
             }
         }
         update=true;
@@ -1343,7 +1341,7 @@ function handleImageLoad(event) {
 
     for (var i = 0; i < currentCanvasGraph.nodes.length; i++) {
 
-        bitmap = new createjs.Bitmap(node_image);
+        bitmap = new createjs.Bitmap(nodeImage);
         createNodeBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
 
         // using "on" binds the listener to the scope of the currentTarget by default
@@ -1409,6 +1407,8 @@ function addEdgeBtnClicked() {
     currentCanvasFlags.addEdgeFlag=!currentCanvasFlags.addEdgeFlag;
 
     highlightSelectedMenuTool();
+
+    currentCanvasGraph.selectedNodes = [];
 }
 function removeNodeBtnClicked() {
     currentCanvasFlags.addNodeFlag=false;
@@ -1427,6 +1427,8 @@ function removeEdgeBtnClicked() {
     currentCanvasFlags.removeEdgeFlag=!currentCanvasFlags.removeEdgeFlag;
 
     highlightSelectedMenuTool();
+
+    currentCanvasGraph.selectedNodes = [];
 }
 /*function stepForwardBtnClicked() {
     stepForwardFlag=true;

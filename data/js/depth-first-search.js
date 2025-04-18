@@ -49,7 +49,7 @@ function resetDFS()
     
 }
 
-function doParenthesisForEdgeBetweenNodes(nodeA, nodeB)
+function setTypeForEdgeBetweenNodes(nodeA, nodeB)
 {
     var edge = getEdgeFromNodeToNode(nodeA,nodeB);
     if(nodeA.timeDiscovered < nodeB.timeDiscovered)
@@ -128,12 +128,12 @@ function DFS_visit(u)
             {
                 if(v.id != u.parent.id)
                 {
-                    doParenthesisForEdgeBetweenNodes(u,v);
+                    setTypeForEdgeBetweenNodes(u,v);
                 }
             }
             else
             {
-                doParenthesisForEdgeBetweenNodes(u,v); 
+                setTypeForEdgeBetweenNodes(u,v); 
             }
             
             

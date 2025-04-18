@@ -3,25 +3,25 @@
 <head>
     <meta charset="utf-8">
     <title></title>
-    <link rel="stylesheet" href="data/assets/css/style.css">
-    <link rel="stylesheet" href="data/assets/css/mermaid.min.css">
+    <link rel="stylesheet" href="data/css/style.css">
+    <link rel="stylesheet" href="data/css/mermaid.min.css">
 
     
-    <script src="data/assets/js/animation.js" defer></script>
-    <script src="data/assets/js/setup.js"></script>
-    <script src="data/assets/js/adjacency-list.js" defer></script>
-    <script src="data/assets/js/breadth-first-search.js" defer></script>
-    <script src="data/assets/js/depth-first-search.js" defer></script>
-    <script src="data/assets/js/dijkstra.js" defer></script>
-    <script src="data/assets/js/tarjan-algorithm.js" defer></script>
-    <script src="data/assets/js/biconnectivity.js" defer></script>
-    <script src="data/assets/js/canvas.js" defer></script>
-    <script src="data/assets/js/save-load-instance.js" defer></script>
-    <script src="data/assets/js/vis.js" defer></script>
-    <script src="data/assets/js/grid.js" defer></script>
+    <script src="data/js/animation.js" defer></script>
+    <script src="data/js/setup.js"></script>
+    <script src="data/js/adjacency-list.js" defer></script>
+    <script src="data/js/breadth-first-search.js" defer></script>
+    <script src="data/js/depth-first-search.js" defer></script>
+    <script src="data/js/dijkstra.js" defer></script>
+    <script src="data/js/tarjan-algorithm.js" defer></script>
+    <script src="data/js/biconnectivity.js" defer></script>
+    <script src="data/js/canvas.js" defer></script>
+    <script src="data/js/save-load-instance.js" defer></script>
+    <script src="data/js/vis.js" defer></script>
+    <script src="data/js/grid.js" defer></script>
     
     <script src="data/lib/vis-network.min.js"></script>
-    <script src="data/lib/easeljs-NEXT.js"></script>
+    <script src="data/lib/easeljs-NEXT.min.js"></script>
     <script src="data/lib/gridjs.umd.js"></script>
 
 </head>
@@ -40,9 +40,9 @@
     <div class="menu-container">
         
         <div class="navigation-container">
-            <a><img src="data/assets/images/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="back" class="back-hidden"></a>
-            <a><img src="data/assets/images/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="load" class="load-hidden"></a>
-            <a><img src="data/assets/images/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; " id="save" class="save-hidden"></a>
+            <a><img src="data/assets/go-back-arrow.png" alt="Back to menu" style="width:42px;height:42px; margin-top: 15px; " id="back" class="back-hidden"></a>
+            <a><img src="data/assets/load.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 11px; float: right;" id="load" class="load-hidden"></a>
+            <a><img src="data/assets/save.png" alt="Save this graph" style="width:42px;height:42px; margin-top: 15px; float: right; " id="save" class="save-hidden"></a>
         </div>
         <input type="file" id="file" accept=".json">
         <div id=result></div>
@@ -89,10 +89,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -119,12 +119,12 @@
                     </div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas0" class="hidden"></div>
@@ -135,10 +135,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -165,12 +165,12 @@
                     </div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas1" class="hidden"></div>
@@ -180,10 +180,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -210,12 +210,12 @@
                     </div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas2" class="hidden"></div>
@@ -225,10 +225,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -257,12 +257,12 @@
                     </div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas3" class="hidden"></div>
@@ -272,10 +272,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -301,12 +301,12 @@
                     </div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas4" class="hidden"></div>
@@ -316,10 +316,10 @@
                     <div>
                         <div class="menu">
                             <div class="menu-tools">
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/node.png" onclick="addNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/addedge.png" onclick="addEdgeBtnClicked()"/>
-                                <input type="image" style="margin-left: 30px" src="data/assets/images/removenode.png" onclick="removeNodeBtnClicked()"/>
-                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/images/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
                             </div>
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
@@ -343,12 +343,12 @@
                     <div id="sidebarCanvas5" class="sidebar"></div>
                 </div>
                 <div class="simulation-container">
-                    <a><img src="data/assets/images/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
-                    <a><img src="data/assets/images/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
-                    <a><img src="data/assets/images/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
-                    <a><img src="data/assets/images/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
                     <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
-                    <a><img src="data/assets/images/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
                 </div>
 
                 <div id="visNetworkCanvas5" class="hidden"></div>

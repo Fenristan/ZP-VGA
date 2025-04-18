@@ -70,7 +70,7 @@ var canvasFlags = [];
 for(let i = 0; i < canvases.length; i++)
 {
     stages.push(new createjs.Stage(canvases[i]));
-    canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0 });
+    canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0, selectedNodes: [] });
     canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
 }
 
@@ -196,11 +196,11 @@ function displayCanvas(evt)
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
     console.log("canvas: "+evt.currentTarget.index);
 
-    /*canvas = canvases[currentCanvasId];
-    context = canvas.getContext("2d");
+    //canvas = canvases[currentCanvasId];
+    //context = canvas.getContext("2d");
 
     stages[currentCanvasId].enableMouseOver(10);
-    stages[currentCanvasId].mouseMoveOutside = true;*/
+    //stages[currentCanvasId].mouseMoveOutside = true;
 
     /*canvasContainers.forEach(function (canvasContainer){
         if(canvasContainer.id != canvasContainerId)

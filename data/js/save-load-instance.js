@@ -51,7 +51,7 @@ file.addEventListener("change", function(){
         
         
         loadedGraph.nodes.forEach(node => {
-            var bitmap = new createjs.Bitmap(node_image);
+            var bitmap = new createjs.Bitmap(nodeImage);
             currentCanvasGraph.nodes.push(node);
             createNodeBitmap(node,containers[currentCanvasId],bitmap);
             bindFunctionalityToBitmap(bitmap);
@@ -117,7 +117,7 @@ file.addEventListener("change", function(){
         
         
         /*for (var i = 0; i < currentCanvasGraph.nodes.length; i++) {
-            bitmap = new createjs.Bitmap(node_image);
+            bitmap = new createjs.Bitmap(nodeImage);
             addNodeToBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
         }*/
 
@@ -154,6 +154,18 @@ function saveInstanceToFile()
 
     //add information to the saved json file, whether or not the graph was directed
     currentCanvasGraph.directed = canvases[currentCanvasId].directed;
+
+    var directedStr;
+    if(currentCanvasGraph.directed)
+    {
+        directedStr = "directed";
+    }
+    else
+    {
+        directedStr = "undirected";
+    }
+
+
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentCanvasGraph));
 
     var today = new Date();
@@ -165,8 +177,10 @@ function saveInstanceToFile()
 
     today = yyyy + '_' + mm + '_' + dd + '-' + hour + '_' + minute;
 
+    
 
-    var exportName = "graph"+"-"+today;
+
+    var exportName = "graph"+"-"+today+"-"+directedStr;
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
     downloadAnchorNode.setAttribute("download", exportName + ".json");

@@ -78,7 +78,7 @@ function isInTheSameTree(startingNode, lookingForNode)
 
 function getOptions()
 {
-  var arrowsEnabled = Boolean(canvases[currentCanvasId].directed);
+  var arrowsEnabled = Boolean(currentCanvasGraph.directed);
   var options = {
     edges: {
     smooth: {

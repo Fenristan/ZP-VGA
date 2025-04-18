@@ -146,7 +146,7 @@ function DFS_visit(u)
             //currentCanvasGraph.visitedEdges.pop();
 
             //if this is an undirected graph, then should check if the edge leads to the parent node, if it does, make it purple again, if not, then make it black. If it isn't undirected, simply make the edge black.
-            /*if(canvases[currentCanvasId].directed == false)
+            /*if(currentCanvasGraph.directed == false)
             {
                 if(u.parent != null)
                 {
@@ -213,7 +213,7 @@ function DFS(){
 
     var numberOfNodes = nodes.length;
     adjacencyList = [];
-    if(canvases[currentCanvasId].directed == false)
+    if(currentCanvasGraph.directed == false)
     {
         adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
     }

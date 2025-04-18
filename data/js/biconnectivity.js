@@ -294,7 +294,7 @@ function Biconnectivity(){
 
     var numberOfNodes = nodes.length;
     
-    if(canvases[currentCanvasId].directed == false)
+    if(currentCanvasGraph.directed == false)
     {
         adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
     }

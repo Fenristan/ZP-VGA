@@ -170,7 +170,7 @@ function DFS_Tarjan(){
 
     var numberOfNodes = nodes.length;
     adjacencyList = [];
-    if(canvases[currentCanvasId].directed == false)
+    if(currentCanvasGraph.directed == false)
     {
         adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
     }

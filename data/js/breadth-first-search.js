@@ -123,7 +123,7 @@ function BFS(){
     
     var numberOfNodes = nodes.length;
     var adjacencyList = [];
-    if(canvases[currentCanvasId].directed == false)
+    if(currentCanvasGraph.directed == false)
     {
         adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
     }

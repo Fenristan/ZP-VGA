@@ -72,7 +72,7 @@ file.addEventListener("change", function(){
         });
 
         //add edges. If the loaded graph was undirected and we are trying to load it as directed, then don't add any edges.
-        /*if(!(loadedGraph.directed == false && canvases[currentCanvasId].directed == true))
+        /*if(!(loadedGraph.directed == false && currentCanvasGraph.directed == true))
         {
             loadedGraph.edges.forEach(edge => {
                 console.log("pridavam edge");
@@ -89,7 +89,7 @@ file.addEventListener("change", function(){
             alert("You have tried to load an undirected graph as a directed one. Nodes will be loaded, but the edges will not.");
         }*/
         
-        //if(loadedGraph.directed == canvases[currentCanvasId].directed)
+        //if(loadedGraph.directed == currentCanvasGraph.directed)
         //{
         loadedGraph.edges.forEach(edge => {
             //console.log("pridavam edge");
@@ -101,13 +101,13 @@ file.addEventListener("change", function(){
         
         updateEdgeWeights();
         //}
-        /*if(loadedGraph.directed == true && canvases[currentCanvasId].directed == false)
+        /*if(loadedGraph.directed == true && currentCanvasGraph.directed == false)
         {
             transformDirectedToUndirected();
         }
         else */
         //when loading an indirected graph into a directed one, transform it onto a directed one.
-        if(loadedGraph.directed == false && canvases[currentCanvasId].directed == true)
+        if(loadedGraph.directed == false && currentCanvasGraph.directed == true)
         {
             alert("Loading undirected graph as a directed one.");
             transformUndirectedToDirected();
@@ -153,7 +153,7 @@ function saveInstanceToFile()
     }
 
     //add information to the saved json file, whether or not the graph was directed
-    currentCanvasGraph.directed = canvases[currentCanvasId].directed;
+    //currentCanvasGraph.directed = currentCanvasGraph.directed;
 
     var directedStr;
     if(currentCanvasGraph.directed)

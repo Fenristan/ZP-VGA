@@ -7,7 +7,7 @@ const canvas3 = document.getElementById('canvas3');
 const canvas4 = document.getElementById('canvas4');
 const canvas5 = document.getElementById('canvas5');
 
-canvas0.directed = true;
+/*canvas0.directed = true;
 canvas1.directed = true;
 canvas2.directed = true;
 canvas3.directed = true;
@@ -19,7 +19,7 @@ canvas1.weighted = false;
 canvas2.weighted = true;
 canvas3.weighted = false;
 canvas4.weighted = false;
-canvas5.weighted = false;
+canvas5.weighted = false;*/
 
 const canvases = [];
 canvases.push(canvas0);
@@ -73,6 +73,20 @@ for(let i = 0; i < canvases.length; i++)
     canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0, selectedNodes: [] });
     canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
 }
+
+canvasGraphs[0].directed = true;
+canvasGraphs[1].directed = true;
+canvasGraphs[2].directed = true;
+canvasGraphs[3].directed = true;
+canvasGraphs[4].directed = false;
+canvasGraphs[5].directed = true;
+
+canvasGraphs[0].weighted = false;
+canvasGraphs[1].weighted = false;
+canvasGraphs[2].weighted = true;
+canvasGraphs[3].weighted = false;
+canvasGraphs[4].weighted = false;
+canvasGraphs[5].weighted = false;
 
 
 const menuCardsContainer = document.getElementsByClassName("menu-cards-container")[0];
@@ -225,21 +239,21 @@ function displayCanvas(evt)
 function checkBoxDirectedClicked(evt)
 {
     //if canvas was undirected and I am switching to a directed graph, make sure that all edges are now multigraphs
-    if(canvases[currentCanvasId].directed == false)
+    if(currentCanvasGraph.directed == false)
     {
         //alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
         /*for(node of currentCanvasGraph.nodes)
         {
             removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
         }*/
-        canvases[currentCanvasId].directed ^= true;
+        currentCanvasGraph.directed ^= true;
         transformUndirectedToDirected();
     }
     else
     {
         
         transformDirectedToUndirected();
-        canvases[currentCanvasId].directed ^= true;
+        currentCanvasGraph.directed ^= true;
     }
     
     for(edge of currentCanvasGraph.edges)
@@ -257,7 +271,7 @@ function setFunctionToCheckboxDirected(checkboxDirected)
 
 function checkBoxWeightedClicked(evt)
 {
-    canvases[currentCanvasId].weighted ^= true;
+    currentCanvasGraph.weighted ^= true;
     toggleWeightedEdgesVisibility();
     update=true;
 }

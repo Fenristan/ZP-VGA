@@ -278,7 +278,7 @@ function getEdgeFromNodeToNode(nodeA, nodeB)
 {
     for(var edge of currentCanvasGraph.edges)
     {
-        if(canvases[currentCanvasId].directed == true)
+        if(currentCanvasGraph.directed == true)
         {
             if((nodeA.id == edge.nodes[0].id)&&(nodeB.id == edge.nodes[1].id))
             {
@@ -484,11 +484,11 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                 }
 
                 //set visibility of weighted edges
-                edgeWeightDom.visible = canvases[currentCanvasId].weighted;
+                edgeWeightDom.visible = currentCanvasGraph.weighted;
                 containers[currentCanvasId].addChild(edgeWeightDom);
                 
                 //if directed, draw arrows
-                if(currentCanvas.directed == true)
+                if(currentCanvasGraph.directed == true)
                 {
                         /*start_x = edges[i].nodes[0].x;
                         start_y = edges[i].nodes[0].y;
@@ -665,7 +665,7 @@ function addEdgeBetweenNodes(nodes)
     {
         console.log("there already is an edge between these nodes");
     }
-    else if(canvases[currentCanvasId].directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
+    else if(currentCanvasGraph.directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
     {
         console.log("undirected graph - there is already an edge between these nodes");
     }
@@ -713,7 +713,7 @@ function removeEdgeBetweenNodes(nodes)
     for(let i = 0; i<edges.length; i++)
     {
         var deleteThisEdge = false;
-        if(canvases[currentCanvasId].directed == true)
+        if(currentCanvasGraph.directed == true)
         {
             deleteThisEdge = (edges[i].nodes[0].id==nodes[0].id) && (edges[i].nodes[1].id==nodes[1].id);
         }
@@ -1252,7 +1252,7 @@ function transformUndirectedToDirected()
             console.log("pridavam edge z do");
             console.log(newEdgeNodes[0]);
             console.log(newEdgeNodes[1]);
-            console.log("a graf je directed?:  "+canvases[currentCanvasId].directed);
+            console.log("a graf je directed?:  "+currentCanvasGraph.directed);
             addEdgeBetweenNodes(newEdgeNodes);
         }
     }

@@ -70,7 +70,7 @@ var canvasFlags = [];
 for(let i = 0; i < canvases.length; i++)
 {
     stages.push(new createjs.Stage(canvases[i]));
-    canvasGraphs.push({ nodes: [], edges: [], startingNode: null, stepCounter: 0, selectedNodes: [] });
+    canvasGraphs.push(new Graph(i));
     canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
 }
 
@@ -87,6 +87,13 @@ canvasGraphs[2].weighted = true;
 canvasGraphs[3].weighted = false;
 canvasGraphs[4].weighted = false;
 canvasGraphs[5].weighted = false;
+
+canvasGraphs[0].algorithm = new Depth_First_Search;
+canvasGraphs[1].algorithm = new Breadth_First_Search;
+canvasGraphs[2].algorithm = new Dijkstra;
+canvasGraphs[3].algorithm = new Tarjan;
+canvasGraphs[4].algorithm = new Biconnectivity;
+
 
 
 const menuCardsContainer = document.getElementsByClassName("menu-cards-container")[0];
@@ -374,10 +381,12 @@ for (i = 0; i < StartStopButtons.length; i++)
                 currentCanvasGraph.startingNode = currentCanvasGraph.nodes[0];
             }
 
-            switch(currentCanvasId)
+            currentCanvasGraph.algorithm.startAlgorithm();
+
+            /*switch(currentCanvasId)
             {
                 case 0:
-                    startDFS();
+                    currentCanvasGraph.algorithm.startAlgorithm();
                     break;
                 case 1:
                     startBFS();
@@ -393,7 +402,7 @@ for (i = 0; i < StartStopButtons.length; i++)
                     break;
                 default:
                      
-            }
+            }*/
         }
         else
         {

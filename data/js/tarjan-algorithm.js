@@ -1,273 +1,261 @@
-var nodes = [];
-var time;
 
-var tarjanGraphHistory = [];
-var originalDFS_TarjanGraph = null;
-
-function drawDFS_Tarjan()
+class Tarjan extends Algorithm
 {
-    for(var u of currentCanvasGraph.nodes)
+    constructor()
     {
-        updateNodeBitmapColor(u);
-
-        updateNodeInformationQuadrantIForDFS_Tarjan(u);
-    }
-    for(var edge of currentCanvasGraph.edges)
-    {
-        edge.changed = true;
-    }
-    drawEdges();
-    renderTarjanGrid();
-    drawTreeDFS_Tarjan();
-}
-
-function saveDFS_TarjanStepToHistory()
-{
-
-    var canvasGraphCopy = getCurrentGraphCopy();
-
-    for(var node of canvasGraphCopy.nodes)
-    {
-        node.timeDiscovered = currentCanvasGraph.nodes[node.id].timeDiscovered;
-        node.timeCompleted = currentCanvasGraph.nodes[node.id].timeCompleted;
-        node.parent = currentCanvasGraph.nodes[node.id].parent
+        super();
+        this.time = 0;
+        this.nodes = [];
+        this.adjacencyList = [];
     }
 
-    tarjanGraphHistory.push(canvasGraphCopy);
-    currentCanvasGraph.stepCounter++;
-}
-
-function resetDFS_Tarjan()
-{
-    currentCanvasGraph = originalDFS_TarjanGraph;
+    drawStep()
+    {
+        for(var u of currentCanvasGraph.nodes)
+        {
+            updateNodeBitmapColor(u);
     
-    tarjanGraphHistory = [];
-
-    clearTarjanGrid();
-
-    resetGraph();
-}
-
-// WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
-function DFS_Tarjan_visit(u)
-{
-
-    u.color = "RED";
-    time += 1;
-    u.timeDiscovered = time;
-    u.lowlink = time;
-    u.inComponent = false;
-    currentCanvasGraph.stack.push(u);
-
-    saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
+            updateNodeInformationQuadrantIForDFS_Tarjan(u);
+        }
+        for(var edge of currentCanvasGraph.edges)
+        {
+            edge.changed = true;
+        }
+        drawEdges();
+        renderTarjanGrid();
+        drawTreeDFS_Tarjan();
+    }
     
-            
-    for (var vId of adjacencyList[u.id]) {
-        var v = currentCanvasGraph.nodes[vId];
-
-        /*saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-        */
+    
+    resetGraph()
+    {
+        currentCanvasGraph = this.originalGraph;
         
-        if(v.color=="BLUE")
-        {
-
-            //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(u, v);
-            edge.color = "red";
-
-
-            u.color = "RED";
-            //highlight the newly visited node as visited
-            v.color = "PURPLE";
-            v.parent = u;
-
-            //v.timeDiscovered = time+1;
-
-            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            
-            
-            //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
-            u.color = "PURPLE";
-            edge.color = "purple";
-            DFS_Tarjan_visit(v);
-
-        }
-        else 
-        {
-
-            var edge = getEdgeFromNodeToNode(u, v);
-            edge.color = "red";
-
-            setTypeForEdgeBetweenNodes(u,v);
-
-            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            
-
-            edge.color = "black";
-            
-            saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-            
-
-        }
-
-        if(v.inComponent == false)
-        {
-            console.log("v.lowlink: "+v.lowlink);
-            u.lowlink = Math.min(u.lowlink,v.lowlink);
-        }
-
+        this.graphStepsHistory = [];
+    
+        clearTarjanGrid();
+    
+        resetGraph();
     }
-
-    if(u.lowlink == u.timeDiscovered)
+    
+    // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
+    DFS_Tarjan_visit(u)
     {
-        //u.color = "ORANGE";
-        var C = [];
-        do
-        {
-            var v = currentCanvasGraph.stack.pop(); 
-            v.inComponent = true;
-            C.push(v); 
-        }while(v != u);
-
-        currentCanvasGraph.SCC.push(C);
-        console.log("SCC: ");
-        console.log(currentCanvasGraph.SCC);
-
-        /*currentCanvasGraph.SCC = [...currentCanvasGraph.SCC, ...C];
+    
+        u.color = "RED";
+        this.time += 1;
+        u.timeDiscovered = this.time;
+        u.lowlink = this.time;
+        u.inComponent = false;
+        currentCanvasGraph.stack.push(u);
+    
+        this.saveStepToHistory(currentCanvasGraph.stepCounter);
         
-        
-        //console.log( currentCanvasGraph.SCC);
-        for(var u of currentCanvasGraph.SCC)
-        {
-            console.log(u.text);
-        }
-        currentCanvasGraph.SCC = [];*/
-    }
-
+                
+        for (var vId of this.adjacencyList[u.id]) {
+            var v = currentCanvasGraph.nodes[vId];
     
-    u.color = "GREEN";
-    /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
-    update=true;
-    drawTreeDFS_Tarjan();*/
-
-    time += 1;
-    u.timeCompleted = time;
-    //updateNodeInformationQuadrantIForNodeInCanvas(u);
-
-    saveDFS_TarjanStepToHistory(currentCanvasGraph.stepCounter);
-    
-
-    
-    
-}
-
-function DFS_Tarjan(){
-
-    nodes = currentCanvasGraph.nodes.slice();
-
-    var splicedNode = nodes.splice(currentCanvasGraph.startingNode.id,1);
-    nodes.unshift(splicedNode[0]);
-
-    var numberOfNodes = nodes.length;
-    adjacencyList = [];
-    if(currentCanvasGraph.directed == false)
-    {
-        adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
-    }
-    else
-    {
-        adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
-    }
-    
-    //var path = [];
-
-    for (var u of nodes) {
-        u.color = "BLUE";
-        u.parent = null;
-        u.timeDiscovered=null;
-        u.timeCompleted=null;
-        u.inComponent=false;
-        u.lowlink=null;
-    }
-
-    for (var e of currentCanvasGraph.edges) {
-        e.color = "black";
-    }
-
-    time = 0;
-    currentCanvasGraph.stack = [];
-    currentCanvasGraph.SCC = [];
-
-    for (var u of nodes) {
-        if(u.color == "BLUE")
-        {
-            DFS_Tarjan_visit(u);
-        }
-    }
-
-
-};
-
-async function startTarjan(){
-
-    originalDFS_TarjanGraph = getCurrentGraphCopy();
-
-    //originalDFS_TarjanGraph = currentCanvasGraph;
-
-    toggleNodeInformationQuadrantIVisibility();
-    showCurrentVisNetwork();
-
-    DFS_Tarjan();
-
-    canvasFlags[currentCanvasId].runningFlag = true;
-    
-    var step = 0;
-    var lastStep = tarjanGraphHistory.length;
-
-    while(canvasFlags[currentCanvasId].stopFlag != true)
-    {
-
-        currentCanvasGraph = tarjanGraphHistory[step];
-
-        drawDFS_Tarjan();
-
-        await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
-
-        if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
-        {
-            if(step != 0)
+            /*this.saveStepToHistory(currentCanvasGraph.stepCounter);
+            */
+            
+            if(v.color=="BLUE")
             {
-                step--;
+    
+                //highlight edge between these nodes red
+                var edge = getEdgeFromNodeToNode(u, v);
+                edge.color = "red";
+    
+    
+                u.color = "RED";
+                //highlight the newly visited node as visited
+                v.color = "PURPLE";
+                v.parent = u;
+    
+                //v.timeDiscovered = this.time+1;
+    
+                this.saveStepToHistory(currentCanvasGraph.stepCounter);
+                
+                
+                //highlight the origin node as visited, draw edges again so that the currently selected edge is no longer highlighted as such.
+                u.color = "PURPLE";
+                edge.color = "purple";
+                this.DFS_Tarjan_visit(v);
+    
             }
-            canvasFlags[currentCanvasId].stepBackwardsFlag = false;
+            else 
+            {
+    
+                var edge = getEdgeFromNodeToNode(u, v);
+                edge.color = "red";
+    
+                setTypeForEdgeBetweenNodes(u,v);
+    
+                this.saveStepToHistory(currentCanvasGraph.stepCounter);
+                
+    
+                edge.color = "black";
+                
+                this.saveStepToHistory(currentCanvasGraph.stepCounter);
+                
+    
+            }
+    
+            if(v.inComponent == false)
+            {
+                console.log("v.lowlink: "+v.lowlink);
+                u.lowlink = Math.min(u.lowlink,v.lowlink);
+            }
+    
         }
-        else if(canvasFlags[currentCanvasId].restartFlag == true)
+    
+        if(u.lowlink == u.timeDiscovered)
         {
-            step = 0;
-            canvasFlags[currentCanvasId].restartFlag = false;
+            //u.color = "ORANGE";
+            var C = [];
+            do
+            {
+                var v = currentCanvasGraph.stack.pop(); 
+                v.inComponent = true;
+                C.push(v); 
+            }while(v != u);
+    
+            currentCanvasGraph.SCC.push(C);
+            console.log("SCC: ");
+            console.log(currentCanvasGraph.SCC);
+    
+            /*currentCanvasGraph.SCC = [...currentCanvasGraph.SCC, ...C];
+            
+            
+            //console.log( currentCanvasGraph.SCC);
+            for(var u of currentCanvasGraph.SCC)
+            {
+                console.log(u.text);
+            }
+            currentCanvasGraph.SCC = [];*/
         }
-        /*else if(canvasFlags[currentCanvasId].stopFlag == true)
+    
+        
+        u.color = "GREEN";
+        /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
+        update=true;
+        drawTreeDFS_Tarjan();*/
+    
+        this.time += 1;
+        u.timeCompleted = this.time;
+        //updateNodeInformationQuadrantIForNodeInCanvas(u);
+    
+        this.saveStepToHistory(currentCanvasGraph.stepCounter);
+        
+    
+        
+        
+    }
+    
+    DFS_Tarjan(){
+    
+        this.nodes = currentCanvasGraph.nodes.slice();
+    
+        var splicedNode = this.nodes.splice(currentCanvasGraph.startingNode.id,1);
+        this.nodes.unshift(splicedNode[0]);
+    
+        var numberOfNodes = this.nodes.length;
+        this.adjacencyList = [];
+        if(currentCanvasGraph.directed == false)
         {
-            resetDFS_Tarjan();
-            canvasFlags[currentCanvasId].stopFlag = false;
-            return 0;
-        }*/
+            this.adjacencyList = convertToAdjacencyListUndirected(numberOfNodes);
+        }
         else
         {
-            if(step < lastStep-1)
+            this.adjacencyList = convertToAdjacencyListDirected(numberOfNodes);
+        }
+        
+        //var path = [];
+    
+        for (var u of this.nodes) {
+            u.color = "BLUE";
+            u.parent = null;
+            u.timeDiscovered=null;
+            u.timeCompleted=null;
+            u.inComponent=false;
+            u.lowlink=null;
+        }
+    
+        for (var e of currentCanvasGraph.edges) {
+            e.color = "black";
+        }
+    
+        this.time = 0;
+        currentCanvasGraph.stack = [];
+        currentCanvasGraph.SCC = [];
+    
+        for (var u of this.nodes) {
+            if(u.color == "BLUE")
             {
-                step++;
-                console.log("jdu delat step: "+step);
+                this.DFS_Tarjan_visit(u);
             }
         }
-    }
-    resetDFS_Tarjan();
     
-    //drawEdges();
-    //drawTreeDFS_Tarjan();
+    
+    };
+    
+    async startAlgorithm(){
+    
+        this.originalGraph = currentCanvasGraph;
 
-
-
-
-
+        currentCanvasGraph = getCurrentGraphCopy();
+    
+        toggleNodeInformationQuadrantIVisibility();
+        showCurrentVisNetwork();
+    
+        this.DFS_Tarjan();
+    
+        canvasFlags[currentCanvasId].runningFlag = true;
+        
+        var step = 0;
+        var lastStep = this.graphStepsHistory.length;
+    
+        while(canvasFlags[currentCanvasId].stopFlag != true)
+        {
+    
+            currentCanvasGraph = this.graphStepsHistory[step];
+    
+            this.drawStep();
+    
+            await Promise.race([createClickListenerPromise(CurrentRestartButton), createClickListenerPromise(CurrentStepBackwardsButton), createClickListenerPromise(CurrentStepForwardButton)]);
+    
+            if(canvasFlags[currentCanvasId].stepBackwardsFlag == true)
+            {
+                if(step != 0)
+                {
+                    step--;
+                }
+                canvasFlags[currentCanvasId].stepBackwardsFlag = false;
+            }
+            else if(canvasFlags[currentCanvasId].restartFlag == true)
+            {
+                step = 0;
+                canvasFlags[currentCanvasId].restartFlag = false;
+            }
+            /*else if(canvasFlags[currentCanvasId].stopFlag == true)
+            {
+                this.resetGraph();
+                canvasFlags[currentCanvasId].stopFlag = false;
+                return 0;
+            }*/
+            else
+            {
+                if(step < lastStep-1)
+                {
+                    step++;
+                    console.log("jdu delat step: "+step);
+                }
+            }
+        }
+        this.resetGraph();
+        
+        //drawEdges();
+        //drawTreeDFS_Tarjan();
+    
+    }
 }
+

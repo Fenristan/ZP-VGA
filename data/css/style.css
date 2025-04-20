@@ -11,28 +11,27 @@ body {
 .menu-container {
   width: 100%;
 }
-.current-menu {
-  background: #4d431d;
+.algorithm-menu {
+  background: #2a2e6f;
   border-radius: 5px;
   padding: 20px 70px 20px 20px;
   display: flex;
   justify-content: space-between;
-  border: #fdd663 solid 2px;
   color: #fff;
   margin-left: 5%;
   margin-right: 5%;
 }
-.current-menu .icon {
+.algorithm-menu .icon {
   text-align: center;
 }
-.current-menu .icon img {
+.algorithm-menu .icon img {
   max-width: 130px;
 }
-.current-menu .icon h6 {
+.algorithm-menu .icon h6 {
   margin-top: -10px;
   text-transform: capitalize;
 }
-.current-menu h2 {
+.algorithm-menu h2 {
   font-weight: 700;
   font-size: 1.7rem;
 }
@@ -65,14 +64,14 @@ body {
   padding: 20px 16px;
   list-style: none;
   width: calc(100% / 3);
-  background: #313050;
+  background: #9a5353;
   border-radius: 5px;
   border:none;
   height: 160px;
 }
 
 .menu-cards :hover {
-  background: #373657;
+  background: #2a2e6f;
 }
 
 .menu-cards .card img {

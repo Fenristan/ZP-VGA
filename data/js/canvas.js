@@ -1,68 +1,21 @@
+const canvases = document.getElementsByClassName("canvas");
 
-
-const canvas0 = document.getElementById('canvas0');
-const canvas1 = document.getElementById('canvas1');
-const canvas2 = document.getElementById('canvas2');
-const canvas3 = document.getElementById('canvas3');
-const canvas4 = document.getElementById('canvas4');
-const canvas5 = document.getElementById('canvas5');
-
-/*canvas0.directed = true;
-canvas1.directed = true;
-canvas2.directed = true;
-canvas3.directed = true;
-canvas4.directed = false;
-canvas5.directed = true;
-
-canvas0.weighted = false;
-canvas1.weighted = false;
-canvas2.weighted = true;
-canvas3.weighted = false;
-canvas4.weighted = false;
-canvas5.weighted = false;*/
-
-const canvases = [];
-canvases.push(canvas0);
-canvases.push(canvas1);
-canvases.push(canvas2);
-canvases.push(canvas3);
-canvases.push(canvas4);
-canvases.push(canvas5);
-
-
-const canvasContainer0 = document.getElementById('canvas-container0');
-const canvasContainer1 = document.getElementById('canvas-container1');
-const canvasContainer2 = document.getElementById('canvas-container2');
-const canvasContainer3 = document.getElementById('canvas-container3');
-const canvasContainer4 = document.getElementById('canvas-container4');
-const canvasContainer5 = document.getElementById('canvas-container5');
-
+const canvasContainersDOMs = document.getElementsByClassName("canvas-container-hidden");
 const canvasContainers = [];
-canvasContainers.push(canvasContainer0);
-canvasContainers.push(canvasContainer1);
-canvasContainers.push(canvasContainer2);
-canvasContainers.push(canvasContainer3);
-canvasContainers.push(canvasContainer4);
-canvasContainers.push(canvasContainer5);
+for(let i = 0; i < canvasContainersDOMs.length; i++)
+{
+    canvasContainers.push(canvasContainersDOMs[i]);
+}
 
-
-const menuOption1 = document.querySelector("#menuOption0");
-const menuOption2 = document.querySelector("#menuOption1");
-const menuOption3 = document.querySelector("#menuOption2");
-const menuOption4 = document.querySelector("#menuOption3");
-const menuOption5 = document.querySelector("#menuOption4");
-const menuOption6 = document.querySelector("#menuOption5");
-
+const menuOptionsDOMs = document.getElementsByClassName("menuOption");
 const menuOptions = [];
+for(let i = 0; i < menuOptionsDOMs.length; i++)
+{
+    menuOptions.push(menuOptionsDOMs[i]);
+}
 
-menuOptions.push(menuOption1);
-menuOptions.push(menuOption2);
-menuOptions.push(menuOption3);
-menuOptions.push(menuOption4);
-menuOptions.push(menuOption5);
-menuOptions.push(menuOption6);
-
-var stages = []
+var stages = [];
+var containers = [];
 
 var canvasGraphs = [];
 var canvasFlags = [];
@@ -72,6 +25,12 @@ for(let i = 0; i < canvases.length; i++)
     stages.push(new createjs.Stage(canvases[i]));
     canvasGraphs.push(new Graph(i));
     canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
+    containers[i] = new createjs.Container();
+}
+
+for(let i = 0; i < stages.length; i++)
+{
+    stages[i].addChild(containers[i]);
 }
 
 canvasGraphs[0].directed = true;
@@ -310,6 +269,47 @@ function hideCurrentVisNetwork()
     var visNetwork = document.getElementById("visNetworkCanvas"+currentCanvasId);
     visNetwork.classList.remove('visNetwork');
     visNetwork.classList.add('hidden');
+}
+
+function addNodeBtnClicked() {
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
+    currentCanvasFlags.addNodeFlag=!currentCanvasFlags.addNodeFlag;
+
+    highlightSelectedMenuTool();
+}
+function addEdgeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
+    currentCanvasFlags.addEdgeFlag=!currentCanvasFlags.addEdgeFlag;
+
+    highlightSelectedMenuTool();
+
+    currentCanvasGraph.selectedNodes = [];
+}
+function removeNodeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeEdgeFlag=false;
+
+    currentCanvasFlags.removeNodeFlag=!currentCanvasFlags.removeNodeFlag;
+
+    highlightSelectedMenuTool();
+}
+function removeEdgeBtnClicked() {
+    currentCanvasFlags.addNodeFlag=false;
+    currentCanvasFlags.addEdgeFlag=false;
+    currentCanvasFlags.removeNodeFlag=false;
+
+    currentCanvasFlags.removeEdgeFlag=!currentCanvasFlags.removeEdgeFlag;
+
+    highlightSelectedMenuTool();
+
+    currentCanvasGraph.selectedNodes = [];
 }
 
 menuOptions.forEach(setFunctionToMenuOption)

@@ -81,7 +81,6 @@ function init() {
                 console.log(currentCanvasGraph.nodes);
                 var bitmap = new createjs.Bitmap(nodeImage);
                 createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
-                bindFunctionalityToBitmap(bitmap);
                 //currentCanvasFlags.addNodeFlag=false;
                 //highlightSelectedMenuTool();
                 update = true;
@@ -166,7 +165,6 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     edgeWeightDom.x = mp_x;
                     edgeWeightDom.y = mp_y;
                     
-                    //calculate end points for arrows of bezier
                     var d_x = cp3_x - end_x;
                     var d_y = cp3_y - end_y;
 
@@ -227,8 +225,8 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                 {
                     g.setStrokeStyle(3);
 
-                    var r_start = 24;
-                    var r_end = -24;//(edges[i].nodes[1].size/2)*-1
+                    var r_start = nodeRadius;
+                    var r_end = -nodeRadius;//(edges[i].nodes[1].size/2)*-1
 
                     var a=edges[i].nodes[1].x-edges[i].nodes[0].x;
                     var b=edges[i].nodes[1].y-edges[i].nodes[0].y;
@@ -253,7 +251,7 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     edgeWeightDom.x = mp_x;
                     edgeWeightDom.y = mp_y;
 
-                    var d_x = edges[i].nodes[0].x - edges[i].nodes[1].x;
+                    var d_x = edges[i].nodes[0].x - edges[i].nodes[1].x;    
                     var d_y = edges[i].nodes[0].y - edges[i].nodes[1].y;
                         
                     
@@ -376,42 +374,25 @@ function updateEdgeWeights()
 function createNodeBitmap(node,container,bitmap) {
     bitmap.x = node.x;
     bitmap.y = node.y;
-    //bitmap.rotation = 360 * Math.random() | 0;
+
     bitmap.regX = bitmap.image.width / 2 | 0;
     bitmap.regY = bitmap.image.height / 2 | 0;
-    //bitmap.scale = bitmap.originalScale = Math.random() * 0.4 + 0.6;
+
     bitmap.scale = 0.7;
     bitmap.name = "bmpNode_" + node.id;
     bitmap.id = (node.id);
     bitmap.cursor = "pointer";
-    //node.size=(bitmap.getBounds().width);
+
 
     nodeRadius = ((bitmap.image.width)*bitmap.scale) / 2;
     console.log("nodeRadius je: "+nodeRadius);
-    //nodeRadius=(bitmap.getBounds().width/2);
-    /*text.x = node.x-textoffset;
-    text.y = node.y-textoffset;
-    text.name = "nodeNameText_" + node.id;
-    text.id = (node.id);
-    text.cursor = "pointer";
-    text.scale = 1.5;*/
+
 
     var html = document.createElement("div");
     html.innerHTML = ""+node.text;
     html.id = "nodeNameText_"+currentCanvasId+"_"+node.id;
     html.style.contenteditable="true";
-    //html.id="nodeNameText_"+node.id;
-    //html.id="nodeNameText_"+node.id;
-    //html.style.height = '50px';
-    //html.style.width = '100px';
-    //html.style.backgroundColor = '#000000';
-    /*html.style.position = "absolute";
-    html.style.top = (0).toString();
-    html.style.left = (0).toString();*/
-    //html.style.bottom = node.y;
 
-    //var content = document.createTextNode(""+node.id);
-    //html.appendChild(content);*/
     document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
 
     var textName = new createjs.DOMElement(html);
@@ -432,228 +413,41 @@ function createNodeBitmap(node,container,bitmap) {
 
     container.addChild(bitmap,textInformationQuadrantI,textName);
 
+    bindFunctionalityToBitmap(bitmap)
+
 }
 
-function addEdgeBetweenNodes(nodes)
+function createEdgeVisualisationElements(edge)
 {
-    var edges = currentCanvasGraph.edges;
-    if(edgeFromNodeToNode(nodes[0],nodes[1]))
-    {
-        console.log("there already is an edge between these nodes");
-    }
-    else if(currentCanvasGraph.directed == false && edgeFromNodeToNode(nodes[1],nodes[0]))
-    {
-        console.log("undirected graph - there is already an edge between these nodes");
-    }
-    else
-    {
-        var edge = new Edge(edges.length,nodes,1);
-        edges.push(edge);
+    var html = document.createElement("div");
+    html.innerHTML = ""+edge.weight;
+    html.id = "edgeWeightText_"+currentCanvasId+"_"+edge.id;
+    html.style.contenteditable="true";
 
-        var html = document.createElement("div");
-        html.innerHTML = ""+edge.weight;
-        html.id = "edgeWeightText_"+currentCanvasId+"_"+edge.id;
-        html.style.contenteditable="true";
+    document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
 
-        document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
+    var edgeWeightDom = new createjs.DOMElement(html);
+    edgeWeightDom.id = edge.id;
+    edgeWeightDom.name = "edgeWeight_" + edge.id;
+    edgeWeightDom.cursor = "pointer";
 
-        console.log("creating edgeWeight_"+edge.id);
-        var edgeWeightDom = new createjs.DOMElement(html);
-        edgeWeightDom.id = edge.id;
-        edgeWeightDom.name = "edgeWeight_" + edge.id;
-        edgeWeightDom.cursor = "pointer";
-
-        console.log(edgeWeightDom.name);
-        
-
-        containers[currentCanvasId].addChild(edgeWeightDom);
-        console.log("edge Weight Dom name: "+edgeWeightDom.name)
-
-        // if there is already an edge in the opposite direction - we are creating a multigraph, set this edge as changed, so that is it also drawn as a multigraph
-        var edgeOppositeDirection = getEdgeFromNodeToNode(nodes[1],nodes[0])
-        if(edgeOppositeDirection != null)
-        {
-            edgeOppositeDirection.changed = true;
-        }
-
-        drawEdges();
-    }
     
-    
-}
-function removeEdgeBetweenNodes(nodes)
-{
-    var edges = currentCanvasGraph.edges;
-    let oldEdges = edges.slice(0);
-    //var edge = new Edge(edges.length,nodes);
-    for(let i = 0; i<edges.length; i++)
+    containers[currentCanvasId].addChild(edgeWeightDom);
+
+    // if there is already an edge in the opposite direction - we are creating a multigraph, set this edge as changed, so that is it also drawn as a multigraph
+    var edgeOppositeDirection = getEdgeFromNodeToNode(edge.nodes[1],edge.nodes[0])
+    if(edgeOppositeDirection != null)
     {
-        var deleteThisEdge = false;
-        if(currentCanvasGraph.directed == true)
-        {
-            deleteThisEdge = (edges[i].nodes[0].id==nodes[0].id) && (edges[i].nodes[1].id==nodes[1].id);
-        }
-        else
-        {
-            deleteThisEdge = (nodes[0].id == edges[i].nodes[0].id)&&(nodes[1].id == edges[i].nodes[1].id)||(nodes[0].id == edges[i].nodes[1].id)&&(nodes[1].id == edges[i].nodes[0].id);
-        }
-        //if((edges[i].nodes[0]==nodes[0]||edges[i].nodes[0]==nodes[1])&&(edges[i].nodes[1]==nodes[0]||edges[i].nodes[1]==nodes[1])) //check if edge exists
-        if(deleteThisEdge)
-        {
-            // if there is already an edge in the opposite direction, a multigraph, we have to make sure, so that it updates when we draw edges so that it can be drawn as a regular edge, isntead of a curve
-            var edgeOppositeDirection = getEdgeFromNodeToNode(edges[i].nodes[1],edges[i].nodes[0])
-            if(edgeOppositeDirection != null)
-            {
-                edgeOppositeDirection.changed = true;
-            }
-
-            //oldEdges[i].changed = true;
-            //edges[i].changed = true;
-
-            console.log("removing edge: "+edges[i].id)
-            console.log("removing "+(containers[currentCanvasId].getChildByName("edgeWeight_"+edges[i].id)).name)
-
-            let indexDeleted = edges[i].id;
-            console.log("indexDeleted je:"+indexDeleted)
-            console.log("edges length je:"+edges.length)
-
-            
-
-            let edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+indexDeleted);
-            //text.parentNode.removeChild(text)
-            console.log("deleting : "+edgeWeightText.id)
-            edgeWeightText.remove();
-            
-            containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("edgeWeight_"+indexDeleted));
-
-            containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+indexDeleted));
-            
-
-            for(let j = edges[i].id+1; j < edges.length; j++)
-            {
-                
-                console.log("id je:"+j)
-                
-                let edgeWeight = containers[currentCanvasId].getChildByName("edgeWeight_"+j);
-                //edgeWeight.id = edgeWeight.id-1;
-                let index = j-1
-                edgeWeight.name = "edgeWeight_" + index;
-                containers[currentCanvasId].addChild(edgeWeight);
-                
-
-                
-                
-                let text = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+j);
-                let indexNext = j-1
-                console.log("zkousim edgeWeightText_:"+indexNext);
-                console.log("edges length: "+edges.length);
-                //let nextTextInnerHTML = (document.getElementById("edgeWeightText_"+currentCanvasId+"_"+(indexDeleted))).innerHTML;
-                //text.innerHTML = nextTextInnerHTML;
-
-                text.id = "edgeWeightText_"+currentCanvasId+"_"+indexNext;
-
-                let line = containers[currentCanvasId].getChildByName("line_"+j);
-                line.name = "line_"+(indexNext);
-
-            }
-
-            for(let j = edges[i].id; j < edges.length-1; j++)
-            {
-                
-
-                edges[j]=edges[j+1];
-                edges[j].id=(edges[j].id)-1;
-
-                
-                /*let selectedLine = this.parent.getChildByName("line_"+(j+1));
-                selectedLine.id=selectedLine.id-1;
-                selectedLine.name="bmpNode_"+i;
-                this.parent.addChild(selectedLine);*/
-            }
-            
-            
-            
-            //containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("edgeWeight_"+edges.length-1));
-
-            //let index = edges.length-1
-            //let edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+index);
-            //edgeWeightText.remove();
-            
-
-            var poppedEdge = edges.pop();
-
-            
-        
-            //poppedEdge.changed = true;
-            console.log(edges);
-            //console.log("mazu line "+(oldEdges.length-1));
-            //containers[currentCanvasId].getChildByName("line_"+(oldEdges.length-1)).graphics.clear();
-            //containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+(oldEdges.length-1)));
-
-            //this.parent.removeChild(this.parent.getChildByName("line_"+edges[i].id));
-        }
-    }
-    drawEdges();
-}
-function removeAllEdgesFromNode(node,nodes,edges)
-{
-    //var edge = new Edge(edges.length,nodes);
-    let oldEdges = edges.slice(0);
-    var edgesToBeRemoved = []
-    /*for(let i = 0; i<edges.length; i++)
-    {
-        console.log("id ndoe predaneho"+node.id);
-        
-        //if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
-        if((edges[i].nodes[0]==node||edges[i].nodes[1]==node))
-        {
-            //edgesToBeRemoved.push(edges[i])
-            /*for(let j = edges[i].id; j < edges.length-1; j++)
-            {
-                edges[j]=edges[j+1];
-                edges[j].id=(edges[j].id)-1;
-            }
-            //containers.removeChild(containers.getChildByName("line_"+edges[i].id));
-            edges.pop();
-            //console.log(edges);
-
-        }
-        for(let i = 0; i<edgesToBeRemoved.length; i++)
-        {
-            //removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes,edges);
-        }
-        
-    }*/
-
-    for(let i = edges.length-1; i>=0; i--)
-    {
-        if((edges[i].nodes[0].id==node.id||edges[i].nodes[1].id==node.id))
-        {
-            edgesToBeRemoved.push(edges[i]);
-        }
-    }
-
-    for(let i = 0; i<edgesToBeRemoved.length; i++)
-    {
-        removeEdgeBetweenNodes(edgesToBeRemoved[i].nodes);
+        edgeOppositeDirection.changed = true;
     }
 
     drawEdges();
 }
 
-function removeNode(bitmap)
+
+function removeNodeBitmap(bitmap)
 {
-    var nodes = currentCanvasGraph.nodes;
-    var edges = currentCanvasGraph.edges;
-    var oldEdges = edges.slice(0);
     var parent = bitmap.parent;
-    var nodeId = bitmap.id;
-
-    removeAllEdgesFromNode(nodes[bitmap.id],nodes,edges);
-
-    //remove this node, it's bitmap and everything else
-    nodes.splice(bitmap.id,1);
-    
     parent.removeChild(parent.getChildByName("nodeNameText_"+bitmap.id));
 
     var htmlTextName = document.getElementById("nodeNameText_"+currentCanvasId+"_"+bitmap.id);
@@ -662,31 +456,18 @@ function removeNode(bitmap)
     parent.removeChild(parent.getChildByName("nodeInformationQuadrantIText_"+bitmap.id));
     
     parent.removeChild(bitmap);
+}
 
-    //shift the ids of all nodes that come after the one that was deleted.
-    for(var i = nodes.length-1; i >= nodeId ; i--)
-    {
-        var selectedBitmap = parent.getChildByName("bmpNode_"+(nodes[i].id));
-        selectedBitmap.id -= 1;
-        selectedBitmap.name = "bmpNode_"+(selectedBitmap.id);
-        //parent.addChild(selectedBitmap);
+function removeEdgeVisualisationElements(edge)
+{
+    let indexDeleted = edge.id;
 
-        var textName = parent.getChildByName("nodeNameText_"+nodes[i].id);
-        textName.name = "nodeNameText_"+(selectedBitmap.id);
-        //parent.addChild(textName);
-
-        var htmlTextName = document.getElementById("nodeNameText_"+currentCanvasId+"_"+nodes[i].id);
-        htmlTextName.id = "nodeNameText_"+currentCanvasId+"_"+(selectedBitmap.id);
-
-        var textInformationQuadrantI =  parent.getChildByName("nodeInformationQuadrantIText_"+nodes[i].id);
-        textInformationQuadrantI.name = "nodeInformationQuadrantIText_"+(selectedBitmap.id);
-        //parent.addChild(textInformationQuadrantI);
-
-        nodes[i].id-=1;
-    }
-
-    drawEdges();
+    let edgeWeightText = document.getElementById("edgeWeightText_"+currentCanvasId+"_"+indexDeleted);
+    edgeWeightText.remove();
     
+    containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("edgeWeight_"+indexDeleted));
+
+    containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+indexDeleted));
 }
 
 function toggleNodeInformationQuadrantIVisibility()
@@ -710,24 +491,6 @@ function clearNodeInformationQuadrantIText()
     });
 }
 
-/*function updateNodeInformationQuadrantIForNodeInCanvas(node)
-{
-    if(node.timeDiscovered!=null)
-    {
-        var timeDiscoveredCompletedText = "" + node.timeDiscovered + "/";
-        if(node.timeCompleted!=null)
-        {
-            timeDiscoveredCompletedText += "" + node.timeCompleted;
-        }
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = timeDiscoveredCompletedText;
-    }
-    else if(node.distance!=null)
-    {
-        containers[currentCanvasId].getChildByName("nodeInformationQuadrantIText_"+node.id).text = "" + node.distance;
-    }
-    
-    update=true;
-}*/
 
 function updateNodeInformationQuadrantIForDFS(node)
 {
@@ -871,7 +634,7 @@ function bindFunctionalityToBitmap(bitmap) {
                 currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
                 removeEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
                 //currentCanvasGraph.selectedNodes.length=0;
-                currentCanvasGraph.selectedNodes = []
+                currentCanvasGraph.selectedNodes = [];
                 //currentCanvasFlags.removeEdgeFlag=false;
                 //highlightSelectedMenuTool();
             }
@@ -1081,31 +844,7 @@ function tick(event) {
 }
 
 
-function highlightSelectedMenuTool()
-{
-    for(var i=0; i<4; i++)
-    {
-        canvasContainers[currentCanvasId].getElementsByTagName('input')[i].style.outline = "none";
-    }
-    
-    if(currentCanvasFlags.addNodeFlag)
-    {
-        canvasContainers[currentCanvasId].getElementsByTagName('input')[0].style.outline = "2px solid orange";
-    }
-    else if(currentCanvasFlags.addEdgeFlag)
-    {
-        canvasContainers[currentCanvasId].getElementsByTagName('input')[1].style.outline = "2px solid orange";
-    }
-    else if(currentCanvasFlags.removeNodeFlag)
-    {
-        canvasContainers[currentCanvasId].getElementsByTagName('input')[2].style.outline = "2px solid orange";
-    }
-    else if(currentCanvasFlags.removeEdgeFlag)
-    {
-        canvasContainers[currentCanvasId].getElementsByTagName('input')[3].style.outline = "2px solid orange";
-    }
 
-}
 
 
 /*function stepForwardBtnClicked() {

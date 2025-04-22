@@ -48,7 +48,7 @@ class Biconnectivity extends Algorithm
     
     }
     
-    setTypeForEdgeBetweenNodesBiconnectivity(nodeA, nodeB)
+    setTypeForEdgeBetweenNodes(nodeA, nodeB)
     {
         var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
         if(nodeA.number < nodeB.number)
@@ -192,7 +192,7 @@ class Biconnectivity extends Algorithm
                 currentCanvasGraph.edgeStack.push(edge);
                 v.lowpt = Math.min(v.lowpt,w.number);
     
-                this.setTypeForEdgeBetweenNodesBiconnectivity(v,w);
+                this.setTypeForEdgeBetweenNodes(v,w);
     
                 edge.color = "red";
     

@@ -54,7 +54,7 @@ file.addEventListener("change", function(){
             var bitmap = new createjs.Bitmap(nodeImage);
             currentCanvasGraph.nodes.push(node);
             createNodeBitmap(node,containers[currentCanvasId],bitmap);
-            bindFunctionalityToBitmap(bitmap);
+            //bindFunctionalityToBitmap(bitmap);
 
             //I make sure to check that every edge in the loaded canvas, which posesses this node, references this actual node.
             for(var i = 0; i < loadedGraph.edges.length; i++)

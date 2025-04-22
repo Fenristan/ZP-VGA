@@ -450,6 +450,31 @@ for(var StartPauseAutoButton of PlayPauseAutoButtons)
         }
         toggleCurrentPlayPauseAutoButton();
     });
+ 
+}
 
+function highlightSelectedMenuTool()
+{
+    for(var i=0; i<4; i++)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[i].style.outline = "none";
+    }
     
+    if(currentCanvasFlags.addNodeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[0].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.addEdgeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[1].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.removeNodeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[2].style.outline = "2px solid orange";
+    }
+    else if(currentCanvasFlags.removeEdgeFlag)
+    {
+        canvasContainers[currentCanvasId].getElementsByTagName('input')[3].style.outline = "2px solid orange";
+    }
+
 }

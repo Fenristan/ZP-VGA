@@ -59,7 +59,7 @@ class Depth_First_Search extends Algorithm
             */
     
             //highlight edge between these nodes red
-            var edge = getEdgeFromNodeToNode(u, v);
+            var edge = currentCanvasGraph.getEdgeFromNodeToNode(u, v);
             edge.previousColor = edge.color;
             edge.color = "red";
             
@@ -216,7 +216,7 @@ class Depth_First_Search extends Algorithm
     
         this.originalGraph = currentCanvasGraph;
 
-        currentCanvasGraph = getCurrentGraphCopy();
+        currentCanvasGraph = currentCanvasGraph.getCurrentGraphCopy();
         //this.originalGraph = currentCanvasGraph;
     
         toggleNodeInformationQuadrantIVisibility();
@@ -269,17 +269,12 @@ class Depth_First_Search extends Algorithm
         
         //drawEdges();
         //drawTreeDFS();
-    
-    
-    
-    
-    
     }
 }
 
 function setTypeForEdgeBetweenNodes(nodeA, nodeB)
 {
-    var edge = getEdgeFromNodeToNode(nodeA,nodeB);
+    var edge = currentCanvasGraph.getEdgeFromNodeToNode(nodeA,nodeB);
     if(nodeA.timeDiscovered < nodeB.timeDiscovered)
     {
         if(isInTheSameTree(nodeB,nodeA))

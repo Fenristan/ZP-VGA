@@ -30,7 +30,11 @@ file.addEventListener("change", function(){
 
         var fileText = this.result;
         //console.log(fileText);
-        const loadedGraph = JSON.parse(fileText);
+        const loadedGraphParsed = JSON.parse(fileText);
+
+        var loadedGraph = new Graph();
+
+        Object.assign(loadedGraph,loadedGraphParsed);
         
         //update = true;
         
@@ -45,7 +49,7 @@ file.addEventListener("change", function(){
                 var node = currentCanvasGraph.nodes[i]
                 var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
                 //console.log(bitmap);
-                removeNode(bitmap)
+                currentCanvasGraph.removeNode(bitmap)
             }
         }
         
@@ -78,7 +82,7 @@ file.addEventListener("change", function(){
                 console.log("pridavam edge");
                 console.log(edge);
                 
-                addEdgeBetweenNodes(edge.nodes,currentCanvasGraph.edges);
+                currentCanvasGraph.addEdgeBetweenNodes(edge.nodes,currentCanvasGraph.edges);
                 currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
             });
             
@@ -95,7 +99,7 @@ file.addEventListener("change", function(){
             //console.log("pridavam edge");
             //console.log(edge);
             
-            addEdgeBetweenNodes(edge.nodes);
+            currentCanvasGraph.addEdgeBetweenNodes(edge.nodes);
             currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
         });
         
@@ -103,14 +107,14 @@ file.addEventListener("change", function(){
         //}
         /*if(loadedGraph.directed == true && currentCanvasGraph.directed == false)
         {
-            transformDirectedToUndirected();
+            currentCanvasGraph.transformDirectedToUndirected();
         }
         else */
         //when loading an indirected graph into a directed one, transform it onto a directed one.
         if(loadedGraph.directed == false && currentCanvasGraph.directed == true)
         {
             alert("Loading undirected graph as a directed one.");
-            transformUndirectedToDirected();
+            currentCanvasGraph.transformUndirectedToDirected();
         }
 
 

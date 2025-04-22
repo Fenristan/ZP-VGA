@@ -43,7 +43,7 @@ class Breadth_First_Search extends Algorithm
     {
         this.originalGraph = currentCanvasGraph;
 
-        currentCanvasGraph = getCurrentGraphCopy();
+        currentCanvasGraph = currentCanvasGraph.getCurrentGraphCopy();
     
         toggleNodeInformationQuadrantIVisibility();
         showCurrentVisNetwork();
@@ -146,7 +146,7 @@ class Breadth_First_Search extends Algorithm
             
     
             for (var vId of adjacencyList[u.id]) {
-                var v =  getNodeUsingId(vId);
+                var v =  currentCanvasGraph.getNodeUsingId(vId);
     
                 if (v.color == "BLUE") {
                     u.color = "RED";
@@ -157,7 +157,7 @@ class Breadth_First_Search extends Algorithm
                     v.parent = u;
                     currentCanvasGraph.queue.push(v);
     
-                    var edge = getEdgeFromNodeToNode(u,v);
+                    var edge = currentCanvasGraph.getEdgeFromNodeToNode(u,v);
                     edge.color = "red";
     
     

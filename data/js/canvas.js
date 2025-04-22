@@ -210,15 +210,15 @@ function checkBoxDirectedClicked(evt)
         //alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
         /*for(node of currentCanvasGraph.nodes)
         {
-            removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
+            currentCanvasGraph.removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
         }*/
         currentCanvasGraph.directed ^= true;
-        transformUndirectedToDirected();
+        currentCanvasGraph.transformUndirectedToDirected();
     }
     else
     {
         
-        transformDirectedToUndirected();
+        currentCanvasGraph.transformDirectedToUndirected();
         currentCanvasGraph.directed ^= true;
     }
     

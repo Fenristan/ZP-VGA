@@ -8,7 +8,7 @@ class Algorithm
 
     saveStepToHistory()
     {
-        var canvasGraphCopy = getCurrentGraphCopy();
+        var canvasGraphCopy = currentCanvasGraph.getCurrentGraphCopy();
         this.graphStepsHistory.push(canvasGraphCopy);
         currentCanvasGraph.stepCounter++;
     }

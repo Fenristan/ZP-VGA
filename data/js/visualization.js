@@ -76,11 +76,9 @@ function init() {
             if(currentCanvasFlags.addNodeFlag==true)
             {
                 var newNode = new Node(currentCanvasGraph.nodes.length,currentCanvasGraph.nodes.length,(evt.stageX),(evt.stageY))
-                currentCanvasGraph.nodes.push(newNode);
-                console.log(newNode);
-                console.log(currentCanvasGraph.nodes);
-                var bitmap = new createjs.Bitmap(nodeImage);
-                createNodeBitmap(newNode,containers[currentCanvasId],bitmap);
+                //currentCanvasGraph.nodes.push(newNode);
+                currentCanvasGraph.addNode(newNode);
+                //var bitmap = new createjs.Bitmap(nodeImage);
                 //currentCanvasFlags.addNodeFlag=false;
                 //highlightSelectedMenuTool();
                 update = true;
@@ -127,7 +125,7 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
 
                 g.beginStroke( edges[i].color );
 
-                var isMultigraph = edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1],edges);
+                var isMultigraph = currentCanvasGraph.edgeBetweenNodesBothWays(edges[i].nodes[0],edges[i].nodes[1]);
                 
                 
                 if(edges[i].nodes[0].id == edges[i].nodes[1].id)
@@ -371,7 +369,10 @@ function updateEdgeWeights()
     }
 }
 
-function createNodeBitmap(node,container,bitmap) {
+function createNodeBitmap(node,container) {
+
+    var bitmap = new createjs.Bitmap(nodeImage);
+
     bitmap.x = node.x;
     bitmap.y = node.y;
 
@@ -435,7 +436,7 @@ function createEdgeVisualisationElements(edge)
     containers[currentCanvasId].addChild(edgeWeightDom);
 
     // if there is already an edge in the opposite direction - we are creating a multigraph, set this edge as changed, so that is it also drawn as a multigraph
-    var edgeOppositeDirection = getEdgeFromNodeToNode(edge.nodes[1],edge.nodes[0])
+    var edgeOppositeDirection = currentCanvasGraph.getEdgeFromNodeToNode(edge.nodes[1],edge.nodes[0])
     if(edgeOppositeDirection != null)
     {
         edgeOppositeDirection.changed = true;
@@ -609,7 +610,7 @@ function bindFunctionalityToBitmap(bitmap) {
             else
             {
                 currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
-                addEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
+                currentCanvasGraph.addEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
                 //currentCanvasGraph.selectedNodes.length=0;
                 currentCanvasGraph.selectedNodes = []
                 //currentCanvasFlags.addEdgeFlag=false;
@@ -618,7 +619,7 @@ function bindFunctionalityToBitmap(bitmap) {
         }
         else if(currentCanvasFlags.removeNodeFlag==true)
         {
-            removeNode(bitmap);
+            currentCanvasGraph.removeNode(nodes[bitmap.id]);
             //currentCanvasFlags.removeNodeFlag=false;
             //highlightSelectedMenuTool();
         }
@@ -632,7 +633,7 @@ function bindFunctionalityToBitmap(bitmap) {
             else
             {
                 currentCanvasGraph.selectedNodes.push(nodes[bitmap.id]);
-                removeEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
+                currentCanvasGraph.removeEdgeBetweenNodes(currentCanvasGraph.selectedNodes);
                 //currentCanvasGraph.selectedNodes.length=0;
                 currentCanvasGraph.selectedNodes = [];
                 //currentCanvasFlags.removeEdgeFlag=false;
@@ -689,7 +690,7 @@ function bindFunctionalityToBitmap(bitmap) {
             for(var nodeB of currentCanvasGraph.nodes)
             {
                 
-                var edge = getEdgeFromNodeToNode(node,nodeB);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(node,nodeB);
                 if(edge != null)
                 {
                     edge.changed = true;
@@ -697,7 +698,7 @@ function bindFunctionalityToBitmap(bitmap) {
                     drawEdges();
                 }
                 
-                edge = getEdgeFromNodeToNode(nodeB,node);
+                edge = currentCanvasGraph.getEdgeFromNodeToNode(nodeB,node);
                 if(edge != null)
                 {
                     edge.changed = true;
@@ -795,45 +796,6 @@ function resetGraph()
     canvasContainers[currentCanvasId].getElementsByClassName("canvas-container-row")[0].style.pointerEvents = "auto";
 }
 
-function handleImageLoad(event) {
-    var textoffset = 3;
-    var bitmap;
-    currentCanvasGraph = canvasGraphs[0];
-    
-    
-
-
-    //const nodes = [];
-    //const edges = [];
-
-    for(var i = 0; i < 5; i++)
-    {
-        currentCanvasGraph.nodes.push(new Node(i,i,(currentCanvas.width * Math.random() | 0),(currentCanvas.height * Math.random() | 0)));
-    }
-
-    //currentCanvasGraph.edges.push(new Edge(0,[currentCanvasGraph.nodes[0],currentCanvasGraph.nodes[1]],1));
-    //currentCanvasGraph.edges.push(new Edge(1,[currentCanvasGraph.nodes[1],currentCanvasGraph.nodes[2]],1));
-
-    currentCanvasGraph.edges = [];
-
-    addEdgeBetweenNodes([currentCanvasGraph.nodes[0],currentCanvasGraph.nodes[1]]);
-    addEdgeBetweenNodes([currentCanvasGraph.nodes[1],currentCanvasGraph.nodes[2]]);
-
-    for (var i = 0; i < currentCanvasGraph.nodes.length; i++) {
-
-        bitmap = new createjs.Bitmap(nodeImage);
-        createNodeBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
-
-        // using "on" binds the listener to the scope of the currentTarget by default
-        // in this case that means it executes in the scope of the button.
-        bindFunctionalityToBitmap(bitmap);
-    }
-
-    drawEdges(currentCanvasGraph.edges);
-
-    examples.hideDistractor();
-    
-}
 
 function tick(event) {
     // this set makes it so the stages only re-renders when an event handler indicates a change has happened.

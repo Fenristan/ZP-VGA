@@ -40,7 +40,7 @@ class Dijkstra extends Algorithm
     {
         this.originalGraph = currentCanvasGraph;
 
-        currentCanvasGraph = getCurrentGraphCopy();
+        currentCanvasGraph = currentCanvasGraph.getCurrentGraphCopy();
     
         toggleNodeInformationQuadrantIVisibility();
         showCurrentVisNetwork();
@@ -163,7 +163,7 @@ class Dijkstra extends Algorithm
             }
             if(u.parent != null)
             {
-                var edge = getEdgeFromNodeToNode(u.parent,u);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(u.parent,u);
                 edge.color = "purple";
             }
     
@@ -174,8 +174,8 @@ class Dijkstra extends Algorithm
             
     
             for (var vId of adjacencyList[u.id]) {
-                var v =  getNodeUsingId(vId);
-                var edge = getEdgeFromNodeToNode(u,v)
+                var v =  currentCanvasGraph.getNodeUsingId(vId);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(u,v)
                 edge.previousColor = edge.color;
                 edge.color = "red";
                 //this.saveStepToHistory(currentCanvasGraph.stepCounter);

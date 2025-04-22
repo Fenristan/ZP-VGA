@@ -284,7 +284,7 @@ function drawTreeDFS_Tarjan()
     for(node of currentCanvasGraph.nodes)
     {
         //node = currentCanvasGraph.nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED")
+        if(node.color != "BLUE")
         {
             node.level = 0;
             node.label = node.text;
@@ -326,7 +326,7 @@ function drawTreeBiconnectivity()
     for(node of currentCanvasGraph.nodes)
     {
         //node = currentCanvasGraph.nodes.slice(node.id,1);
-        if(node.color == "PURPLE" || node.color == "GREEN" || node.color == "RED" || node.color == "ORANGE")
+        if(node.color != "BLUE")
         {
             node.level = 0;
             node.label = node.text;

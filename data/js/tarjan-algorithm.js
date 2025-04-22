@@ -13,6 +13,14 @@ class Tarjan extends Algorithm
     {
         for(var u of currentCanvasGraph.nodes)
         {
+            if(u.isRoot == true)
+            {
+                if(u.color != "RED")
+                {
+                    u.color = "ORANGE";
+                }
+            }
+
             updateNodeBitmapColor(u);
     
             updateNodeInformationQuadrantIForDFS_Tarjan(u);
@@ -62,7 +70,7 @@ class Tarjan extends Algorithm
             {
     
                 //highlight edge between these nodes red
-                var edge = getEdgeFromNodeToNode(u, v);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(u, v);
                 edge.color = "red";
     
     
@@ -85,7 +93,7 @@ class Tarjan extends Algorithm
             else 
             {
     
-                var edge = getEdgeFromNodeToNode(u, v);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(u, v);
                 edge.color = "red";
     
                 setTypeForEdgeBetweenNodes(u,v);
@@ -111,6 +119,7 @@ class Tarjan extends Algorithm
         if(u.lowlink == u.timeDiscovered)
         {
             //u.color = "ORANGE";
+            u.isRoot = true;
             var C = [];
             do
             {
@@ -178,6 +187,7 @@ class Tarjan extends Algorithm
             u.timeCompleted=null;
             u.inComponent=false;
             u.lowlink=null;
+            u.isRoot=false;
         }
     
         for (var e of currentCanvasGraph.edges) {
@@ -202,7 +212,7 @@ class Tarjan extends Algorithm
     
         this.originalGraph = currentCanvasGraph;
 
-        currentCanvasGraph = getCurrentGraphCopy();
+        currentCanvasGraph = currentCanvasGraph.getCurrentGraphCopy();
     
         toggleNodeInformationQuadrantIVisibility();
         showCurrentVisNetwork();

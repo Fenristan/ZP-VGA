@@ -50,7 +50,7 @@ class Biconnectivity extends Algorithm
     
     setTypeForEdgeBetweenNodes(nodeA, nodeB)
     {
-        var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
+        var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
         if(nodeA.number < nodeB.number)
         {
             if(isInTheSameTree(nodeB,nodeA))
@@ -92,7 +92,7 @@ class Biconnectivity extends Algorithm
         for (var wId of this.adjacencyList[v.id]) {
             var w = currentCanvasGraph.nodes[wId];
     
-            var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+            var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
             edge.color = "red";
             v.color = "RED";
     
@@ -188,7 +188,7 @@ class Biconnectivity extends Algorithm
             //else if((w.number < v.number) && w!=u)
             else if((w.number < v.number) && w.id!=u.id)
             {
-                var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
                 currentCanvasGraph.edgeStack.push(edge);
                 v.lowpt = Math.min(v.lowpt,w.number);
     
@@ -196,7 +196,7 @@ class Biconnectivity extends Algorithm
     
                 edge.color = "red";
     
-                //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
+                //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[currentCanvasGraph.getNodeUsingId(v).id]);
     
                 this.saveStepToHistory(currentCanvasGraph.stepCounter);
                 
@@ -230,10 +230,10 @@ class Biconnectivity extends Algorithm
             }
             /*else
             {
-                var edge = getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(v,w);
                 edge.color = "red";
     
-                //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[getNodeUsingId(v).id]);
+                //setTypeForEdgeBetweenNodes(currentCanvasGraph.nodes[u.id],currentCanvasGraph.nodes[currentCanvasGraph.getNodeUsingId(v).id]);
     
                 saveDFSStepToHistory(currentCanvasGraph.stepCounter);
     
@@ -326,11 +326,11 @@ class Biconnectivity extends Algorithm
     
     async startAlgorithm(){
     
-        //this.originalGraph = getCurrentGraphCopy();
+        //this.originalGraph = currentCanvasGraph.getCurrentGraphCopy();
         //this.originalGraph = currentCanvasGraph;
         this.originalGraph = currentCanvasGraph;
 
-        currentCanvasGraph = getCurrentGraphCopy();
+        currentCanvasGraph = currentCanvasGraph.getCurrentGraphCopy();
     
         toggleNodeInformationQuadrantIVisibility();
         showCurrentVisNetwork();

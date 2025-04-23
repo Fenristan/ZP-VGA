@@ -1,9 +1,9 @@
-var grids = [];
+//var grids = [];
 
-for(canvas in canvases)
+/*for(canvas in canvases)
 {
     grids.push(null);
-}
+}*/
 
 function renderBFSGrid()
 {

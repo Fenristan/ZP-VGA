@@ -1,78 +1,9 @@
-//import * as vis from "./lib/vis-network.min.js";
 
-visGraphs = [];
-visNetworks = [];
-
-//var currentVisNetwork = null;
-
-for(let i = 0; i < canvases.length; i++)
-{
-    visGraphs.push({ nodes: [], edges: []});
-    visNetworks.push(null);
-}
-
-//var network = null;
-//var directionInput = document.getElementById("direction");
 
 function destroyCurrentVisNetwork() {
   if (visNetworks[currentCanvasId] !== null) {
     visNetworks[currentCanvasId].destroy();
     visNetworks[currentCanvasId] = null;
-  }
-}
-
-function getLevelRec(node, level)
-{
-  level += 1;
-  if(node.parent != null)
-  {
-    return getLevelRec(node.parent, level);
-  }
-  else
-  {
-    return level;
-  }
-}
-
-function getLevel(node)
-{
-  var level = 0;
-  if(node.parent != null)
-  {
-    node.level = getLevelRec(node.parent, level);
-  }
-  else
-  {
-    node.level = level;
-    return;
-  }
-}
-
-function searchParents(currentNode, lookingForNode)
-{
-  if(currentNode.parent == null)
-  {
-    return false;
-  }
-  else if(currentNode.parent == lookingForNode)
-  {
-    return true;
-  }
-  else
-  {
-    return searchParents(currentNode.parent, lookingForNode);
-  }
-}
-
-function isInTheSameTree(startingNode, lookingForNode)
-{
-  if(startingNode.parent != null)
-  {
-    return searchParents(startingNode,lookingForNode);
-  }
-  else
-  {
-    return false;
   }
 }
 
@@ -356,28 +287,69 @@ function drawTreeBiconnectivity()
     renderBiconnectivityGrid();
 }
 
-/*var directionInput = document.getElementById("direction");
-var btnUD = document.getElementById("btn-UD");
-btnUD.onclick = function () {
-  directionInput.value = "UD";
-  draw();
-};
-var btnDU = document.getElementById("btn-DU");
-btnDU.onclick = function () {
-  directionInput.value = "DU";
-  draw();
-};
-var btnLR = document.getElementById("btn-LR");
-btnLR.onclick = function () {
-  directionInput.value = "LR";
-  draw();
-};
-var btnRL = document.getElementById("btn-RL");
-btnRL.onclick = function () {
-  directionInput.value = "RL";
-  draw();
-};*/
+function getLevelRec(node, level)
+{
+  level += 1;
+  if(node.parent != null)
+  {
+    return getLevelRec(node.parent, level);
+  }
+  else
+  {
+    return level;
+  }
+}
 
-/*window.addEventListener("load", () => {
-  draw();
-});*/
+function getLevel(node)
+{
+  var level = 0;
+  if(node.parent != null)
+  {
+    node.level = getLevelRec(node.parent, level);
+  }
+  else
+  {
+    node.level = level;
+    return;
+  }
+}
+
+function searchParents(currentNode, lookingForNode)
+{
+  if(currentNode.parent == null)
+  {
+    return false;
+  }
+  else if(currentNode.parent == lookingForNode)
+  {
+    return true;
+  }
+  else
+  {
+    return searchParents(currentNode.parent, lookingForNode);
+  }
+}
+
+function isInTheSameTree(startingNode, lookingForNode)
+{
+  if(startingNode.parent != null)
+  {
+    return searchParents(startingNode,lookingForNode);
+  }
+  else
+  {
+    return false;
+  }
+}
+
+function isDescendantInTheSameTree(u, v)
+{
+  if(u.timeDiscovered>v.timeDiscovered && (u.timeCompleted<v.timeCompleted) || u.timeCompleted == null)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}

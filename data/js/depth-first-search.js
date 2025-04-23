@@ -84,21 +84,8 @@ class Depth_First_Search extends Algorithm
             }
             else 
             {
-    
-                if(u.parent != null)
-                {
-                    if(v.id != u.parent.id)
-                    {
-                        setTypeForEdgeBetweenNodes(u,v);
-                    }
-                }
-                else
-                {
-                    setTypeForEdgeBetweenNodes(u,v); 
-                }
-                
-                
-    
+                setTypeForEdgeBetweenNodes(u,v);
+
                 this.saveStepToHistory(currentCanvasGraph.stepCounter);
                 
     
@@ -275,28 +262,35 @@ class Depth_First_Search extends Algorithm
 function setTypeForEdgeBetweenNodes(nodeA, nodeB)
 {
     var edge = currentCanvasGraph.getEdgeFromNodeToNode(nodeA,nodeB);
-    if(nodeA.timeDiscovered < nodeB.timeDiscovered)
+
+    if(nodeA.id == nodeB.id)
     {
-        if(isInTheSameTree(nodeB,nodeA))
-        {
-            edge.label = "F";
-        }
-        else
-        {
-            edge.label = "C";
-        }
-        
+        edge.label = "B";
     }
-    else if(nodeA.timeDiscovered > nodeB.timeDiscovered)
+    else
     {
-        if(isInTheSameTree(nodeA,nodeB))
-        {
-            edge.label = "B";
-        }
-        else
-        {
-            edge.label = "C";
-        }
-        
+       if(isDescendantInTheSameTree(nodeB,nodeA))
+       {
+            if(nodeA.timeDiscovered < nodeB.timeDiscovered)
+            {
+                edge.label = "F";
+            }
+            else
+            {
+                edge.label = "B";
+            }
+       }
+       else
+       {
+            if(nodeA.timeDiscovered < nodeB.timeDiscovered)
+            {
+                edge.label = "F";
+            }
+            else
+            {
+                edge.label = "C";
+            }
+       }
     }
+    
 }

@@ -48,7 +48,7 @@ class Biconnectivity extends Algorithm
     
     }
     
-    setTypeForEdgeBetweenNodes(nodeA, nodeB)
+    /*setTypeForEdgeBetweenNodes(nodeA, nodeB)
     {
         var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
         if(nodeA.number < nodeB.number)
@@ -75,7 +75,7 @@ class Biconnectivity extends Algorithm
             }
             
         }
-    }
+    }*/
     
     Biconnect(v,u){
     
@@ -192,7 +192,7 @@ class Biconnectivity extends Algorithm
                 currentCanvasGraph.edgeStack.push(edge);
                 v.lowpt = Math.min(v.lowpt,w.number);
     
-                this.setTypeForEdgeBetweenNodes(v,w);
+                //this.setTypeForEdgeBetweenNodes(v,w);
     
                 edge.color = "red";
     

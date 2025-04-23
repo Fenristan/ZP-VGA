@@ -20,12 +20,21 @@ var containers = [];
 var canvasGraphs = [];
 var canvasFlags = [];
 
+var grids = [];
+var visGraphs = [];
+var visNetworks = [];
+
 for(let i = 0; i < canvases.length; i++)
 {
     stages.push(new createjs.Stage(canvases[i]));
     canvasGraphs.push(new Graph(i));
     canvasFlags.push({ addNodeFlag: false, addEdgeFlag: false, removeNodeFlag: false, removeEdgeFlag: false, stopFlag: false, restartFlag: false, runningFlag: false, automaticAdvanceFlag: false});
     containers[i] = new createjs.Container();
+    
+    grids.push(null);
+    visGraphs.push({ nodes: [], edges: []});
+    visNetworks.push(null);
+
 }
 
 for(let i = 0; i < stages.length; i++)
@@ -339,6 +348,7 @@ BackToMenuButton.addEventListener("click", function(){
 
 });
 
+//assign functionality to start/stop buttons
 for (i = 0; i < StartStopButtons.length; i++)
 {
     
@@ -351,7 +361,7 @@ for (i = 0; i < StartStopButtons.length; i++)
 
     StartStopButton.addEventListener("click", function(){
 
-        CurrentStepForwardButton = StepForwardButtons[currentCanvasId]; //ummm asi ne
+        CurrentStepForwardButton = StepForwardButtons[currentCanvasId];
         CurrentStepBackwardsButton = StepBackwardsButtons[currentCanvasId];
 
         // after the start simulation button has been clicked, each node is assigned it's given name (text)
@@ -362,6 +372,12 @@ for (i = 0; i < StartStopButtons.length; i++)
         //the same is true for weighted edges
         for(edge of currentCanvasGraph.edges)
         {
+            var number = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML)
+            if(isNaN(number))
+            {
+                alert("Alespoň jedna ze zadaných vah hran není platné číslo.");
+                return;
+            }
             currentCanvasGraph.edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
         }
     

@@ -2,7 +2,7 @@
  * Very minimal shared code for examples.
  */
 
-(function() {
+/*(function() {
     if (document.body) { setupEmbed(); }
     else { document.addEventListener("DOMContentLoaded", setupEmbed); }
 
@@ -22,4 +22,4 @@
         var div = document.querySelector(".loading");
         div.className = div.className.replace(/\bloading\b/);
     };
-})();
+})();*/

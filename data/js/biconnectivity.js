@@ -192,7 +192,7 @@ class Biconnectivity extends Algorithm
                 currentCanvasGraph.edgeStack.push(edge);
                 v.lowpt = Math.min(v.lowpt,w.number);
     
-                //this.setTypeForEdgeBetweenNodes(v,w);
+                //setTypeForEdgeBetweenNodes(v,w);
     
                 edge.color = "red";
     

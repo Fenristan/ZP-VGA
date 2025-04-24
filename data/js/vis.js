@@ -226,7 +226,12 @@ function drawTreeDFS_Tarjan()
 
     for(edge of currentCanvasGraph.edges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, label:edge.label, color: edge.color };
+      if(edge.color != "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
     }
   
     
@@ -268,7 +273,12 @@ function drawTreeBiconnectivity()
 
     for(edge of currentCanvasGraph.edges)
     {
-      currentVisGraph.edges.push({ from: edge.nodes[0].id, to: edge.nodes[1].id, label: edge.label, color: edge.color });
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color };
+      if(edge.color != "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
     }
   
     
@@ -314,7 +324,7 @@ function getLevel(node)
   }
 }
 
-function searchParents(currentNode, lookingForNode)
+/*function searchParents(currentNode, lookingForNode)
 {
   if(currentNode.parent == null)
   {
@@ -328,9 +338,9 @@ function searchParents(currentNode, lookingForNode)
   {
     return searchParents(currentNode.parent, lookingForNode);
   }
-}
+}*/
 
-function isInTheSameTree(startingNode, lookingForNode)
+/*function isInTheSameTree(startingNode, lookingForNode)
 {
   if(startingNode.parent != null)
   {
@@ -340,16 +350,5 @@ function isInTheSameTree(startingNode, lookingForNode)
   {
     return false;
   }
-}
+}*/
 
-function isDescendantInTheSameTree(u, v)
-{
-  if(u.timeDiscovered>v.timeDiscovered && (u.timeCompleted<v.timeCompleted) || u.timeCompleted == null)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}

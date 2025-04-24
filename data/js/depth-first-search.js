@@ -259,38 +259,55 @@ class Depth_First_Search extends Algorithm
     }
 }
 
-function setTypeForEdgeBetweenNodes(nodeA, nodeB)
+function isDescendantInTheSameTree(u, v)
 {
-    var edge = currentCanvasGraph.getEdgeFromNodeToNode(nodeA,nodeB);
+  //timeCompleted can be null, which js considers small than a number
+  var uTimeCompleted = u.timeCompleted;
+  var vTimeCompleted = v.timeCompleted;
+  if(u.timeCompleted == null)
+  {
+    uTimeCompleted = Number.MAX_VALUE;
+  }
+  if(v.timeCompleted == null)
+  {
+    vTimeCompleted = Number.MAX_VALUE;
+  }
 
-    if(nodeA.id == nodeB.id)
+  if((u.timeDiscovered>v.timeDiscovered) && (uTimeCompleted<=vTimeCompleted))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+function setTypeForEdgeBetweenNodes(u, v)
+{
+    var edge = currentCanvasGraph.getEdgeFromNodeToNode(u,v);
+
+    if(u.id == v.id)
     {
         edge.label = "B";
     }
+    if(isDescendantInTheSameTree(u,v))
+    {
+        edge.label = "B";
+    }
+    else if(isDescendantInTheSameTree(v,u))
+    {
+        if(v.timeDiscovered > u.timeDiscovered)
+        {
+            edge.label = "F";
+        }
+    }
     else
     {
-       if(isDescendantInTheSameTree(nodeB,nodeA))
-       {
-            if(nodeA.timeDiscovered < nodeB.timeDiscovered)
-            {
-                edge.label = "F";
-            }
-            else
-            {
-                edge.label = "B";
-            }
-       }
-       else
-       {
-            if(nodeA.timeDiscovered < nodeB.timeDiscovered)
-            {
-                edge.label = "F";
-            }
-            else
-            {
-                edge.label = "C";
-            }
-       }
+        if(u.timeDiscovered > v.timeDiscovered)
+        {
+            edge.label = "C";
+        }
     }
     
 }

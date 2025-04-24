@@ -183,11 +183,11 @@ class Dijkstra extends Algorithm
                 //edge.color = "black";
     
                 var alt = u.distance + edge.weight;
-                console.log("alt je: " +alt)
-                console.log(currentCanvasGraph.set);
+                //console.log("alt je: " +alt)
+                //console.log(currentCanvasGraph.set);
                 if(alt < v.distance || v.distance == "∞")
                 {
-                    console.log("v.distance: "+v.distance)
+                    //console.log("v.distance: "+v.distance)
                     v.distance = alt;
                     v.parent = u;
                     //v.color = "PURPLE";

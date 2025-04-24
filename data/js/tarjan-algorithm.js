@@ -110,8 +110,17 @@ class Tarjan extends Algorithm
     
             if(v.inComponent == false)
             {
-                console.log("v.lowlink: "+v.lowlink);
+                var edge = currentCanvasGraph.getEdgeFromNodeToNode(u, v);
+                edge.previousColor = edge.color;
+                edge.color = "red";
+
                 u.lowlink = Math.min(u.lowlink,v.lowlink);
+
+                this.saveStepToHistory(currentCanvasGraph.stepCounter);
+                //console.log("v.lowlink: "+v.lowlink);
+                
+                edge.color = edge.previousColor;
+                this.saveStepToHistory(currentCanvasGraph.stepCounter);
             }
     
         }

@@ -147,9 +147,6 @@ class Dijkstra extends Algorithm
         for (var e of currentCanvasGraph.edges) {
             e.color = "black";
         }
-    
-        console.log("startingNode: ")
-        console.log(currentCanvasGraph.startingNode)
         
         currentCanvasGraph.startingNode.distance = 0;
     
@@ -178,29 +175,17 @@ class Dijkstra extends Algorithm
                 var edge = currentCanvasGraph.getEdgeFromNodeToNode(u,v)
                 edge.previousColor = edge.color;
                 edge.color = "red";
-                //this.saveStepToHistory(currentCanvasGraph.stepCounter);
-                //
-                //edge.color = "black";
-    
+
                 var alt = u.distance + edge.weight;
-                //console.log("alt je: " +alt)
-                //console.log(currentCanvasGraph.set);
+
                 if(alt < v.distance || v.distance == "∞")
                 {
-                    //console.log("v.distance: "+v.distance)
                     v.distance = alt;
                     v.parent = u;
-                    //v.color = "PURPLE";
-                    //edge.color = "purple"
-    
-                    //this.saveStepToHistory(currentCanvasGraph.stepCounter);
-                    //
                 }
                 this.saveStepToHistory(currentCanvasGraph.stepCounter);
                 
                 edge.color = edge.previousColor;
-    
-                //edge.color = "purple";
             }
             
             u.color = "GREEN";
@@ -208,14 +193,6 @@ class Dijkstra extends Algorithm
             
         }
     
-        
-        
-    
-        console.log("set je: ")
-        console.log(currentCanvasGraph.set);
-    
-        console.log("nodes jsou: ")
-        console.log(currentCanvasGraph.nodes);
     }
 }
 

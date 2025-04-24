@@ -183,32 +183,14 @@ function displayCanvas(evt)
     CurrentPlayPauseAutoButton = PlayPauseAutoButtons[currentCanvasId];
 
     let canvasContainerId = "canvas-container" + evt.currentTarget.index;
-    console.log("canvas: "+evt.currentTarget.index);
-
-    //canvas = canvases[currentCanvasId];
-    //context = canvas.getContext("2d");
+    //console.log("canvas: "+evt.currentTarget.index);
 
     stages[currentCanvasId].enableMouseOver(10);
-    //stages[currentCanvasId].mouseMoveOutside = true;
 
-    /*canvasContainers.forEach(function (canvasContainer){
-        if(canvasContainer.id != canvasContainerId)
-        {
-            canvasContainer.classList.remove('canvas-container-visible');
-            canvasContainer.classList.add('canvas-container-hidden');
-        }
-    });*/
 
     document.getElementById(canvasContainerId).classList.remove('canvas-container-hidden');
     document.getElementById(canvasContainerId).classList.add('canvas-container-visible') ;
 
-    //console.log(evt.currentTarget.index);
-    //img = new Image();
-    //const canvas = canvases[evt.currentTarget.index].getContext('2d');
-    //img.src = "assets/images/image.png";
-    //canvas.drawImage(img, 0,0);
-
-    //update = true;
 };
 
 function checkBoxDirectedClicked(evt)
@@ -216,11 +198,6 @@ function checkBoxDirectedClicked(evt)
     //if canvas was undirected and I am switching to a directed graph, make sure that all edges are now multigraphs
     if(currentCanvasGraph.directed == false)
     {
-        //alert("You are switching from an undirected graph to a directed one. If there are any edges, they will be deleted.");
-        /*for(node of currentCanvasGraph.nodes)
-        {
-            currentCanvasGraph.removeAllEdgesFromNode(node,currentCanvasGraph.nodes,currentCanvasGraph.edges);
-        }*/
         currentCanvasGraph.directed ^= true;
         currentCanvasGraph.transformUndirectedToDirected();
     }
@@ -381,7 +358,7 @@ for (i = 0; i < StartStopButtons.length; i++)
             currentCanvasGraph.edges[edge.id].weight = Number(document.getElementById("edgeWeightText_"+currentCanvasId+"_"+edge.id).innerHTML);
         }
     
-        console.log("starting simulation");
+        //console.log("starting simulation");
         
         canvasFlags[currentCanvasId].stopFlag = false;
         //canvasFlags[currentCanvasId].automaticAdvanceFlag = false;

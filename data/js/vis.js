@@ -147,9 +147,6 @@ function drawTreeDijkstra()
     currentVisGraph.nodes = [];
     currentVisGraph.edges = [];
 
-    console.log("currentVisGraph");
-    console.log(currentVisGraph);
-
     //add all visited, completed and currently selected nodes to an array of nodes to be drawn
     for(node of currentCanvasGraph.nodes)
     {
@@ -176,8 +173,6 @@ function drawTreeDijkstra()
       {
         if(edge.nodes[1].distance != "∞" && edge.nodes[1].distance != null)
         {
-          //console.log(edge.nodes[1]);
-          //edge.nodes[1].level = edge.nodes[1].distance;
           getLevel(edge.nodes[1]);
           edge.nodes[1].label = edge.nodes[1].text;
           currentVisGraph.nodes.push(edge.nodes[1]);

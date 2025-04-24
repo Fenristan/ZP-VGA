@@ -386,7 +386,6 @@ function createNodeBitmap(node,container) {
 
 
     nodeRadius = ((bitmap.image.width)*bitmap.scale) / 2;
-    console.log("nodeRadius je: "+nodeRadius);
 
 
     var html = document.createElement("div");
@@ -394,7 +393,7 @@ function createNodeBitmap(node,container) {
     html.id = "nodeNameText_"+currentCanvasId+"_"+node.id;
     html.style.contenteditable="true";
 
-    document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
+    canvasContainers[currentCanvasId].getElementsByClassName("editableText")[0].appendChild(html).contentEditable = "true";
 
     var textName = new createjs.DOMElement(html);
     textName.id = node.id;
@@ -403,7 +402,6 @@ function createNodeBitmap(node,container) {
     textName.x = node.x-textoffset;
     textName.y = node.y-textoffset-3;
 
-    //container.addChild(bitmap,textName);
 
     var textInformationQuadrantI = new createjs.Text("∞","16px Arial","red");
     textInformationQuadrantI.x = node.x+(bitmap.image.width/3)
@@ -425,7 +423,7 @@ function createEdgeVisualisationElements(edge)
     html.id = "edgeWeightText_"+currentCanvasId+"_"+edge.id;
     html.style.contenteditable="true";
 
-    document.getElementById("editableTextCanvas"+currentCanvasId).appendChild(html).contentEditable = "true";
+    canvasContainers[currentCanvasId].getElementsByClassName("editableText")[0].appendChild(html).contentEditable = "true";
 
     var edgeWeightDom = new createjs.DOMElement(html);
     edgeWeightDom.id = edge.id;
@@ -657,23 +655,6 @@ function bindFunctionalityToBitmap(bitmap) {
             this.x = node.x;
             this.y = node.y;
 
-            /*for(var i = 0; i < edges.length; i++)
-            {
-                if(node.id===edges[i].nodes[0].id)
-                {
-                    g.clear();
-                    edges[i].nodes[0]=node;
-                    drawEdges();
-                }
-                else if(node.id===edges[i].nodes[1].id)
-                {
-                    g.clear();
-                    edges[i].nodes[1]=node;
-                    drawEdges();
-                }
-            }*/
-            
-
             var textName = this.parent.getChildByName("nodeNameText_"+this.id);
             textName.x=node.x-textoffset;//textoffset;
             textName.y=node.y-textoffset-3;//textoffset;
@@ -733,11 +714,6 @@ function bindFunctionalityToBitmap(bitmap) {
         update = true;
     });
 
-    /*bitmap.parent.getChildByName("nodeNameText_"+bitmap.id).on("dblclick", function (evt)
-    {
-        let textName = this;
-        textName.text = "";
-    });*/
     
 }
 

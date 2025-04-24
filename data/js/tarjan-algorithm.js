@@ -117,7 +117,6 @@ class Tarjan extends Algorithm
                 u.lowlink = Math.min(u.lowlink,v.lowlink);
 
                 this.saveStepToHistory(currentCanvasGraph.stepCounter);
-                //console.log("v.lowlink: "+v.lowlink);
                 
                 edge.color = edge.previousColor;
                 this.saveStepToHistory(currentCanvasGraph.stepCounter);
@@ -138,25 +137,12 @@ class Tarjan extends Algorithm
             }while(v != u);
     
             currentCanvasGraph.SCC.push(C);
-            console.log("SCC: ");
-            console.log(currentCanvasGraph.SCC);
-    
-            /*currentCanvasGraph.SCC = [...currentCanvasGraph.SCC, ...C];
-            
-            
-            //console.log( currentCanvasGraph.SCC);
-            for(var u of currentCanvasGraph.SCC)
-            {
-                console.log(u.text);
-            }
-            currentCanvasGraph.SCC = [];*/
+
         }
     
         
         u.color = "GREEN";
-        /*containers[currentCanvasId].getChildByName("bmpNode_"+u.id).image=greenNodeImage;
-        update=true;
-        drawTreeDFS_Tarjan();*/
+
     
         this.time += 1;
         u.timeCompleted = this.time;
@@ -255,26 +241,17 @@ class Tarjan extends Algorithm
                 step = 0;
                 canvasFlags[currentCanvasId].restartFlag = false;
             }
-            /*else if(canvasFlags[currentCanvasId].stopFlag == true)
-            {
-                this.resetGraph();
-                canvasFlags[currentCanvasId].stopFlag = false;
-                return 0;
-            }*/
+
             else
             {
                 if(step < lastStep-1)
                 {
                     step++;
-                    console.log("jdu delat step: "+step);
                 }
             }
         }
         this.resetGraph();
-        
-        //drawEdges();
-        //drawTreeDFS_Tarjan();
-    
+
     }
 }
 

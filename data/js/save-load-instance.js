@@ -75,41 +75,15 @@ file.addEventListener("change", function(){
 
         });
 
-        //add edges. If the loaded graph was undirected and we are trying to load it as directed, then don't add any edges.
-        /*if(!(loadedGraph.directed == false && currentCanvasGraph.directed == true))
-        {
-            loadedGraph.edges.forEach(edge => {
-                console.log("pridavam edge");
-                console.log(edge);
-                
-                currentCanvasGraph.addEdgeBetweenNodes(edge.nodes,currentCanvasGraph.edges);
-                currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
-            });
-            
-            updateEdgeWeights();
-        }
-        else
-        {
-            alert("You have tried to load an undirected graph as a directed one. Nodes will be loaded, but the edges will not.");
-        }*/
-        
-        //if(loadedGraph.directed == currentCanvasGraph.directed)
-        //{
+
         loadedGraph.edges.forEach(edge => {
-            //console.log("pridavam edge");
-            //console.log(edge);
-            
+
             currentCanvasGraph.addEdgeBetweenNodes(edge.nodes);
             currentCanvasGraph.edges[currentCanvasGraph.edges.length-1].weight = edge.weight;
         });
         
         updateEdgeWeights();
-        //}
-        /*if(loadedGraph.directed == true && currentCanvasGraph.directed == false)
-        {
-            currentCanvasGraph.transformDirectedToUndirected();
-        }
-        else */
+
         //when loading an indirected graph into a directed one, transform it onto a directed one.
         if(loadedGraph.directed == false && currentCanvasGraph.directed == true)
         {
@@ -117,13 +91,6 @@ file.addEventListener("change", function(){
             currentCanvasGraph.transformUndirectedToDirected();
         }
 
-
-        
-        
-        /*for (var i = 0; i < currentCanvasGraph.nodes.length; i++) {
-            bitmap = new createjs.Bitmap(nodeImage);
-            addNodeToBitmap(currentCanvasGraph.nodes[i],containers[currentCanvasId],bitmap);
-        }*/
 
     });
 
@@ -135,16 +102,6 @@ file.addEventListener("change", function(){
 
 function saveInstanceToFile()
 {
-    /*let currentNodes = currentCanvasGraph.nodes;
-    let currentEdges = currentCanvasGraph.edges;
-    for(var i=0; i < currentNodes.length; i++)
-    {
-        console.log(JSON.stringify(currentNodes[i]));
-    }
-    for(var i=0; i < currentEdges.length; i++)
-    {
-        console.log(JSON.stringify(currentEdges[i]));
-    }*/
 
     //if the simulation hasn't been started for the graph we are trying to save, it will not have it's nodes named and edges weighted.
     for(node of currentCanvasGraph.nodes)

@@ -126,17 +126,6 @@ class Graph {
 
         Object.assign(newGraphCopy,graphParsed);
         
-        /*for(node of graphCopy.nodes)
-        {
-            Object.assign(newGraphCopy.nodes)
-        }*/
-
-        console.log("graphCopy:");
-        console.log(newGraphCopy);
-        /*for(var node of graphCopy.nodes)
-        {
-            node = Object.assign(new Node,node);
-        }*/
         for(var edge of newGraphCopy.edges)
         {
             //edge = Object.assign(new Edge,edge);
@@ -148,22 +137,7 @@ class Graph {
         return newGraphCopy;
     }
 
-    /*edgeBetweenNodes(nodeA, nodeB)
-    {
-        var edges = this.edges;
-        for(let i = 0; i<edges.length;i++)
-        {
-            if((edges[i].nodes[0].id==nodeA.id||edges[i].nodes[0].id==nodeB.id)&&(edges[i].nodes[1].id==nodeA.id||edges[i].nodes[1].id==nodeB.id))
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
-        }
-        
-    }*/
+
     edgeBetweenNodesBothWays(nodeA, nodeB)
     {
         var edges = this.edges;
@@ -233,11 +207,9 @@ class Graph {
     removeNode(node)
     {
         var nodes = currentCanvasGraph.nodes;
-        var edges = currentCanvasGraph.edges;
-        //var oldEdges = edges.slice(0);
+
         var bitmap = containers[currentCanvasId].getChildByName("bmpNode_"+(node.id));
         var parent = bitmap.parent;
-        //var nodeId = bitmap.id;
 
         this.removeAllEdgesFromNode(nodes[bitmap.id]);
 
@@ -298,11 +270,11 @@ class Graph {
         var edges = currentCanvasGraph.edges;
         if(this.edgeFromNodeToNode(nodes[0],nodes[1]))
         {
-            console.log("there already is an edge between these nodes");
+            console.log("There already is an edge between these nodes");
         }
         else if(currentCanvasGraph.directed == false && this.edgeFromNodeToNode(nodes[1],nodes[0]))
         {
-            console.log("undirected graph - there is already an edge between these nodes");
+            console.log("Undirected graph - There is already an edge between these nodes");
         }
         else
         {

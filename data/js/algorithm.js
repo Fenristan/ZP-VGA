@@ -12,4 +12,15 @@ class Algorithm
         this.graphStepsHistory.push(canvasGraphCopy);
         currentCanvasGraph.stepCounter++;
     }
+
+    resetGraph()
+    {
+        currentCanvasGraph = this.originalGraph;
+        
+        this.graphStepsHistory = [];
+    
+        clearGrid();
+    
+        resetGraph();
+    }
 }

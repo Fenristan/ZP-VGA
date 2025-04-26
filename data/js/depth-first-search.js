@@ -27,17 +27,6 @@ class Depth_First_Search extends Algorithm
         drawTreeDFS();
     }
     
-    resetGraph()
-    {
-        currentCanvasGraph = this.originalGraph;
-    
-        this.graphStepsHistory = [];
-        
-        clearDFSGrid();
-    
-        resetGraph();
-        
-    }
     
     // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
     DFS_visit(u)

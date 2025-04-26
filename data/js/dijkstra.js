@@ -24,18 +24,6 @@ class Dijkstra extends Algorithm
     }
     
     
-    resetGraph()
-    {
-        currentCanvasGraph = this.originalGraph;
-    
-        this.graphStepsHistory = [];
-    
-        clearDijkstraGrid();
-    
-        resetGraph();
-        
-    }
-    
     async startAlgorithm()
     {
         this.originalGraph = currentCanvasGraph;

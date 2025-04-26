@@ -475,3 +475,15 @@ function clearBiconnectivityGrid()
     grids[currentCanvasId][0].forceRender();
 
 }
+
+function clearGrid()
+{
+    for(grid of grids[currentCanvasId])
+    {
+        grid.updateConfig({
+            data:[]
+        });
+        grid.forceRender();
+    }
+    
+}

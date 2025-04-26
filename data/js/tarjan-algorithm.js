@@ -35,17 +35,6 @@ class Tarjan extends Algorithm
     }
     
     
-    resetGraph()
-    {
-        currentCanvasGraph = this.originalGraph;
-        
-        this.graphStepsHistory = [];
-    
-        clearTarjanGrid();
-    
-        resetGraph();
-    }
-    
     // WHITE = BLUE, GREY = PURPLE, BLACK = GREEN and RED is the one where I currently am
     DFS_Tarjan_visit(u)
     {

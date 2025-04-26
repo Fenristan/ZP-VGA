@@ -42,6 +42,8 @@ for(let i = 0; i < stages.length; i++)
     stages[i].addChild(containers[i]);
 }
 
+//parameters of graphs are defined here
+
 canvasGraphs[0].directed = true;
 canvasGraphs[1].directed = true;
 canvasGraphs[2].directed = true;
@@ -61,6 +63,7 @@ canvasGraphs[1].algorithm = new Breadth_First_Search;
 canvasGraphs[2].algorithm = new Dijkstra;
 canvasGraphs[3].algorithm = new Tarjan;
 canvasGraphs[4].algorithm = new Biconnectivity;
+canvasGraphs[5].algorithm = new ExampleAlgorithm;
 
 
 

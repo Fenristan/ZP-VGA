@@ -19,25 +19,12 @@ class Breadth_First_Search extends Algorithm
             edge.changed = true;
         }
     
-        /*currentCanvasGraph.startingNode.color = "RED";
-        currentCanvasGraph.startingNode.distance = 0;*/
     
         drawEdges();
         drawTreeBFS();
     }
     
-    
-    resetGraph()
-    {
-        currentCanvasGraph = this.originalGraph;
-        
-        this.graphStepsHistory = [];
-    
-        clearBFSGrid();
-    
-        resetGraph();
-    
-    }
+
     
     async startAlgorithm()
     {

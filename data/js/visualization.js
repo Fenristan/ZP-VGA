@@ -70,20 +70,13 @@ function init() {
     for(var i = 0; i < stages.length; i++)
     {
         stages[i].on("stagemousedown", function(evt) {
-
-            console.log("clicked in canvas "+currentCanvasId);
-            
+ 
             if(currentCanvasFlags.addNodeFlag==true)
             {
                 var newNode = new Node(currentCanvasGraph.nodes.length,currentCanvasGraph.nodes.length,(evt.stageX),(evt.stageY))
-                //currentCanvasGraph.nodes.push(newNode);
                 currentCanvasGraph.addNode(newNode);
-                //var bitmap = new createjs.Bitmap(nodeImage);
-                //currentCanvasFlags.addNodeFlag=false;
-                //highlightSelectedMenuTool();
                 update = true;
             }
-            //stages[currentCanvasId].update(event)
             
         });
     }
@@ -105,7 +98,6 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
         {
             if(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)!=null)
             {
-                //console.log("removing: "+(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id)).name);
                 containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id).graphics.clear();
                 containers[currentCanvasId].removeChild(containers[currentCanvasId].getChildByName("line_"+oldEdges[i].id));
             }
@@ -130,7 +122,6 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                 
                 if(edges[i].nodes[0].id == edges[i].nodes[1].id)
                 {
-                    //console.log("This edge leads to the same node where it started, doing bezier");
 
                     g.setStrokeStyle(3);
 
@@ -143,7 +134,7 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
 
                     g.moveTo(start_x,start_y);
 
-                    //I do nodeRadius *2 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
+                    //I do nodeRadius *3 simply because I cannot draw a quartic bezier curve, I am limited to a guadratic one, therefore I make the curve at least a bit more pronounced this way
                     var cp1_x = start_x - nodeRadius*3;
                     var cp1_y = start_y;
 
@@ -179,21 +170,7 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                     var end_x = edges[i].nodes[1].x
                     var end_y = edges[i].nodes[1].y
 
-                    //console.log("there is already an edge between these nodes, doing bezier")
                     g.moveTo(start_x,start_y);
-
-                    /*
-                        x1 = mp_x, y1 = mp_y
-                        x2 = end_x, y2 = end_y
-                        
-                    */
-
-                    //calculate vector from node to node
-                    //var v = [end_x-start_x,end_y-start_y]
-                    //calculate normal 
-                    //var d_x = end_x - start_x
-                    //var d_y = end_y - start_y
-                    //var n = [-(d_y),d_x]
 
                     //calculate middle point between nodes
                     var mp_x = (start_x + end_x)/2;
@@ -262,23 +239,9 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                 //if directed, draw arrows
                 if(currentCanvasGraph.directed == true)
                 {
-                        /*start_x = edges[i].nodes[0].x;
-                        start_y = edges[i].nodes[0].y;
-
-                        end_x = edges[i].nodes[1].x;
-                        end_y = edges[i].nodes[1].y;*/
 
                     var length = Math.sqrt(d_x * d_x + d_y * d_y);
 
-                    //start_x = start_x - Math.round(d_x / ((length / (15))));
-                    //start_y = start_y - Math.round(d_y / ((length / (15))));
-                    //end_x = end_x + Math.round(d_x / ((length / (15))));
-                    //end_y = end_y + Math.round(d_y / ((length / (15))));
-
-                    /*if(edges[i].nodes[0].id == edges[i].nodes[1].id)
-                    {
-                        
-                    }*/
                     //arrows of bezier point to a different spot and the degree is inverse
                     if(isMultigraph)
                     {
@@ -286,13 +249,6 @@ function drawEdges(oldEdges=currentCanvasGraph.edges) {
                         end_x = end_x - Math.round(d_x / ((length / nodeRadius)));
                         end_y = end_y - Math.round(d_y / ((length / nodeRadius)));
 
-
-                        //rotate the end point around the center of the node
-                        /*var radians = (Math.PI / 180) * 180;
-                        cos = Math.cos(radians);
-                        sin = Math.sin(radians);
-                        end_x = (cos * (end_x - edges[i].nodes[1].x)) + (sin * (end_y - edges[i].nodes[1].y)) + edges[i].nodes[1].x;
-                        end_y = (cos * (end_y - edges[i].nodes[1].y)) - (sin * (end_x - edges[i].nodes[1].x)) + edges[i].nodes[1].y;*/
 
                         // calculate the angle of the edge
                         var deg = (Math.atan(d_y / d_x)) * 180.0 / Math.PI;
@@ -588,14 +544,10 @@ function toggleWeightedEdgesVisibility()
 
 function bindFunctionalityToBitmap(bitmap) {
 
-    var edges = currentCanvasGraph.edges;
+    //var edges = currentCanvasGraph.edges;
     var nodes = currentCanvasGraph.nodes;
     bitmap.on("mousedown", function (evt) {
 
-        console.log(""+bitmap.id);
-        console.log(""+this.name)
-        console.log(edges)
-        console.log(nodes);
         
         this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
         if(currentCanvasFlags.addEdgeFlag==true)
@@ -644,7 +596,6 @@ function bindFunctionalityToBitmap(bitmap) {
     // the pressmove event is dispatched when the mouse moves after a mousedown on the target until the mouse is released.
     bitmap.on("pressmove", function (evt) {
 
-        console.log(this);
 
         //I have to check this, because there is a chance, that someone could try to delete a node and instead of only clicking, they also pressmove at the same time. And when that happens, the original node is deleted, but I am still trying to manipulate it.
         if(this.parent != null)
@@ -675,7 +626,6 @@ function bindFunctionalityToBitmap(bitmap) {
                 if(edge != null)
                 {
                     edge.changed = true;
-                    console.log("meni se edge mezi node s id "+node.id+" a node "+nodeB.id);
                     drawEdges();
                 }
                 
@@ -683,7 +633,6 @@ function bindFunctionalityToBitmap(bitmap) {
                 if(edge != null)
                 {
                     edge.changed = true;
-                    console.log("meni se edge mezi node s id "+node.id+" a node "+nodeB.id);
                     drawEdges();
                 }
             }
@@ -782,19 +731,5 @@ function tick(event) {
 }
 
 
-
-
-
-/*function stepForwardBtnClicked() {
-    stepForwardFlag=true;
-}*/
-/*function startSimulation() {
-    console.log("starting simulation");
-
-    if(currentCanvasId == 0)
-    {
-        startBSF();
-    }
-}*/
 
 

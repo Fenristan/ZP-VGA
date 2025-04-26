@@ -5,7 +5,6 @@ class Biconnectivity extends Algorithm
     {
         super();
         this.time = 0;
-        this.i = 0;
         this.adjacencyList = [];
     }
 
@@ -36,52 +35,12 @@ class Biconnectivity extends Algorithm
         drawTreeBiconnectivity();
     }
     
-    resetGraph()
-    {
-        currentCanvasGraph = this.originalGraph;
-    
-        this.graphStepsHistory = [];
-    
-        clearBiconnectivityGrid();
-    
-        resetGraph();
-    
-    }
-    
-    /*setTypeForEdgeBetweenNodes(nodeA, nodeB)
-    {
-        var edge = currentCanvasGraph.getEdgeFromNodeToNodeUndirectedOrderMatters(nodeA,nodeB);
-        if(nodeA.number < nodeB.number)
-        {
-            if(isInTheSameTree(nodeB,nodeA))
-            {
-                edge.label = "F";
-            }
-            else
-            {
-                edge.label = "C";
-            }
-            
-        }
-        else if(nodeA.number > nodeB.number)
-        {
-            if(isInTheSameTree(nodeA,nodeB))
-            {
-                edge.label = "B";
-            }
-            else
-            {
-                edge.label = "C";
-            }
-            
-        }
-    }*/
     
     Biconnect(v,u){
     
         v.color = "RED";
-        this.i += 1;
-        v.number = this.i;
+        this.time += 1;
+        v.number = this.time;
         v.lowpt = v.number;
     
         this.saveStepToHistory(currentCanvasGraph.stepCounter);
@@ -306,7 +265,7 @@ class Biconnectivity extends Algorithm
         
         //Biconnect();
     
-        this.i = 0;
+        this.time = 0;
         currentCanvasGraph.edgeStack = [];
         currentCanvasGraph.components = [];
     

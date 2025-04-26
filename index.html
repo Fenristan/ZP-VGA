@@ -6,21 +6,29 @@
     <link rel="stylesheet" href="data/css/style.css">
     <link rel="stylesheet" href="data/css/mermaid.min.css">
 
-    <script src="data/js/algorithm.js" defer></script>
+    
+
     <script src="data/js/node.js" defer></script>
     <script src="data/js/edge.js" defer></script>
     <script src="data/js/graph.js" defer></script>
     <script src="data/js/visualization.js" defer></script>
+    <script src="data/js/vis.js" defer></script>
+    <script src="data/js/grid.js" defer></script>
+
+    <script src="data/js/algorithm.js" defer></script>
     <script src="data/js/adjacency-list.js" defer></script>
     <script src="data/js/breadth-first-search.js" defer></script>
     <script src="data/js/depth-first-search.js" defer></script>
     <script src="data/js/dijkstra.js" defer></script>
     <script src="data/js/tarjan-algorithm.js" defer></script>
     <script src="data/js/biconnectivity.js" defer></script>
+    <script src="data/js/example-algorithm.js" defer></script>
+    <!--files containing new algorithms should go here-->
+
     <script src="data/js/canvases.js" defer></script>
     <script src="data/js/save-load-instance.js" defer></script>
-    <script src="data/js/vis.js" defer></script>
-    <script src="data/js/grid.js" defer></script>
+    
+    
     
     <script src="data/lib/vis-network.min.js"></script>
     <script src="data/lib/easeljs-NEXT.min.js"></script>
@@ -78,12 +86,32 @@
                     <h2>Tarjanův algoritmus pro hledání 2-souvislých komponent</h2>
 
                 </button>
-                <button class="menuOption" id="menuOption5" disabled>
+                <!-- A prepared additional algorithm option. -->
+                <button class="menuOption" id="menuOption5" disabled> <!-- make sure to remove disabled -->
 
-                    <h2></h2>
+                    <h2><!--Insert name of the algorithm here--></h2>
 
                 </button>
             </ul>
+            <!-- Additional row of options, uncomment, to make them vissible
+            <ul class="menu-cards">
+                <button class="menuOption" id="menuOption6">
+
+                    <h2>Name of Algorithm</h2>
+
+                </button>
+                <button class="menuOption" id="menuOption7">
+
+                    <h2>Name of Algorithm</h2>
+
+                </button>
+                <button class="menuOption" id="menuOption8">
+
+                    <h2>Name of Algorithm</h2>
+
+                </button>
+            </ul>
+            -->
         </div>
         <div id="map">
             <div class = canvas-container-hidden id="canvas-container0">
@@ -356,6 +384,143 @@
                 <div id="visNetworkCanvas5" class="hidden"></div>
 
             </div>
+
+            <!-- Additional three canvases
+            <div class = canvas-container-hidden id="canvas-container6">
+                <div class = canvas-container-row>
+                    <div>
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off" disabled = true>
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" id="checkboxWeighted" autocomplete="off" disabled = true>
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="editableTextCanvas6" class="editableText">
+                        </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas6" width="1200" height="600"></canvas>
+                    </div>
+                    <div id="sidebarCanvas6" class="sidebar">
+                        <div id = "sidebarExampleGridCanvas6" style = "width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="simulation-container">
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                </div>
+
+                <div id="visNetworkCanvas6" class="hidden"></div>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container7">
+                <div class = canvas-container-row>
+                    <div>
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox"  id="checkboxDirected" autocomplete="off" disabled = true>
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox"  id="checkboxWeighted" autocomplete="off" disabled = true>
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="editableTextCanvas7" class="editableText">
+                        </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas7" width="1200" height="600"></canvas>
+                    </div>
+                    <div id="sidebarCanvas7" class="sidebar">
+                        <div id = "sidebarExampleGridCanvas7" style = "width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="simulation-container">
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                </div>
+
+                <div id="visNetworkCanvas7" class="hidden"></div>
+            </div>
+            <div class = canvas-container-hidden id="canvas-container8">
+                <div class = canvas-container-row>
+                    <div>
+                        <div class="menu">
+                            <div class="menu-tools">
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/node.png" onclick="addNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/addedge.png" onclick="addEdgeBtnClicked()"/>
+                                <input type="image" style="margin-left: 30px" src="data/assets/removenode.png" onclick="removeNodeBtnClicked()"/>
+                                <input type="image" style="z-index:2;  top:10%; left:10%" src="data/assets/removeedge.png" onclick="removeEdgeBtnClicked()"/>
+                            </div>
+                            <div class="menu-settings">                           
+                                <div class="settings-grid">
+                                    <div class="cell1">
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
+                                    </div>
+                                    <div class="cell2">
+                                        <input type="checkbox" checked="checked" id="checkboxWeighted" autocomplete="off">
+                                    </div>
+                                    <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
+                                    <div class="cell3">Directed</div>
+                                    <div class="cell4">Weighted</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="editableTextCanvas8" class="editableText">
+                        </div>
+                    <canvas style="z-index:1" class="canvas" id="canvas8" width="1200" height="600"></canvas>
+                    </div>
+                    <div id="sidebarCanvas8" class="sidebar">
+                        <div id = "sidebarExampleGridCanvas8" style = "width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="simulation-container">
+                    <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
+                    <a><img src="data/assets/forward_icon.png" alt="Next step" style="width:50px;height:50px; margin-top: 7px; float: right; " id="stepforward" class="stepforward"></a>
+                    <a><img src="data/assets/start_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="start" class="start"></a>
+                    <a><img src="data/assets/back_icon.png" alt="Load a graph from file" style="width:50px;height:50px; margin-top: 7px; float: right;" id="stepback" class="stepback"></a>
+                    <input type="range" min="1" max="5" value="3" style="float: right; margin-top: 22px; margin-right: 20px;" oninput="setTimeInterval()" autocomplete="off" id="time-interval-slider-input" class="time-interval-slider-input" />
+                    <a><img src="data/assets/play_auto_icon.png" alt="Start the simulation" style="width:50px;height:50px; margin-top: 7px; float: right;" id="play_auto" class="play_auto"></a>
+                </div>
+
+                <div id="visNetworkCanvas8" class="hidden"></div>
+
+            </div>
+
+        -->
             
         </div>
         

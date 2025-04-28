@@ -131,9 +131,8 @@ body {
   background: #fdd663;
 }
 
-#map
+#canvases
 {
-
   margin-top: 5px;
 }
 
@@ -386,4 +385,10 @@ body.embedded {
 
 .hidden{
   display:none;
+}
+
+.algorithm-description{
+  margin-top: 20px;
+  color:gray;
+  font-size: 15px;
 }

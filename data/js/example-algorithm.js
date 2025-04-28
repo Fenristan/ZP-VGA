@@ -5,6 +5,7 @@ class ExampleAlgorithm extends Algorithm
     {
         super();
         //this.someProperty = 0;
+        //this.someOtherProperty = 0;
     }
 
     drawStep()
@@ -14,15 +15,15 @@ class ExampleAlgorithm extends Algorithm
 
             updateNodeBitmapColor(u);
     
-            //updateNodeInformationQuadrantIFor<ExampleAlgorithm>(u);
+
         }
         for(var edge of currentCanvasGraph.edges)
         {
             edge.changed = true;
         }
         drawEdges();
-        //render<ExampleAlgorithm>Grid();
-        //drawTree<ExampleAlgorithm>();
+        //renderExampleAlgorithmGrid();
+        //drawTreeExampleAlgorithm();
     }
     
     

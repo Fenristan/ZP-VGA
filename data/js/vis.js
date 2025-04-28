@@ -292,6 +292,63 @@ function drawTreeBiconnectivity()
     renderBiconnectivityGrid();
 }
 
+function drawTreeExampleAlgorithm()
+{
+    var currentVisGraph = visGraphs[currentCanvasId];
+    var currentVisNetwork = visNetworks[currentCanvasId];
+    destroyCurrentVisNetwork();
+    currentVisGraph.nodes = [];
+    currentVisGraph.edges = [];
+
+    //add all visited, completed and currently selected nodes to an array of nodes to be drawn
+    for(node of currentCanvasGraph.nodes)
+    {
+        if(node.color != "BLUE")
+        {
+            node.label = node.text;
+            getLevel(node);
+            currentVisGraph.nodes.push(node);
+        }
+    }
+
+    //add all edges to the array of edges to be drawn
+    for(edge of currentCanvasGraph.edges)
+    {
+      var visEdge = { from: edge.nodes[0].id, to: edge.nodes[1].id, color: edge.color };
+      if(edge.color != "black")
+      {
+        visEdge.width = 3;
+      }
+      currentVisGraph.edges.push(visEdge);
+      if(currentVisGraph.nodes.findIndex(node => node.id === edge.nodes[1].id) == -1)
+      {
+        if(edge.nodes[1].distance != "∞" && edge.nodes[1].distance != null)
+        {
+          getLevel(edge.nodes[1]);
+          edge.nodes[1].label = edge.nodes[1].text;
+          currentVisGraph.nodes.push(edge.nodes[1]);
+        }
+        
+      }
+      
+    }
+  
+    // create a network
+    var container = document.getElementById("visNetworkCanvas"+currentCanvasId);
+    var data = {
+        nodes: currentVisGraph.nodes,
+        edges: currentVisGraph.edges,
+    };
+
+    var options = getOptions();
+
+    currentVisNetwork = new vis.Network(container, data, options);
+    visNetworks[currentCanvasId] = currentVisNetwork;
+}
+
+
+
+
 function getLevelRec(node, level)
 {
   level += 1;
@@ -318,32 +375,3 @@ function getLevel(node)
     return;
   }
 }
-
-/*function searchParents(currentNode, lookingForNode)
-{
-  if(currentNode.parent == null)
-  {
-    return false;
-  }
-  else if(currentNode.parent == lookingForNode)
-  {
-    return true;
-  }
-  else
-  {
-    return searchParents(currentNode.parent, lookingForNode);
-  }
-}*/
-
-/*function isInTheSameTree(startingNode, lookingForNode)
-{
-  if(startingNode.parent != null)
-  {
-    return searchParents(startingNode,lookingForNode);
-  }
-  else
-  {
-    return false;
-  }
-}*/
-

@@ -83,7 +83,7 @@
                 </button>
                 <button class="menuOption" id="menuOption4">
 
-                    <h2>Tarjanův algoritmus pro hledání 2-souvislých komponent</h2>
+                    <h2>Tarjanův algoritmus pro nalezení dvou-souvislých komponent</h2>
 
                 </button>
                 <!-- A prepared additional algorithm option. -->
@@ -113,7 +113,7 @@
             </ul>
             -->
         </div>
-        <div id="map">
+        <div id="canvases">
             <div class = canvas-container-hidden id="canvas-container0">
                 <div class = canvas-container-row>
                     <div>
@@ -158,7 +158,7 @@
                 </div>
 
                 <div id="visNetworkCanvas0" class="hidden"></div>
-
+                <div class = "algorithm-description">Pro Depth-first search jsou v prvním kvadrantu vrcholu při vizualizaci algoritmu zobrazeny informace ve formátu čas nalezení / čas dokončení.</div>
             </div>
             <div class = canvas-container-hidden id="canvas-container1">
                 <div class = canvas-container-row>
@@ -204,6 +204,7 @@
                 </div>
 
                 <div id="visNetworkCanvas1" class="hidden"></div>
+                <div class = "algorithm-description">Pro Breadth-first search jsou v prvním kvadrantu vrcholu při vizualizaci algoritmu zobrazeny informace o času objevení.</div>
             </div>
             <div class = canvas-container-hidden id="canvas-container2">
                 <div class = canvas-container-row>
@@ -249,6 +250,7 @@
                 </div>
 
                 <div id="visNetworkCanvas2" class="hidden"></div>
+                <div class = "algorithm-description">Pro Dijkstrův algoritmus jsou v prvním kvadrantu vrcholu při vizualizaci algoritmu zobrazeny informace o času nalezení.</div>
             </div>
             <div class = canvas-container-hidden id="canvas-container3">
                 <div class = canvas-container-row>
@@ -296,6 +298,7 @@
                 </div>
 
                 <div id="visNetworkCanvas3" class="hidden"></div>
+                <div class = "algorithm-description">Pro Tarjanův algoritmus pro nalezení silně souvislých komponent jsou v prvním kvadrantu vrcholu při vizualizaci algoritmu zobrazeny informace čas objevení / [lowlink].</div>
             </div>
             <div class = canvas-container-hidden id="canvas-container4">
                 <div class = canvas-container-row>
@@ -340,6 +343,7 @@
                 </div>
 
                 <div id="visNetworkCanvas4" class="hidden"></div>
+                <div class = "algorithm-description">Pro Tarjanův algoritmus pro nalezení silně souvislých komponent jsou v prvním kvadrantu vrcholu při vizualizaci algoritmu zobrazeny informace čas objevení / [lowpt].</div>
             </div>
             <div class = canvas-container-hidden id="canvas-container5">
                 <div class = canvas-container-row>
@@ -370,7 +374,10 @@
                         </div>
                     <canvas style="z-index:1" class="canvas" id="canvas5" width="1200" height="600"></canvas>
                     </div>
-                    <div id="sidebarCanvas5" class="sidebar"></div>
+                    <div id="sidebarCanvas5" class="sidebar">
+                        <div id = "sidebarSomeParameterCanvas5" style = "width: 50%;"></div>
+                        <div id = "sidebarSomeOtherParameterGridCanvas5" style = "width: 50%;"></div>
+                    </div>
                 </div>
                 <div class="simulation-container">
                     <a><img src="data/assets/restart.png" alt="Back to menu" style="width:45px;height:45px; margin-top: 7px; " id="restart" class="restart"></a>
@@ -399,10 +406,10 @@
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
                                     <div class="cell1">
-                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off" disabled = true>
+                                        <input type="checkbox" checked="checked" id="checkboxDirected" autocomplete="off">
                                     </div>
                                     <div class="cell2">
-                                        <input type="checkbox" id="checkboxWeighted" autocomplete="off" disabled = true>
+                                        <input type="checkbox" id="checkboxWeighted" autocomplete="off" >
                                     </div>
                                     <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
                                     <div class="cell3">Directed</div>
@@ -443,10 +450,10 @@
                             <div class="menu-settings">                           
                                 <div class="settings-grid">
                                     <div class="cell1">
-                                        <input type="checkbox"  id="checkboxDirected" autocomplete="off" disabled = true>
+                                        <input type="checkbox"  id="checkboxDirected" autocomplete="off">
                                     </div>
                                     <div class="cell2">
-                                        <input type="checkbox"  id="checkboxWeighted" autocomplete="off" disabled = true>
+                                        <input type="checkbox"  id="checkboxWeighted" autocomplete="off">
                                     </div>
                                     <div style="border-bottom: 1px solid #333;grid-column: span 2;"></div>
                                     <div class="cell3">Directed</div>

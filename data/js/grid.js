@@ -405,76 +405,50 @@ function renderBiconnectivityGrid()
     
 }
 
-function clearBFSGrid()
+function renderExampleAlgorithmGrid()
 {
-    grids[currentCanvasId][0].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][1].updateConfig({
-        data:[]
-    });
+    var gridSomeParameterData = [];
+    var gridSomeOtherParameterData = [];
 
-    grids[currentCanvasId][0].forceRender();
-    grids[currentCanvasId][1].forceRender();
+    for(var u of currentCanvasGraph.nodes)
+    {
+        gridSomeParameterData.push([u.text,u.someParameter]);
+        gridSomeOtherParameterData.push([u.text,u.someOtherParameter]);
+    }
+
+    if(grids[currentCanvasId] == null)
+    {
+        grids[currentCanvasId] = [];
+
+        var someParameterGrid = new gridjs.Grid({
+            columns: ['SomeParameter'],
+            data: gridSomeParameterData
+        }).render(document.getElementById("sidebarSomeParameterCanvas"+currentCanvasId));
+
+        var domeOtherParameterGrid = new gridjs.Grid({
+            columns: ['SomeOtherParameter'],
+            data: gridSomeOtherParameterData
+        }).render(document.getElementById("sidebarSomeOtherParameterCanvas"+currentCanvasId));
+
+        grids[currentCanvasId].push(someParameterGrid);
+        grids[currentCanvasId].push(domeOtherParameterGrid);
+    }
+    else
+    {
+        grids[currentCanvasId][0].updateConfig({
+            data:gridSomeParameterData
+        });
+
+        grids[currentCanvasId][1].updateConfig({
+            data:gridSomeOtherParameterData
+        });
+
+        grids[currentCanvasId][0].forceRender();
+        grids[currentCanvasId][1].forceRender();
+    }
+    
 }
 
-function clearDFSGrid()
-{
-    grids[currentCanvasId][0].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][1].updateConfig({
-        data:[]
-    });
-
-    grids[currentCanvasId][0].forceRender();
-    grids[currentCanvasId][1].forceRender();
-}
-
-function clearDijkstraGrid()
-{
-    grids[currentCanvasId][0].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][1].updateConfig({
-        data:[]
-    });
-
-    grids[currentCanvasId][0].forceRender();
-    grids[currentCanvasId][1].forceRender();
-}
-
-function clearTarjanGrid()
-{
-    grids[currentCanvasId][0].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][1].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][2].updateConfig({
-        data:[]
-    });
-    grids[currentCanvasId][3].updateConfig({
-        data:[]
-    });
-
-    grids[currentCanvasId][0].forceRender();
-    grids[currentCanvasId][1].forceRender();
-    grids[currentCanvasId][2].forceRender();
-    grids[currentCanvasId][3].forceRender();
-}
-
-function clearBiconnectivityGrid()
-{
-    grids[currentCanvasId][0].updateConfig({
-        data:[]
-    });
-
-
-    grids[currentCanvasId][0].forceRender();
-
-}
 
 function clearGrid()
 {

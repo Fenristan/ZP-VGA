@@ -1,22 +1,21 @@
-# ZP-VGA
-Repozitář pro programovou část bakalářské práce na téma Vizualizace grafových algoritmů.
+# Vizualizace grafových algoritmů
+Tato webová aplikace byla vytvořena v rámci bakalářské práce na téma Vizualizace grafových algoritmů.  
+Aplikace umožňuje uživateli, pro výukové účely, interaktivně vizualizovat průběh činnosti různých grafových algoritmů na uživatel vytvořeném grafu. Mezi vizualizované algoritmy patří Depth-First-Search, Breadth-First-Search, Dijsktrův algoritmus, Tarjanův algoritmus pro nalezení silně souvislých komponent a Tarjanův algoritmus pro hledání 2-souvislých komponent.  
+Aplikace rovněž umožňuje snadnou a interaktivní úpravu grafu, manuální i automatické krokování vizualizace algoritmu, zobrazuje informace o stavu grafu a jeho prvcích v jednotlivých krocích a také poskytuje možnost uložení a načtení vytvořeného grafu ze souboru.
 
-
+## Spuštění aplikace
 Pokyny pro spuštění jsou následující:
  1. Pro spuštění na lokálním stroji se ujistěte, že na něm běží server.
  2. Spusťte soubor "index.html" na serveru.
 
-
-Tato práce poskytuje interaktivní prostředí prostředí, ve kterém si uživatel může uživatel intuitivně vytvořit vlastní graf a následně na něm spustit jeden z algoritmů, mezi které patří Depth-First-Search, Breadth-First-Search, Dijsktrův algoritmus, Tarjanův algoritmus pro nalezení silně souvislých komponent a Tarjanův algoritmus pro hledání 2-souvislých komponent.
-
-Po spuštění aplikace vyberte z nabídky algoritmus.
+## Návod použití
+Po spuštění aplikace vyberte z nabídky algoritmus.  
 Objeví se před vámi plocha, ve které můžete vytvářet váš graf.
 
 Graf je možné upravovat pomocí lišty nástrojů.
 ![image](https://github.com/user-attachments/assets/b3a8b8e9-9491-4c6b-a3b4-03991ceff159)
 
-Začněte přidáním hran. 
-
+Začněte přidáním hran.  
 ![image](https://github.com/user-attachments/assets/0c0df49b-8ef2-4689-85da-b47678775a1e)
 
 Stisknutím možnosti tuto možnost vyberete a následným kliknutím myši do prostoru plátna do něj vrchol přidáte.
@@ -29,7 +28,7 @@ Vyberte možnost přídání hrany.
 
 Následně klikněte myší do vrcholu, ze kterého má hrana začínat a poté do druhého vrcholu, kde má hrana končit.
 
-Vybráním možnosti odstranění vrcholu je možné kliknutím do libovolného vrcholu jej odebrat.
+Vybráním možnosti odstranění vrcholu je možné kliknutím do libovolného vrcholu jej odebrat.  
 Odebrání hrany funguje stejně jako její přidání. U orientovaného grafu je nutné dávat pozor pořadí vybrání vrcholů.
 
 Tlačítky na pravé straně lišty poté můžete přepínat mezi orientovaným a neorientovaným grafem a také zda mají být zobrazeny váhy hran. Pro některé algoritmy není volba jedné, nebo obou možností dostupná.
